@@ -5,4 +5,5 @@
     <color name="light_gray">#ccc</color>
     <color name="dark_gray">#333</color>
     <color name="red">#f00</color>
+    <color name="dark_green">#090</color>
 </resources>

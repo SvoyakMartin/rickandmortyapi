@@ -46,4 +46,11 @@
         app:layout_constraintStart_toEndOf="@id/button_dark_theme"
         app:layout_constraintTop_toTopOf="@id/button_light_theme" />
 
+    <ru.svoyakmartin.rickandmortyapi.customView.LastSeenView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/button_create_user"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
