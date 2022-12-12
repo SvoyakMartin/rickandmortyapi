@@ -1,16 +1,16 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Theme.RickAndMortyApi" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_700</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+<resources>
+    <style name="Theme.RickAndMortyApi.Base" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="backColor">@color/light_gray</item>
+        <item name="frontColor">@color/dark_gray</item>
+        <item name="errorColor">@color/red</item>
+
+        <item name="colorPrimaryDark">?attr/backColor</item>
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorSecondary">?attr/backColor</item>
+
+        <item name="materialButtonStyle">@style/ButtonProject</item>
+        <item name="textInputStyle">@style/InputStyleProject</item>
     </style>
+
+    <style name="Theme.RickAndMortyApi.Main" parent="Theme.RickAndMortyApi.Base" />
 </resources>

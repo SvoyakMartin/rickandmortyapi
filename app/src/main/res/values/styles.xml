@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ButtonProject" parent="Widget.MaterialComponents.Button">
+        <item name="android:backgroundTint">?attr/backColor</item>
+        <item name="android:textColor">?attr/frontColor</item>
+    </style>
+
+    <style name="InputStyleProject" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="errorTextColor">?attr/errorColor</item>
+        <item name="boxStrokeErrorColor">?attr/errorColor</item>
+
+        <item name="boxStrokeColor">?attr/backColor</item>
+        <item name="hintTextColor">?attr/frontColor</item>
+
+        <item name="errorTextAppearance">?attr/textAppearanceBody1</item>
+    </style>
+</resources>
