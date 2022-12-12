@@ -1,4 +1,4 @@
-package ru.svoyakmartin.rickandmortyapi.entitys
+package ru.svoyakmartin.rickandmortyapi.models
 
 data class Episode(
     val id: Int,// The id of the episode.

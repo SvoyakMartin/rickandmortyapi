@@ -1,4 +1,4 @@
-package ru.svoyakmartin.rickandmortyapi.entitys
+package ru.svoyakmartin.rickandmortyapi.models
 
 data class Location(
     val id: Int,// The id of the location.
