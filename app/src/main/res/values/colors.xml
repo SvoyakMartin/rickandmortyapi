@@ -6,4 +6,5 @@
     <color name="dark_gray">#333</color>
     <color name="red">#f00</color>
     <color name="dark_green">#090</color>
+    <color name="dark_red">@color/design_default_color_error</color>
 </resources>

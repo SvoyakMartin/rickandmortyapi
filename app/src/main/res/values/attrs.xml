@@ -3,4 +3,9 @@
     <attr name="backColor" format="color" />
     <attr name="frontColor" format="color" />
     <attr name="errorColor" format="color" />
+
+    <declare-styleable name="LastSeenAnimView">
+        <attr name="aliveStatus" format="string"/>
+        <attr name="location" format="string"/>
+    </declare-styleable>
 </resources>
