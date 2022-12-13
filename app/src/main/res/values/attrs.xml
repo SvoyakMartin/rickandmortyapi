@@ -13,5 +13,6 @@
             <enum name="DEAD" value="1"/>
             <enum name="UNKNOWN" value="2"/>
         </attr>
+        <attr name="style" format="reference"/>
     </declare-styleable>
 </resources>

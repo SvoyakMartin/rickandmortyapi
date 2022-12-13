@@ -62,7 +62,7 @@
         app:LSA_location="Citadel of Ricks"
         app:LSA_location_color="@color/dark_gray"
         app:LSA_location_find_color="@color/light_gray"
-        app:LSA_aliveStatus="DEAD"
+        app:style="@style/LSA"
         app:layout_constraintBottom_toTopOf="@+id/button_create_user"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/LastSeenView"
