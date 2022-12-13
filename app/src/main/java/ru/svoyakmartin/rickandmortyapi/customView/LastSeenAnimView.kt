@@ -2,15 +2,11 @@ package ru.svoyakmartin.rickandmortyapi.customView
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
-import org.w3c.dom.Text
 import ru.svoyakmartin.rickandmortyapi.R
-import java.util.*
-import kotlin.random.Random
 
 private enum class AliveStatus(val label: Int) {
     ALIVE(R.string.status_alive),
@@ -35,7 +31,7 @@ class LastSeenAnimView
     private val reference = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890 "
     private var isLastSeenVisible = false
     private var generatedText = ""
-    private val random = Random(Date().time)
+//    private val random = Random(Date().time)
 
     private var location = "Citadel of Ricks"
     private var alive = ""
@@ -170,7 +166,10 @@ class LastSeenAnimView
 
     private fun drawLocation(canvas: Canvas) {
         paint.apply {
-            color = ContextCompat.getColor(context, R.color.dark_gray)
+            color = ContextCompat.getColor(
+                context,
+                if (location == generatedText) R.color.dark_green else R.color.dark_red
+            )
             textSize = locationTextSize
         }
 
@@ -185,16 +184,31 @@ class LastSeenAnimView
     private fun showGenerateLocation() {
         if (location.isNotEmpty() && generatedText != location) {
             val currentIndex = if (generatedText.isEmpty()) 0 else generatedText.length - 1
-            val randomChar = reference[random.nextInt(location.length)]
+            val currentChar: Char
+
+            //RANDOM - слишком долго перебирает, переделываем
+//            val randomChar = reference[random.nextInt(location.length)]
+//
+//            if (generatedText.isEmpty() || generatedText[currentIndex] == location[currentIndex]) {
+//                generatedText += randomChar
+//            } else if (currentIndex == 0) {
+//                generatedText = "" + randomChar
+//            } else {
+//                generatedText = location.substring(0, currentIndex) + randomChar
+//            }
 
             if (generatedText.isEmpty() || generatedText[currentIndex] == location[currentIndex]) {
-                generatedText += randomChar
-            } else if (currentIndex == 0) {
-                generatedText = "" + randomChar
+                currentChar = reference[0]
+                generatedText += currentChar
             } else {
-                generatedText = location.substring(0, currentIndex) + randomChar
+                currentChar = reference[reference.indexOf(generatedText.last()) + 1]
+                generatedText = if (currentIndex == 0) {
+                    "" + currentChar
+                } else {
+                    location.substring(0, currentIndex) + currentChar
+                }
             }
-            requestLayout()
+
             invalidate()
         }
     }
