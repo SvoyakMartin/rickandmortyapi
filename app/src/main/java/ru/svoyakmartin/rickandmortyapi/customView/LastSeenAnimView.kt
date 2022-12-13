@@ -3,16 +3,13 @@ package ru.svoyakmartin.rickandmortyapi.customView
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.os.Bundle
+import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import ru.svoyakmartin.rickandmortyapi.R
-
-private enum class AliveStatus(val label: Int) {
-    ALIVE(R.string.status_alive),
-    DEAD(R.string.status_dead),
-    UNKNOWN(R.string.status_unknown)
-}
 
 class LastSeenAnimView
 @JvmOverloads constructor(
@@ -21,6 +18,12 @@ class LastSeenAnimView
     defStyleAttr: Int = 0,
     defStyleRS: Int = 0
 ) : View(context, attrs, defStyleAttr, defStyleRS) {
+
+    enum class AliveStatus {
+        ALIVE,
+        DEAD,
+        UNKNOWN
+    }
 
     private val circleRadius = 25F
     private val circlePadding = 20F
@@ -31,10 +34,13 @@ class LastSeenAnimView
     private val reference = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890 "
     private var isLastSeenVisible = false
     private var generatedText = ""
-//    private val random = Random(Date().time)
 
-    private var location = "Citadel of Ricks"
-    private var alive = ""
+    //attrs
+    private var location = ""
+    private var location_color = 0
+    private var location_find_color = 0
+
+//    private val random = Random(Date().time)
 
     init {
         isClickable = true
@@ -47,7 +53,7 @@ class LastSeenAnimView
         }
 
         attrs?.let {
-//            initAttrs(it, defStyleAttr, defStyleRS)
+            initAttrs(it, defStyleAttr, defStyleRS)
         }
     }
 
@@ -94,8 +100,21 @@ class LastSeenAnimView
             defStyleRS
         ).apply {
             try {
-                location = getString(R.styleable.LastSeenAnimView_location)!!
-                alive = getString(R.styleable.LastSeenAnimView_aliveStatus).toString()
+                location = getString(R.styleable.LastSeenAnimView_LSA_location)!!
+                location_color = getColor(
+                    R.styleable.LastSeenAnimView_LSA_location_color,
+                    context.getColor(R.color.dark_green)
+                )
+                location_find_color = getInt(
+                    R.styleable.LastSeenAnimView_LSA_location_find_color,
+                    context.getColor(R.color.dark_red)
+                )
+                val status = getInt(
+                    R.styleable.LastSeenAnimView_LSA_aliveStatus,
+                    AliveStatus.ALIVE.ordinal
+                )
+                aliveStatus = AliveStatus.values()[status]
+
             } finally {
                 recycle()
             }
@@ -166,10 +185,8 @@ class LastSeenAnimView
 
     private fun drawLocation(canvas: Canvas) {
         paint.apply {
-            color = ContextCompat.getColor(
-                context,
-                if (location == generatedText) R.color.dark_green else R.color.dark_red
-            )
+            color = if (location == generatedText) location_color else location_find_color
+
             textSize = locationTextSize
         }
 
@@ -179,6 +196,25 @@ class LastSeenAnimView
             statusTextSize + circlePadding + lastSeenTextSize + locationTextSize,
             paint
         )
+    }
+
+    override fun onSaveInstanceState(): Parcelable? {
+        return bundleOf(
+            "isLastSeenVisible" to isLastSeenVisible,
+            "generatedText" to generatedText,
+            "super" to super.onSaveInstanceState()
+        )
+
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        var superState = state
+        if (superState is Bundle){
+            isLastSeenVisible = superState.getBoolean("isLastSeenVisible")
+            generatedText = superState.getString("generatedText")!!
+            superState = superState.getParcelable("super")
+        }
+        super.onRestoreInstanceState(superState)
     }
 
     private fun showGenerateLocation() {
