@@ -203,13 +203,6 @@ class LastSeenAnimView
             isLastSeenVisibleState = isLastSeenVisible
             generatedTextState = generatedText
         }
-
-//        return bundleOf(
-//            IS_LAST_SEEN_VISIBLE to isLastSeenVisible,
-//            GENERATED_TEXT to generatedText,
-//            SUPER_INSTANCE_STATE to super.onSaveInstanceState()
-//        )
-
     }
 
     override fun onRestoreInstanceState(state: Parcelable?) {
@@ -220,15 +213,6 @@ class LastSeenAnimView
         } else {
             super.onRestoreInstanceState(state)
         }
-
-
-//        var superState = state
-//        if (superState is Bundle) {
-//            isLastSeenVisible = superState.getBoolean(IS_LAST_SEEN_VISIBLE)
-//            generatedText = superState.getString(GENERATED_TEXT)!!
-//            superState = superState.getParcelable(SUPER_INSTANCE_STATE)
-//        }
-//        super.onRestoreInstanceState(superState)
     }
 
     internal class SavedState : BaseSavedState {
