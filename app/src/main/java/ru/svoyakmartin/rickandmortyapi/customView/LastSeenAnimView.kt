@@ -48,7 +48,8 @@ class LastSeenAnimView
     private var locationColor = 0
     private var locationFindColor = 0
 
-//    private val random = Random(Date().time)
+/*  используется в showGenerateLocation() при необходимости
+    private val random = Random(Date().time) */
 
     init {
         isClickable = true
@@ -259,16 +260,16 @@ class LastSeenAnimView
             val currentIndex = if (generatedText.isEmpty()) 0 else generatedText.length - 1
             val currentChar: Char
 
-            //RANDOM - слишком долго перебирает, переделываем
-//            val randomChar = reference[random.nextInt(location.length)]
-//
-//            if (generatedText.isEmpty() || generatedText[currentIndex] == location[currentIndex]) {
-//                generatedText += randomChar
-//            } else if (currentIndex == 0) {
-//                generatedText = "" + randomChar
-//            } else {
-//                generatedText = location.substring(0, currentIndex) + randomChar
-//            }
+            /*RANDOM - слишком долго перебирает, переделываем
+            val randomChar = reference[random.nextInt(location.length)]
+
+            if (generatedText.isEmpty() || generatedText[currentIndex] == location[currentIndex]) {
+                generatedText += randomChar
+            } else if (currentIndex == 0) {
+                generatedText = "" + randomChar
+            } else {
+                generatedText = location.substring(0, currentIndex) + randomChar
+            }*/
 
             if (generatedText.isEmpty() || generatedText[currentIndex] == location[currentIndex]) {
                 currentChar = reference[0]
