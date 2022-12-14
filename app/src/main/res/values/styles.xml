@@ -14,8 +14,4 @@
 
         <item name="errorTextAppearance">?attr/textAppearanceBody1</item>
     </style>
-
-    <style name="LSA">
-        <item name="LSA_aliveStatus">DEAD</item>
-    </style>
 </resources>

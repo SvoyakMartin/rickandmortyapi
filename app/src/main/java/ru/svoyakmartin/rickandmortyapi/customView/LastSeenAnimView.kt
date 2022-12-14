@@ -3,12 +3,13 @@ package ru.svoyakmartin.rickandmortyapi.customView
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.os.Bundle
+import android.os.Build
+import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
+import androidx.core.os.ParcelCompat
 import ru.svoyakmartin.rickandmortyapi.R
 
 class LastSeenAnimView
@@ -30,15 +31,22 @@ class LastSeenAnimView
     private val statusTextSize = 50F
     private val lastSeenTextSize = 40F
     private val locationTextSize = 45F
-    private var aliveStatus = AliveStatus.ALIVE
+    private val paint: Paint by lazy {
+        Paint().apply {
+            style = Paint.Style.FILL
+            isAntiAlias = true
+        }
+    }
+
     private val reference = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890 "
     private var isLastSeenVisible = false
     private var generatedText = ""
 
     //attrs
+    private var aliveStatus = AliveStatus.ALIVE
     private var location = ""
-    private var location_color = 0
-    private var location_find_color = 0
+    private var locationColor = 0
+    private var locationFindColor = 0
 
 //    private val random = Random(Date().time)
 
@@ -57,10 +65,32 @@ class LastSeenAnimView
         }
     }
 
-    private val paint: Paint by lazy {
-        Paint().apply {
-            style = Paint.Style.FILL
-            isAntiAlias = true
+    private fun initAttrs(attrs: AttributeSet, defStyleAttr: Int, defStyleRS: Int) {
+        context.theme.obtainStyledAttributes(
+            attrs,
+            R.styleable.LastSeenAnimView,
+            defStyleAttr,
+            defStyleRS
+        ).apply {
+            try {
+                location = getString(R.styleable.LastSeenAnimView_LSA_location)!!
+                locationColor = getColor(
+                    R.styleable.LastSeenAnimView_LSA_location_color,
+                    context.getColor(R.color.dark_green)
+                )
+                locationFindColor = getInt(
+                    R.styleable.LastSeenAnimView_LSA_location_find_color,
+                    context.getColor(R.color.dark_red)
+                )
+                val status = getInt(
+                    R.styleable.LastSeenAnimView_LSA_aliveStatus,
+                    AliveStatus.ALIVE.ordinal
+                )
+                aliveStatus = AliveStatus.values()[status]
+
+            } finally {
+                recycle()
+            }
         }
     }
 
@@ -71,8 +101,8 @@ class LastSeenAnimView
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        var wSize = MeasureSpec.getSize(widthMeasureSpec)
-        var hSize = MeasureSpec.getSize(heightMeasureSpec)
+        val wSize = MeasureSpec.getSize(widthMeasureSpec)
+        val hSize = MeasureSpec.getSize(heightMeasureSpec)
 
         setMeasuredDimension(wSize, hSize)
     }
@@ -88,35 +118,6 @@ class LastSeenAnimView
                 if (generatedText != location) {
                     showGenerateLocation()
                 }
-            }
-        }
-    }
-
-    private fun initAttrs(attrs: AttributeSet, defStyleAttr: Int, defStyleRS: Int) {
-        context.theme.obtainStyledAttributes(
-            attrs,
-            R.styleable.LastSeenAnimView,
-            defStyleAttr,
-            defStyleRS
-        ).apply {
-            try {
-                location = getString(R.styleable.LastSeenAnimView_LSA_location)!!
-                location_color = getColor(
-                    R.styleable.LastSeenAnimView_LSA_location_color,
-                    context.getColor(R.color.dark_green)
-                )
-                location_find_color = getInt(
-                    R.styleable.LastSeenAnimView_LSA_location_find_color,
-                    context.getColor(R.color.dark_red)
-                )
-                val status = getInt(
-                    R.styleable.LastSeenAnimView_LSA_aliveStatus,
-                    AliveStatus.ALIVE.ordinal
-                )
-                aliveStatus = AliveStatus.values()[status]
-
-            } finally {
-                recycle()
             }
         }
     }
@@ -185,8 +186,7 @@ class LastSeenAnimView
 
     private fun drawLocation(canvas: Canvas) {
         paint.apply {
-            color = if (location == generatedText) location_color else location_find_color
-
+            color = if (location == generatedText) locationColor else locationFindColor
             textSize = locationTextSize
         }
 
@@ -198,23 +198,76 @@ class LastSeenAnimView
         )
     }
 
-    override fun onSaveInstanceState(): Parcelable? {
-        return bundleOf(
-            "isLastSeenVisible" to isLastSeenVisible,
-            "generatedText" to generatedText,
-            "super" to super.onSaveInstanceState()
-        )
+    override fun onSaveInstanceState(): Parcelable {
+        return SavedState(super.onSaveInstanceState()).apply {
+            isLastSeenVisibleState = isLastSeenVisible
+            generatedTextState = generatedText
+        }
+
+//        return bundleOf(
+//            IS_LAST_SEEN_VISIBLE to isLastSeenVisible,
+//            GENERATED_TEXT to generatedText,
+//            SUPER_INSTANCE_STATE to super.onSaveInstanceState()
+//        )
 
     }
 
     override fun onRestoreInstanceState(state: Parcelable?) {
-        var superState = state
-        if (superState is Bundle){
-            isLastSeenVisible = superState.getBoolean("isLastSeenVisible")
-            generatedText = superState.getString("generatedText")!!
-            superState = superState.getParcelable("super")
+        if (state is SavedState) {
+            super.onRestoreInstanceState(state.superState)
+            isLastSeenVisible = state.isLastSeenVisibleState
+            generatedText = state.generatedTextState
+        } else {
+            super.onRestoreInstanceState(state)
         }
-        super.onRestoreInstanceState(superState)
+
+
+//        var superState = state
+//        if (superState is Bundle) {
+//            isLastSeenVisible = superState.getBoolean(IS_LAST_SEEN_VISIBLE)
+//            generatedText = superState.getString(GENERATED_TEXT)!!
+//            superState = superState.getParcelable(SUPER_INSTANCE_STATE)
+//        }
+//        super.onRestoreInstanceState(superState)
+    }
+
+    internal class SavedState : BaseSavedState {
+
+        var isLastSeenVisibleState: Boolean = false
+        var generatedTextState: String = ""
+
+        //save
+        constructor(superState: Parcelable?) : super(superState)
+
+        //for restore
+        constructor(source: Parcel) : super(source) {
+            source.apply {
+                isLastSeenVisibleState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q/*29*/) {
+                    readBoolean()
+                } else {
+                    ParcelCompat.readBoolean(source)
+                }
+                readString()?.let { generatedTextState = it }
+            }
+        }
+
+        override fun writeToParcel(out: Parcel, flags: Int) {
+            super.writeToParcel(out, flags)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q/*29*/) {
+                out.writeBoolean(isLastSeenVisibleState)
+            } else {
+                ParcelCompat.writeBoolean(out, isLastSeenVisibleState)
+            }
+            out.writeString(generatedTextState)
+        }
+
+        companion object {
+            @JvmField
+            val CREATOR = object : Parcelable.Creator<SavedState> {
+                override fun createFromParcel(source: Parcel): SavedState = SavedState(source)
+                override fun newArray(size: Int): Array<SavedState?> = arrayOfNulls(size)
+            }
+        }
     }
 
     private fun showGenerateLocation() {
