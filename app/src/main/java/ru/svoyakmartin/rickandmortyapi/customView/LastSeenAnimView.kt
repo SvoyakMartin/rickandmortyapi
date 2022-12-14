@@ -11,6 +11,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.os.ParcelCompat
 import ru.svoyakmartin.rickandmortyapi.R
+import kotlin.math.max
 
 class LastSeenAnimView
 @JvmOverloads constructor(
@@ -24,6 +25,13 @@ class LastSeenAnimView
         ALIVE,
         DEAD,
         UNKNOWN
+    }
+
+    enum class PaintStyle{
+        ICON,
+        STATUS,
+        HEADER,
+        LOCATION
     }
 
     private val circleRadius = 25F
@@ -95,17 +103,31 @@ class LastSeenAnimView
         }
     }
 
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-
-    }
-
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        val wSize = MeasureSpec.getSize(widthMeasureSpec)
-        val hSize = MeasureSpec.getSize(heightMeasureSpec)
+//        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+//        val wSize = MeasureSpec.getSize(widthMeasureSpec)
+//        val hSize = MeasureSpec.getSize(heightMeasureSpec)
 
-        setMeasuredDimension(wSize, hSize)
+        setPaint(PaintStyle.STATUS)
+        val wStatus = paint.measureText(getStatusText(aliveStatus))
+
+        setPaint(PaintStyle.HEADER)
+        val wHeader = paint.measureText(context.getString(R.string.last_seen_text))
+
+        setPaint(PaintStyle.LOCATION)
+        val wLocation = paint.measureText(location)
+
+
+        val width = circlePadding * 2 + circleRadius * 2 + max(wStatus, max(wHeader, wLocation))
+        val height = circlePadding + statusTextSize + lastSeenTextSize + locationTextSize
+
+//        when (MeasureSpec.getMode(widthMeasureSpec)){
+//            MeasureSpec.UNSPECIFIED ->{}
+//            MeasureSpec.AT_MOST ->{}
+//            MeasureSpec.EXACTLY ->{}
+//        }
+
+        setMeasuredDimension(width.toInt(), height.toInt())
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -123,31 +145,52 @@ class LastSeenAnimView
         }
     }
 
-    private fun drawStatus(canvas: Canvas) {
-        val colorId: Int
-        val stringId: Int
-
-        when (aliveStatus) {
-            AliveStatus.ALIVE -> {
-                colorId = R.color.dark_green
-                stringId = R.string.status_alive
-            }
-            AliveStatus.DEAD -> {
-                colorId = R.color.dark_red
-                stringId = R.string.status_dead
-            }
-            AliveStatus.UNKNOWN -> {
-                colorId = R.color.dark_gray
-                stringId = R.string.status_unknown
+    private fun setPaint(paintStyle: PaintStyle) {
+        paint.apply {
+            when (paintStyle){
+                PaintStyle.ICON -> color = getStatusColor()
+                PaintStyle.STATUS -> {
+                    color = context.getColor(R.color.black)
+                    textSize = statusTextSize
+                }
+                PaintStyle.HEADER -> {
+                    color = context.getColor(R.color.light_gray)
+                    textSize = lastSeenTextSize
+                }
+                PaintStyle.LOCATION -> {
+                    color = if (location == generatedText) locationColor else locationFindColor
+                    textSize = locationTextSize
+                }
             }
         }
-
-        drawStatusCircle(canvas, colorId)
-        drawStatusText(canvas, stringId)
     }
 
-    private fun drawStatusCircle(canvas: Canvas, colorId: Int) {
-        paint.color = context.getColor(colorId)
+    private fun getStatusText(status: AliveStatus = aliveStatus): String {
+        return context.getString(
+            when (status) {
+                AliveStatus.ALIVE -> R.string.status_alive
+                AliveStatus.DEAD -> R.string.status_dead
+                AliveStatus.UNKNOWN -> R.string.status_unknown
+            }
+        )
+    }
+
+    private fun getStatusColor(status: AliveStatus = aliveStatus): Int{
+        val colorId = when (status) {
+            AliveStatus.ALIVE -> R.color.dark_green
+            AliveStatus.DEAD -> R.color.dark_red
+            AliveStatus.UNKNOWN -> R.color.dark_gray
+        }
+        return context.getColor(colorId)
+    }
+
+    private fun drawStatus(canvas: Canvas) {
+        drawStatusIcon(canvas)
+        drawStatusText(canvas)
+    }
+
+    private fun drawStatusIcon(canvas: Canvas) {
+        setPaint(PaintStyle.ICON)
 
         canvas.drawCircle(
             circlePadding + circleRadius,
@@ -157,14 +200,11 @@ class LastSeenAnimView
         )
     }
 
-    private fun drawStatusText(canvas: Canvas, stringId: Int) {
-        paint.apply {
-            color = ContextCompat.getColor(context, R.color.black)
-            textSize = statusTextSize
-        }
+    private fun drawStatusText(canvas: Canvas) {
+        setPaint(PaintStyle.STATUS)
 
         canvas.drawText(
-            context.getString(stringId),
+            getStatusText(),
             circleRadius * 2 + circlePadding * 2,
             statusTextSize + circlePadding,
             paint
@@ -172,10 +212,7 @@ class LastSeenAnimView
     }
 
     private fun drawLastSeen(canvas: Canvas) {
-        paint.apply {
-            color = ContextCompat.getColor(context, R.color.light_gray)
-            textSize = lastSeenTextSize
-        }
+        setPaint(PaintStyle.HEADER)
 
         canvas.drawText(
             context.getString(R.string.last_seen_text),
@@ -186,10 +223,7 @@ class LastSeenAnimView
     }
 
     private fun drawLocation(canvas: Canvas) {
-        paint.apply {
-            color = if (location == generatedText) locationColor else locationFindColor
-            textSize = locationTextSize
-        }
+        setPaint(PaintStyle.LOCATION)
 
         canvas.drawText(
             generatedText,
