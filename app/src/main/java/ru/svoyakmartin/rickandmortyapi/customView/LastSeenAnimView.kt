@@ -27,7 +27,7 @@ class LastSeenAnimView
         UNKNOWN
     }
 
-    enum class PaintStyle{
+    enum class PaintStyle {
         ICON,
         STATUS,
         HEADER,
@@ -147,7 +147,7 @@ class LastSeenAnimView
 
     private fun setPaint(paintStyle: PaintStyle) {
         paint.apply {
-            when (paintStyle){
+            when (paintStyle) {
                 PaintStyle.ICON -> color = getStatusColor()
                 PaintStyle.STATUS -> {
                     color = context.getColor(R.color.black)
@@ -175,13 +175,14 @@ class LastSeenAnimView
         )
     }
 
-    private fun getStatusColor(status: AliveStatus = aliveStatus): Int{
-        val colorId = when (status) {
-            AliveStatus.ALIVE -> R.color.dark_green
-            AliveStatus.DEAD -> R.color.dark_red
-            AliveStatus.UNKNOWN -> R.color.dark_gray
-        }
-        return context.getColor(colorId)
+    private fun getStatusColor(status: AliveStatus = aliveStatus): Int {
+        return context.getColor(
+            when (status) {
+                AliveStatus.ALIVE -> R.color.dark_green
+                AliveStatus.DEAD -> R.color.dark_red
+                AliveStatus.UNKNOWN -> R.color.dark_gray
+            }
+        )
     }
 
     private fun drawStatus(canvas: Canvas) {
