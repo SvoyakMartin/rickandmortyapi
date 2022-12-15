@@ -18,8 +18,8 @@ class CharactersFragment : Fragment(), CharactersClickListener {
     private lateinit var binding: FragmentCharacterBinding
     private val adapter = CharactersAdapter(this)
 
-    private fun getExampleDataList(): ArrayList<Character> {
-        return arrayListOf(
+    private fun getExampleDataList(): MutableList<Character> {
+        return mutableListOf(
             Character(0, "Keara", "", "", "", "", "", "", "", listOf("The ABC's of Beth"), "", ""),
             Character(
                 1,
@@ -36,9 +36,9 @@ class CharactersFragment : Fragment(), CharactersClickListener {
                 ""
             ),
             Character(2, "Pussifer", "", "", "", "", "", "", "", listOf("Rickmurai Jack"), "", ""),
-            Character(0, "Keara", "", "", "", "", "", "", "", listOf("The ABC's of Beth"), "", ""),
+            Character(3, "Keara", "", "", "", "", "", "", "", listOf("The ABC's of Beth"), "", ""),
             Character(
-                1,
+                4,
                 "Sleepy Gary",
                 "",
                 "",
@@ -51,10 +51,10 @@ class CharactersFragment : Fragment(), CharactersClickListener {
                 "",
                 ""
             ),
-            Character(2, "Pussifer", "", "", "", "", "", "", "", listOf("Rickmurai Jack"), "", ""),
-            Character(0, "Keara", "", "", "", "", "", "", "", listOf("The ABC's of Beth"), "", ""),
+            Character(5, "Pussifer", "", "", "", "", "", "", "", listOf("Rickmurai Jack"), "", ""),
+            Character(6, "Keara", "", "", "", "", "", "", "", listOf("The ABC's of Beth"), "", ""),
             Character(
-                1,
+                7,
                 "Sleepy Gary",
                 "",
                 "",
@@ -67,7 +67,7 @@ class CharactersFragment : Fragment(), CharactersClickListener {
                 "",
                 ""
             ),
-            Character(2, "Pussifer", "", "", "", "", "", "", "", listOf("Rickmurai Jack"), "", "")
+            Character(8, "Pussifer", "", "", "", "", "", "", "", listOf("Rickmurai Jack"), "", "")
         )
     }
 
@@ -106,6 +106,13 @@ class CharactersFragment : Fragment(), CharactersClickListener {
 
             buttonAutoTheme.setOnClickListener {
                 setNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            }
+
+            buttonShuffle.setOnClickListener {
+                val copy: MutableList<Character> = ArrayList()
+                copy.addAll(adapter.currentList())
+                copy.shuffle()
+                adapter.shuffleData(copy)
             }
         }
     }
