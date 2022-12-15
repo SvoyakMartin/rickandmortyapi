@@ -8,7 +8,6 @@ import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.View
-import androidx.core.content.ContextCompat
 import androidx.core.os.ParcelCompat
 import ru.svoyakmartin.rickandmortyapi.R
 import kotlin.math.max
@@ -34,11 +33,11 @@ class LastSeenAnimView
         LOCATION
     }
 
-    private val circleRadius = 25F
-    private val circlePadding = 20F
-    private val statusTextSize = 50F
-    private val lastSeenTextSize = 40F
-    private val locationTextSize = 45F
+    private val circleRadius = context.toDp(12f)
+    private val circlePadding = context.toDp(8f)
+    private val statusTextSize = context.toDp(20f)
+    private val lastSeenTextSize = context.toDp(14f)
+    private val locationTextSize = context.toDp(16f)
     private val paint: Paint by lazy {
         Paint().apply {
             style = Paint.Style.FILL
@@ -127,7 +126,7 @@ class LastSeenAnimView
 //            MeasureSpec.EXACTLY ->{}
 //        }
 
-        setMeasuredDimension(width.toInt(), height.toInt())
+        setMeasuredDimension(width.toInt() + 1, height.toInt() + 1)
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -320,5 +319,9 @@ class LastSeenAnimView
 
             invalidate()
         }
+    }
+
+    private fun Context.toDp(value: Float): Float {
+        return resources.displayMetrics.density * value
     }
 }
