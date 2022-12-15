@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">RickAndMortyApi</string>
-    <string name="button_create_user_text">Создать пользователя</string>
+
     <string name="button_save_data">Сохранить</string>
     <string name="button_send_data">Отправить</string>
     <string name="button_light_theme_text">Light</string>

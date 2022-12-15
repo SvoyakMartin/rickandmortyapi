@@ -25,14 +25,14 @@ class CharactersFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
-            buttonCreateUser.setOnClickListener {
-                parentFragmentManager
-                    .beginTransaction()
-                    .setReorderingAllowed(true)
-                    .addToBackStack("UserStack")
-                    .replace(R.id.fragmentContainerView, LocationsFragment())
-                    .commit()
-            }
+//            buttonCreateUser.setOnClickListener {
+//                parentFragmentManager
+//                    .beginTransaction()
+//                    .setReorderingAllowed(true)
+//                    .addToBackStack("UserStack")
+//                    .replace(R.id.fragmentContainerView, LocationsFragment())
+//                    .commit()
+//            }
             buttonLightTheme.setOnClickListener {
                 setNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             }
