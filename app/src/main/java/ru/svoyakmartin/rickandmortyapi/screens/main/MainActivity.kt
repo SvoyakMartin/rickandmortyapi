@@ -1,7 +1,9 @@
-package ru.svoyakmartin.rickandmortyapi
+package ru.svoyakmartin.rickandmortyapi.screens.main
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import ru.svoyakmartin.rickandmortyapi.R
+import ru.svoyakmartin.rickandmortyapi.screens.main.characters.CharactersFragment
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

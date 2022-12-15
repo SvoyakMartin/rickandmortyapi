@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CharactersFragment">
+    tools:context=".screens.main.characters.CharactersFragment">
 
     <Button
         android:id="@+id/button_light_theme"
@@ -36,12 +36,14 @@
         app:layout_constraintTop_toTopOf="@id/button_light_theme" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/characters_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/button_light_theme"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@+id/button_dark_theme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:listitem="@layout/character_item_view"/>
+        tools:listitem="@layout/character_item_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

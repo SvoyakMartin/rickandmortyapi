@@ -17,4 +17,7 @@
     <string name="address_empty_error">Введите адрес</string>
     <string name="email_empty_error">Введите e-mail</string>
     <string name="no_send_error">Не найдены приложения для отправки</string>
+
+
+    <string name="first_seen_in">first seen in</string>
 </resources>

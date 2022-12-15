@@ -1,4 +1,4 @@
-package ru.svoyakmartin.rickandmortyapi
+package ru.svoyakmartin.rickandmortyapi.screens.main.episodes
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import ru.svoyakmartin.rickandmortyapi.R
 import ru.svoyakmartin.rickandmortyapi.databinding.FragmentEpisodeBinding
 
 class EpisodesFragment : Fragment() {
