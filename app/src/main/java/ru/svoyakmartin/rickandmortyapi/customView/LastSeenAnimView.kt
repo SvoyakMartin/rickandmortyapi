@@ -249,7 +249,7 @@ class LastSeenAnimView
     }
 
     private fun showGenerateLocation() {
-        if (location.isNotEmpty() && generatedText != location) {
+        if (location.isNotEmpty() && generatedText.length <= location.length) {
 
             when (searchAlgorithm) {
                 SearchAlgorithm.RANDOM -> randomGenerateLocation()
@@ -299,9 +299,13 @@ class LastSeenAnimView
             location[currentIndex] == generatedText[currentIndex]
         ) {
             currentIndex++
+
+            if (currentIndex == location.length){
+                return
+            }
         }
 
-        val randomChar = reference[random.nextInt(location.length)]
+        val randomChar = reference[random.nextInt(reference.length-1)]
 
         if (currentIteration == quickSearchIterations) {
             currentIteration = 0
