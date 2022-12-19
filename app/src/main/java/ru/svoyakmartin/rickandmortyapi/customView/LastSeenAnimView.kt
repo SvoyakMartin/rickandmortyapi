@@ -250,6 +250,42 @@ class LastSeenAnimView
         }
     }
 
+    private fun showGenerateLocation() {
+        if (location.isNotEmpty() && generatedText != location) {
+            val currentIndex = if (generatedText.isEmpty()) 0 else generatedText.length - 1
+            val currentChar: Char
+
+            /*RANDOM - слишком долго перебирает, переделываем
+            val randomChar = reference[random.nextInt(location.length)]
+
+            if (generatedText.isEmpty() || generatedText[currentIndex] == location[currentIndex]) {
+                generatedText += randomChar
+            } else if (currentIndex == 0) {
+                generatedText = "" + randomChar
+            } else {
+                generatedText = location.substring(0, currentIndex) + randomChar
+            }*/
+
+            if (generatedText.isEmpty() || generatedText[currentIndex] == location[currentIndex]) {
+                currentChar = reference[0]
+                generatedText += currentChar
+            } else {
+                currentChar = reference[reference.indexOf(generatedText.last()) + 1]
+                generatedText = if (currentIndex == 0) {
+                    "" + currentChar
+                } else {
+                    location.substring(0, currentIndex) + currentChar
+                }
+            }
+
+            invalidate()
+        }
+    }
+
+    private fun Context.toDp(value: Float): Float {
+        return resources.displayMetrics.density * value
+    }
+
     internal class SavedState : BaseSavedState {
 
         var isLastSeenVisibleState: Boolean = false
@@ -287,41 +323,5 @@ class LastSeenAnimView
                 override fun newArray(size: Int): Array<SavedState?> = arrayOfNulls(size)
             }
         }
-    }
-
-    private fun showGenerateLocation() {
-        if (location.isNotEmpty() && generatedText != location) {
-            val currentIndex = if (generatedText.isEmpty()) 0 else generatedText.length - 1
-            val currentChar: Char
-
-            /*RANDOM - слишком долго перебирает, переделываем
-            val randomChar = reference[random.nextInt(location.length)]
-
-            if (generatedText.isEmpty() || generatedText[currentIndex] == location[currentIndex]) {
-                generatedText += randomChar
-            } else if (currentIndex == 0) {
-                generatedText = "" + randomChar
-            } else {
-                generatedText = location.substring(0, currentIndex) + randomChar
-            }*/
-
-            if (generatedText.isEmpty() || generatedText[currentIndex] == location[currentIndex]) {
-                currentChar = reference[0]
-                generatedText += currentChar
-            } else {
-                currentChar = reference[reference.indexOf(generatedText.last()) + 1]
-                generatedText = if (currentIndex == 0) {
-                    "" + currentChar
-                } else {
-                    location.substring(0, currentIndex) + currentChar
-                }
-            }
-
-            invalidate()
-        }
-    }
-
-    private fun Context.toDp(value: Float): Float {
-        return resources.displayMetrics.density * value
     }
 }
