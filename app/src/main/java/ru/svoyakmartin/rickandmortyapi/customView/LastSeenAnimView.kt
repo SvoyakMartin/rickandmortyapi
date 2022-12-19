@@ -10,7 +10,9 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.core.os.ParcelCompat
 import ru.svoyakmartin.rickandmortyapi.R
+import java.util.*
 import kotlin.math.max
+import kotlin.random.Random
 
 class LastSeenAnimView
 @JvmOverloads constructor(
@@ -19,20 +21,6 @@ class LastSeenAnimView
     defStyleAttr: Int = 0,
     defStyleRS: Int = 0
 ) : View(context, attrs, defStyleAttr, defStyleRS) {
-
-    enum class AliveStatus {
-        ALIVE,
-        DEAD,
-        UNKNOWN
-    }
-
-    enum class PaintStyle {
-        ICON,
-        STATUS,
-        HEADER,
-        LOCATION
-    }
-
     private val circleRadius = context.toDp(12f)
     private val circlePadding = context.toDp(8f)
     private val statusTextSize = context.toDp(20f)
@@ -54,15 +42,17 @@ class LastSeenAnimView
     private val reference = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890 "
     private var isLastSeenVisible = false
     private var generatedText = ""
+    private var currentIteration = 0
 
     //attrs
     private var aliveStatus = AliveStatus.ALIVE
+    private var searchAlgorithm = SearchAlgorithm.SUCCESSIVELY
+    private var quickSearchIterations = 5
     private var location = ""
     private var locationColor = 0
     private var locationFindColor = 0
 
-/*  используется в showGenerateLocation() при необходимости
-    private val random = Random(Date().time) */
+    private val random = Random(Date().time)
 
     init {
         isClickable = true
@@ -101,7 +91,12 @@ class LastSeenAnimView
                     AliveStatus.ALIVE.ordinal
                 )
                 aliveStatus = AliveStatus.values()[status]
-
+                val algorithm = getInt(
+                    R.styleable.LastSeenAnimView_LSA_search_algorithm,
+                    SearchAlgorithm.SUCCESSIVELY.ordinal
+                )
+                searchAlgorithm = SearchAlgorithm.values()[algorithm]
+                quickSearchIterations = getInt(R.styleable.LastSeenAnimView_LSA_quick_search_iterations, 5)
             } finally {
                 recycle()
             }
@@ -134,14 +129,22 @@ class LastSeenAnimView
         canvas?.let {
             drawStatus(it)
             if (isLastSeenVisible) {
-                drawLastSeen(canvas)
+                drawHeader(canvas)
                 drawLocation(canvas)
 
-                if (generatedText != location) {
+                if (generatedText.length <= location.length) {
                     showGenerateLocation()
                 }
             }
         }
+    }
+
+    fun setSearchAlgorithm(algorithm: SearchAlgorithm) {
+        searchAlgorithm = algorithm
+    }
+
+    fun setQuickSearchIterations(value: Int){
+        quickSearchIterations = if (value < 1) 1 else value
     }
 
     private fun getPaint(paintStyle: PaintStyle): Paint {
@@ -210,7 +213,7 @@ class LastSeenAnimView
         )
     }
 
-    private fun drawLastSeen(canvas: Canvas) {
+    private fun drawHeader(canvas: Canvas) {
         canvas.drawText(
             context.getString(R.string.last_seen_text),
             circleRadius * 2 + circlePadding * 2,
@@ -247,33 +250,64 @@ class LastSeenAnimView
 
     private fun showGenerateLocation() {
         if (location.isNotEmpty() && generatedText != location) {
-            val currentIndex = if (generatedText.isEmpty()) 0 else generatedText.length - 1
-            val currentChar: Char
 
-            /*RANDOM - слишком долго перебирает, переделываем
-            val randomChar = reference[random.nextInt(location.length)]
-
-            if (generatedText.isEmpty() || generatedText[currentIndex] == location[currentIndex]) {
-                generatedText += randomChar
-            } else if (currentIndex == 0) {
-                generatedText = "" + randomChar
-            } else {
-                generatedText = location.substring(0, currentIndex) + randomChar
-            }*/
-
-            if (generatedText.isEmpty() || generatedText[currentIndex] == location[currentIndex]) {
-                currentChar = reference[0]
-                generatedText += currentChar
-            } else {
-                currentChar = reference[reference.indexOf(generatedText.last()) + 1]
-                generatedText = if (currentIndex == 0) {
-                    "" + currentChar
-                } else {
-                    location.substring(0, currentIndex) + currentChar
-                }
+            when (searchAlgorithm) {
+                SearchAlgorithm.RANDOM -> randomGenerateLocation()
+                SearchAlgorithm.SUCCESSIVELY -> successivelyGenerateLocation()
+                SearchAlgorithm.QUICK_SUCCESSIVELY -> quickSuccessivelyGenerateLocation()
             }
 
             invalidate()
+        }
+    }
+
+    private fun randomGenerateLocation() {
+        val currentIndex = if (generatedText.isEmpty()) 0 else generatedText.length - 1
+        val randomChar = reference[random.nextInt(location.length)]
+
+        if (generatedText.isEmpty() || generatedText[currentIndex] == location[currentIndex]) {
+            generatedText += randomChar
+        } else if (currentIndex == 0) {
+            generatedText = "" + randomChar
+        } else {
+            generatedText = location.substring(0, currentIndex) + randomChar
+        }
+    }
+
+    private fun successivelyGenerateLocation() {
+        val currentIndex = if (generatedText.isEmpty()) 0 else generatedText.length - 1
+        val currentChar: Char
+
+        if (generatedText.isEmpty() || generatedText[currentIndex] == location[currentIndex]) {
+            currentChar = reference[0]
+            generatedText += currentChar
+        } else {
+            currentChar = reference[reference.indexOf(generatedText.last()) + 1]
+            generatedText = if (currentIndex == 0) {
+                "" + currentChar
+            } else {
+                location.substring(0, currentIndex) + currentChar
+            }
+        }
+    }
+
+    private fun quickSuccessivelyGenerateLocation() {
+        currentIteration++
+        var currentIndex = if (generatedText.isEmpty()) 0 else generatedText.length - 1
+
+        if (generatedText.length > currentIndex &&
+            location[currentIndex] == generatedText[currentIndex]
+        ) {
+            currentIndex++
+        }
+
+        val randomChar = reference[random.nextInt(location.length)]
+
+        if (currentIteration == quickSearchIterations) {
+            currentIteration = 0
+            generatedText = location.substring(0, currentIndex + 1)
+        } else {
+            generatedText = location.substring(0, currentIndex) + randomChar
         }
     }
 
@@ -318,5 +352,24 @@ class LastSeenAnimView
                 override fun newArray(size: Int): Array<SavedState?> = arrayOfNulls(size)
             }
         }
+    }
+
+    enum class AliveStatus {
+        ALIVE,
+        DEAD,
+        UNKNOWN
+    }
+
+    enum class PaintStyle {
+        ICON,
+        STATUS,
+        HEADER,
+        LOCATION
+    }
+
+    enum class SearchAlgorithm {
+        RANDOM,
+        SUCCESSIVELY,
+        QUICK_SUCCESSIVELY
     }
 }

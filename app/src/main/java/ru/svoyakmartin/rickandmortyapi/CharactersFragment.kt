@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
+import ru.svoyakmartin.rickandmortyapi.customView.LastSeenAnimView
 import ru.svoyakmartin.rickandmortyapi.databinding.FragmentCharacterBinding
 
 class CharactersFragment : Fragment() {
@@ -44,11 +45,14 @@ class CharactersFragment : Fragment() {
             buttonAutoTheme.setOnClickListener {
                 setNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
             }
+            lastSeenAnimView.apply {
+                setSearchAlgorithm(LastSeenAnimView.SearchAlgorithm.QUICK_SUCCESSIVELY)
+                setQuickSearchIterations(5)
+            }
         }
     }
 
     private fun setNightMode(mode: Int) {
         AppCompatDelegate.setDefaultNightMode(mode)
     }
-
 }
