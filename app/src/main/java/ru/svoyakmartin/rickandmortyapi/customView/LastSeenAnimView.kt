@@ -38,11 +38,17 @@ class LastSeenAnimView
     private val statusTextSize = context.toDp(20f)
     private val lastSeenTextSize = context.toDp(14f)
     private val locationTextSize = context.toDp(16f)
-    private val paint: Paint by lazy {
-        Paint().apply {
-            style = Paint.Style.FILL
-            isAntiAlias = true
-        }
+    private val iconPaint: Paint by lazy {
+        getPaint(PaintStyle.ICON)
+    }
+    private val statusTextPaint: Paint by lazy {
+        getPaint(PaintStyle.STATUS)
+    }
+    private val headerTextPaint: Paint by lazy {
+        getPaint(PaintStyle.HEADER)
+    }
+    private val locationTextPaint: Paint by lazy {
+        getPaint(PaintStyle.LOCATION)
     }
 
     private val reference = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890 "
@@ -107,15 +113,9 @@ class LastSeenAnimView
 //        val wSize = MeasureSpec.getSize(widthMeasureSpec)
 //        val hSize = MeasureSpec.getSize(heightMeasureSpec)
 
-        setPaint(PaintStyle.STATUS)
-        val wStatus = paint.measureText(getStatusText(aliveStatus))
-
-        setPaint(PaintStyle.HEADER)
-        val wHeader = paint.measureText(context.getString(R.string.last_seen_text))
-
-        setPaint(PaintStyle.LOCATION)
-        val wLocation = paint.measureText(location)
-
+        val wStatus = statusTextPaint.measureText(getStatusText(aliveStatus))
+        val wHeader = headerTextPaint.measureText(context.getString(R.string.last_seen_text))
+        val wLocation = locationTextPaint.measureText(location)
 
         val width = circlePadding * 2 + circleRadius * 2 + max(wStatus, max(wHeader, wLocation))
         val height = circlePadding + statusTextSize + lastSeenTextSize + locationTextSize
@@ -144,8 +144,11 @@ class LastSeenAnimView
         }
     }
 
-    private fun setPaint(paintStyle: PaintStyle) {
-        paint.apply {
+    private fun getPaint(paintStyle: PaintStyle): Paint {
+        return Paint().apply {
+            style = Paint.Style.FILL
+            isAntiAlias = true
+
             when (paintStyle) {
                 PaintStyle.ICON -> color = getStatusColor()
                 PaintStyle.STATUS -> {
@@ -190,46 +193,38 @@ class LastSeenAnimView
     }
 
     private fun drawStatusIcon(canvas: Canvas) {
-        setPaint(PaintStyle.ICON)
-
         canvas.drawCircle(
             circlePadding + circleRadius,
             circlePadding + circleRadius,
             circleRadius,
-            paint
+            iconPaint
         )
     }
 
     private fun drawStatusText(canvas: Canvas) {
-        setPaint(PaintStyle.STATUS)
-
         canvas.drawText(
             getStatusText(),
             circleRadius * 2 + circlePadding * 2,
             statusTextSize + circlePadding,
-            paint
+            statusTextPaint
         )
     }
 
     private fun drawLastSeen(canvas: Canvas) {
-        setPaint(PaintStyle.HEADER)
-
         canvas.drawText(
             context.getString(R.string.last_seen_text),
             circleRadius * 2 + circlePadding * 2,
             statusTextSize + circlePadding + lastSeenTextSize,
-            paint
+            headerTextPaint
         )
     }
 
     private fun drawLocation(canvas: Canvas) {
-        setPaint(PaintStyle.LOCATION)
-
         canvas.drawText(
             generatedText,
             circleRadius * 2 + circlePadding * 2,
             statusTextSize + circlePadding + lastSeenTextSize + locationTextSize,
-            paint
+            locationTextPaint
         )
     }
 
