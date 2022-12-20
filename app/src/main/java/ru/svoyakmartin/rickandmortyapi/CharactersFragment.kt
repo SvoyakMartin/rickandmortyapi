@@ -32,6 +32,7 @@ class CharactersFragment : Fragment() {
         val animator = ValueAnimator.ofFloat().apply {
             interpolator = AccelerateDecelerateInterpolator()
             duration = 2000
+            repeatCount = 3
         }
 
         with(binding) {
@@ -40,7 +41,6 @@ class CharactersFragment : Fragment() {
                     val currentY = it.y
                     animator.apply {
                         setFloatValues(0f, 100f, 0f, -100f, 0f)
-                        repeatCount = 3
                         addUpdateListener {
                             buttonAnim.y = currentY + animatedValue as Float
                         }
