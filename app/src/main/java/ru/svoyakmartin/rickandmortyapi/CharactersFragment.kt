@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.*
 import androidx.appcompat.app.AppCompatDelegate
 import ru.svoyakmartin.rickandmortyapi.databinding.FragmentCharacterBinding
 
@@ -23,15 +24,21 @@ class CharactersFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val anim = AnimationUtils.loadAnimation(context, R.anim.button_start_anim).apply {
+            interpolator = BounceInterpolator()
+        }
 
         with(binding) {
-            buttonCreateUser.setOnClickListener {
-                parentFragmentManager
-                    .beginTransaction()
-                    .setReorderingAllowed(true)
-                    .addToBackStack("UserStack")
-                    .replace(R.id.fragmentContainerView, LocationsFragment())
-                    .commit()
+            buttonCreateUser.apply {
+                startAnimation(anim)
+                setOnClickListener {
+                    parentFragmentManager
+                        .beginTransaction()
+                        .setReorderingAllowed(true)
+                        .addToBackStack("UserStack")
+                        .replace(R.id.fragmentContainerView, LocationsFragment())
+                        .commit()
+                }
             }
             buttonLightTheme.setOnClickListener {
                 setNightMode(AppCompatDelegate.MODE_NIGHT_NO)
