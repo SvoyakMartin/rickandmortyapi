@@ -60,11 +60,10 @@ class CharactersFragment : Fragment() {
                     animatorSet.apply {
                         playTogether(animator_r, animator_t)
                         doOnEnd {
-                                                    buttonAnim.apply {
-                                                        translationY = 0f
-                                                        rotation = 0f
-                                                    }
-
+                            buttonAnim.apply {
+                                translationY = 0f
+                                rotation = 0f
+                            }
                         }
                         start()
                     }
