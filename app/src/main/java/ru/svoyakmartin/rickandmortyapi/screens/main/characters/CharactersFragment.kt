@@ -57,10 +57,10 @@ class CharactersFragment : Fragment(), CharactersClickListener {
             }
 
             buttonShuffle.setOnClickListener {
-                val copy: MutableList<Character> = ArrayList<Character>().apply {
+                val copy = ArrayList<Character>().apply {
                     addAll(adapter.currentList())
                     shuffle()
-                }
+                }.toList()
                 adapter.setList(copy)
             }
         }

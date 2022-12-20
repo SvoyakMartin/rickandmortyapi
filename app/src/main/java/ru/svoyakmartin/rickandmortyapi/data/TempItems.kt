@@ -24,8 +24,8 @@ fun addNewItems(repeats: Int) {
     repeat(repeats) {
         tempItems.add(
             Character(
-                items.size,
-                "ADD_${items.size}",
+                tempItems.size,
+                "ADD_${tempItems.size}",
                 "",
                 "",
                 "",
@@ -33,7 +33,7 @@ fun addNewItems(repeats: Int) {
                 "",
                 "",
                 "",
-                listOf("EPISODE_${items.size}"),
+                listOf("EPISODE_${tempItems.size}"),
                 "",
                 ""
             )
