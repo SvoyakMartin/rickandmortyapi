@@ -1,5 +1,6 @@
 package ru.svoyakmartin.rickandmortyapi
 
+import android.animation.ValueAnimator
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -28,7 +29,25 @@ class CharactersFragment : Fragment() {
             interpolator = BounceInterpolator()
         }
 
+        val animator = ValueAnimator.ofFloat().apply {
+            interpolator = AccelerateDecelerateInterpolator()
+            duration = 2000
+        }
+
         with(binding) {
+            buttonAnim.setOnClickListener {
+                if (!animator.isRunning){
+                    val currentY = it.y
+                    animator.apply {
+                        setFloatValues(0f, 100f, 0f, -100f, 0f)
+                        repeatCount = 3
+                        addUpdateListener {
+                            buttonAnim.y = currentY + animatedValue as Float
+                        }
+                    }.start()
+                }
+            }
+
             buttonCreateUser.apply {
                 startAnimation(anim)
                 setOnClickListener {
