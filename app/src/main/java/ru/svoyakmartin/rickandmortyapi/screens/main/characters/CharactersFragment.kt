@@ -18,7 +18,9 @@ import ru.svoyakmartin.rickandmortyapi.screens.main.locations.LocationsFragment
 
 class CharactersFragment : Fragment(), CharactersClickListener {
     private lateinit var binding: FragmentCharacterBinding
-    private val adapter = CharactersAdapter(this)
+    private val adapter = CharactersAdapter(this).apply {
+        submitList(items)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,7 +41,7 @@ class CharactersFragment : Fragment(), CharactersClickListener {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     if ((charactersRecyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition() == adapter.itemCount - 1) {
                         addNewItems(3)
-                        adapter.setList(items)
+                        adapter.submitList(items)
                     }
                 }
             })
@@ -57,11 +59,10 @@ class CharactersFragment : Fragment(), CharactersClickListener {
             }
 
             buttonShuffle.setOnClickListener {
-                val copy = ArrayList<Character>().apply {
-                    addAll(adapter.currentList())
+                items = adapter.currentList().toMutableList().apply {
                     shuffle()
                 }.toList()
-                adapter.setList(copy)
+                adapter.submitList(items)
             }
         }
     }

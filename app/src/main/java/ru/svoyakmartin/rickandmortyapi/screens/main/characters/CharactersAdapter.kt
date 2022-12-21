@@ -14,19 +14,19 @@ class CharactersAdapter(
     private val clickListener: CharactersClickListener
 ) : RecyclerView.Adapter<CharactersViewHolder>() {
     private val diffCallback = object : DiffUtil.ItemCallback<Character>() {
+        /* Called to check whether two objects represent the same item.
+        For example, if your items have unique ids, this method should check their id equality. */
         override fun areItemsTheSame(oldItem: Character, newItem: Character): Boolean =
-            oldItem == newItem
+            oldItem.id == newItem.id
 
+        /* Called to check whether two items have the same data.
+        This information is used to detect if the contents of an item have changed. */
         @SuppressLint("DiffUtilEquals")
         override fun areContentsTheSame(oldItem: Character, newItem: Character): Boolean =
             oldItem == newItem
     }
 
     private val differ = AsyncListDiffer(this, diffCallback)
-
-    init{
-        differ.submitList(items)
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CharactersViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -42,9 +42,8 @@ class CharactersAdapter(
 
     override fun getItemCount(): Int = differ.currentList.size
 
-    fun setList(newItems: List<Character>) {
-        items = newItems
-        differ.submitList(items)
+    fun submitList(newItems: List<Character>) {
+        differ.submitList(newItems)
     }
 
     fun currentList(): List<Character> {
