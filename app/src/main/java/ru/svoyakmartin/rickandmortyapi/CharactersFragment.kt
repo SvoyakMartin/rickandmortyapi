@@ -52,16 +52,14 @@ class CharactersFragment : Fragment() {
 
         with(binding) {
             val animator_r =
-                ObjectAnimator.ofFloat(buttonAnim, View.ROTATION)
+                ObjectAnimator.ofFloat(buttonAnim, View.ROTATION, ANIM_START, 120f, 80f, 90f)
                     .apply {
-                        setFloatValues(ANIM_START, 120f, 80f, 95f)
                         interpolator = AccelerateDecelerateInterpolator()
                         duration = ROTATE_ANIMATOR_DURATION
                     }
 
             val animator_t =
-                ObjectAnimator.ofFloat(buttonAnim, View.TRANSLATION_Y).apply {
-                    setFloatValues(ANIM_START, 140f)
+                ObjectAnimator.ofFloat(buttonAnim, View.TRANSLATION_Y, ANIM_START, 140f).apply {
                     interpolator = BounceInterpolator()
                     duration = TRANSLATION_ANIMATOR_DURATION
                 }
