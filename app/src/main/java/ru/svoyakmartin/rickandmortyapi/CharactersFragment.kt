@@ -15,6 +15,15 @@ import androidx.core.animation.doOnEnd
 import ru.svoyakmartin.rickandmortyapi.databinding.FragmentCharacterBinding
 
 class CharactersFragment : Fragment() {
+    companion object {
+        const val ANIM_START = 0f
+        const val ANIM_STEP = 100f
+        const val ONE_ANIMATOR_DURATION = 2000L
+        const val ONE_ANIMATOR_REPEATS = 3
+        const val ROTATE_ANIMATOR_DURATION = 5000L
+        const val TRANSLATION_ANIMATOR_DURATION = 3000L
+    }
+
     private lateinit var binding: FragmentCharacterBinding
 
     override fun onCreateView(
@@ -35,24 +44,26 @@ class CharactersFragment : Fragment() {
 
         val animator = ValueAnimator.ofFloat().apply {
             interpolator = AccelerateDecelerateInterpolator()
-            duration = 2000
-            repeatCount = 3
+            duration = ONE_ANIMATOR_DURATION
+            repeatCount = ONE_ANIMATOR_REPEATS
         }
 
         val animatorSet = AnimatorSet()
 
         with(binding) {
             val animator_r =
-                ObjectAnimator.ofFloat(buttonAnim, View.ROTATION, 0f, 120f, 80f, 95f)
+                ObjectAnimator.ofFloat(buttonAnim, View.ROTATION)
                     .apply {
+                        setFloatValues(ANIM_START, 120f, 80f, 95f)
                         interpolator = AccelerateDecelerateInterpolator()
-                        duration = 5000
+                        duration = ROTATE_ANIMATOR_DURATION
                     }
 
             val animator_t =
-                ObjectAnimator.ofFloat(buttonAnim, View.TRANSLATION_Y, 0f, 140f).apply {
+                ObjectAnimator.ofFloat(buttonAnim, View.TRANSLATION_Y).apply {
+                    setFloatValues(ANIM_START, 140f)
                     interpolator = BounceInterpolator()
-                    duration = 3000
+                    duration = TRANSLATION_ANIMATOR_DURATION
                 }
 
             buttonAnimTwo.setOnClickListener {
@@ -61,8 +72,8 @@ class CharactersFragment : Fragment() {
                         playTogether(animator_r, animator_t)
                         doOnEnd {
                             buttonAnim.apply {
-                                translationY = 0f
-                                rotation = 0f
+                                translationY = ANIM_START
+                                rotation = ANIM_START
                             }
                         }
                         start()
@@ -74,7 +85,7 @@ class CharactersFragment : Fragment() {
                 if (!animator.isRunning) {
                     val currentY = it.y
                     animator.apply {
-                        setFloatValues(0f, 100f, 0f, -100f, 0f)
+                        setFloatValues(ANIM_START, ANIM_STEP, ANIM_START, -ANIM_STEP, ANIM_START)
                         addUpdateListener {
                             buttonAnim.y = currentY + animatedValue as Float
                         }
