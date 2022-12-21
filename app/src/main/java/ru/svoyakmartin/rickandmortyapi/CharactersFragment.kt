@@ -46,8 +46,8 @@ class CharactersFragment : Fragment() {
                 setNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
             }
             lastSeenAnimView.apply {
-                setSearchAlgorithm(LastSeenAnimView.SearchAlgorithm.QUICK_SUCCESSIVELY)
-                setQuickSearchIterations(5)
+                setLocation("Citadel of Ricks")
+                setAliveStatus(LastSeenAnimView.AliveStatus.DEAD)
             }
         }
     }

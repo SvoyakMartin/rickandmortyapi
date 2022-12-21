@@ -14,11 +14,6 @@
             <enum name="UNKNOWN" value="2"/>
         </attr>
         <attr name="style" format="reference"/>
-        <attr name="LSA_quick_search_iterations" format="integer"/>
-        <attr name="LSA_search_algorithm" format="enum">
-            <enum name="RANDOM" value="0"/>
-            <enum name="SUCCESSIVELY" value="1"/>
-            <enum name="QUICK_SUCCESSIVELY" value="2"/>
-        </attr>
+        <attr name="LSA_search_iterations" format="integer"/>
     </declare-styleable>
 </resources>
