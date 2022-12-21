@@ -6,6 +6,8 @@
     <string name="button_light_theme_text">Light</string>
     <string name="button_dark_theme_text">Dark</string>
     <string name="button_auto_theme_text">Auto</string>
+    <string name="button_anim_text">Anim</string>
+    <string name="button_anim_two_text">Anim2</string>
 
     <string name="name_hint">Имя</string>
     <string name="age_hint">Возраст</string>
