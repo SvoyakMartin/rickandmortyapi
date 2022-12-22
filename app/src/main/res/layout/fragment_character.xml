@@ -4,17 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CharactersFragment">
-
-    <Button
-        android:id="@+id/button_create_user"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/button_create_user_text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    tools:context=".screens.main.characters.CharactersFragment">
 
     <Button
         android:id="@+id/button_light_theme"
@@ -23,8 +13,7 @@
         android:text="@string/button_light_theme_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/button_dark_theme"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/button_create_user" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/button_dark_theme"
@@ -42,47 +31,29 @@
         android:layout_height="wrap_content"
         android:text="@string/button_auto_theme_text"
         app:layout_constraintBottom_toBottomOf="@id/button_light_theme"
-        app:layout_constraintEnd_toStartOf="@+id/button_anim"
+        app:layout_constraintEnd_toStartOf="@+id/button_shuffle"
         app:layout_constraintStart_toEndOf="@id/button_dark_theme"
         app:layout_constraintTop_toTopOf="@id/button_light_theme" />
 
-    <ru.svoyakmartin.rickandmortyapi.customView.LastSeenView
-        android:id="@+id/LastSeenView"
+    <Button
+        android:id="@+id/button_shuffle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/button_create_user"
-        app:layout_constraintEnd_toStartOf="@id/last_seen_anim_view"
+        android:text="@string/button_shuffle_text"
+        app:layout_constraintBottom_toBottomOf="@id/button_light_theme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/button_auto_theme"
+        app:layout_constraintTop_toTopOf="@id/button_light_theme" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/characters_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@+id/button_dark_theme"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ru.svoyakmartin.rickandmortyapi.customView.LastSeenAnimView
-        android:id="@+id/last_seen_anim_view"
-        android:layout_width="200dp"
-        android:layout_height="80dp"
-        app:layout_constraintBottom_toTopOf="@+id/button_create_user"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/LastSeenView"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/button_anim"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/button_anim_text"
-        app:layout_constraintBottom_toBottomOf="@+id/button_light_theme"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/button_auto_theme"
-        app:layout_constraintTop_toTopOf="@+id/button_light_theme" />
-
-    <Button
-        android:id="@+id/button_anim_two"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="visible"
-        android:text="@string/button_anim_two_text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/button_anim"
-        app:layout_constraintStart_toStartOf="@+id/button_anim"
-        app:layout_constraintTop_toBottomOf="@+id/button_anim" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:listitem="@layout/character_item_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

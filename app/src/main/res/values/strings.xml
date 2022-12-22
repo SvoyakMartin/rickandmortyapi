@@ -1,13 +1,12 @@
 <resources>
     <string name="app_name">RickAndMortyApi</string>
-    <string name="button_create_user_text">Создать пользователя</string>
+
     <string name="button_save_data">Сохранить</string>
     <string name="button_send_data">Отправить</string>
     <string name="button_light_theme_text">Light</string>
     <string name="button_dark_theme_text">Dark</string>
     <string name="button_auto_theme_text">Auto</string>
-    <string name="button_anim_text">Anim</string>
-    <string name="button_anim_two_text">Anim2</string>
+    <string name="button_shuffle_text">Shuffle</string>
 
     <string name="name_hint">Имя</string>
     <string name="age_hint">Возраст</string>
@@ -19,8 +18,11 @@
     <string name="address_empty_error">Введите адрес</string>
     <string name="email_empty_error">Введите e-mail</string>
     <string name="no_send_error">Не найдены приложения для отправки</string>
+
     <string name="status_alive">Alive</string>
     <string name="status_dead">Dead</string>
     <string name="status_unknown">Unknown</string>
     <string name="last_seen_text">Last seen on:</string>
+
+    <string name="first_seen_in">first seen in</string>
 </resources>
