@@ -42,7 +42,7 @@
         android:layout_height="wrap_content"
         android:text="@string/button_auto_theme_text"
         app:layout_constraintBottom_toBottomOf="@id/button_light_theme"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button_anim"
         app:layout_constraintStart_toEndOf="@id/button_dark_theme"
         app:layout_constraintTop_toTopOf="@id/button_light_theme" />
 
@@ -63,4 +63,26 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/LastSeenView"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button_anim"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button_anim_text"
+        app:layout_constraintBottom_toBottomOf="@+id/button_light_theme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/button_auto_theme"
+        app:layout_constraintTop_toTopOf="@+id/button_light_theme" />
+
+    <Button
+        android:id="@+id/button_anim_two"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        android:text="@string/button_anim_two_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/button_anim"
+        app:layout_constraintStart_toStartOf="@+id/button_anim"
+        app:layout_constraintTop_toBottomOf="@+id/button_anim" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
