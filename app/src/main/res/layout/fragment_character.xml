@@ -46,6 +46,24 @@
         app:layout_constraintStart_toEndOf="@id/button_dark_theme"
         app:layout_constraintTop_toTopOf="@id/button_light_theme" />
 
+    <ru.svoyakmartin.rickandmortyapi.customView.LastSeenView
+        android:id="@+id/LastSeenView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/button_create_user"
+        app:layout_constraintEnd_toStartOf="@id/last_seen_anim_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ru.svoyakmartin.rickandmortyapi.customView.LastSeenAnimView
+        android:id="@+id/last_seen_anim_view"
+        android:layout_width="200dp"
+        android:layout_height="80dp"
+        app:layout_constraintBottom_toTopOf="@+id/button_create_user"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/LastSeenView"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/button_anim"
         android:layout_width="wrap_content"

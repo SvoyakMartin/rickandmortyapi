@@ -5,8 +5,8 @@
       <map>
         <entry key="..\:/projects/dev/kotlin/RickAndMortyApi/app/src/main/res/drawable/ic_circle_24.xml" value="0.146" />
         <entry key="..\:/projects/dev/kotlin/RickAndMortyApi/app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="..\:/projects/dev/kotlin/RickAndMortyApi/app/src/main/res/layout/fragment_character.xml" value="0.25" />
         <entry key="..\:/projects/dev/kotlin/RickAndMortyApi/app/src/main/res/layout/character_item_view.xml" value="0.25" />
-        <entry key="..\:/projects/dev/kotlin/RickAndMortyApi/app/src/main/res/layout/fragment_character.xml" value="0.22" />
         <entry key="..\:/projects/dev/kotlin/RickAndMortyApi/app/src/main/res/layout/fragment_episode.xml" value="0.2675925925925926" />
         <entry key="..\:/projects/dev/kotlin/RickAndMortyApi/app/src/main/res/layout/fragment_location.xml" value="0.1" />
         <entry key="..\:/projects/dev/kotlin/RickAndMortyApi/app/src/main/res/layout/view_last_seen.xml" value="0.32592592592592595" />

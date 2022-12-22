@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.*
 import androidx.appcompat.app.AppCompatDelegate
+import ru.svoyakmartin.rickandmortyapi.customView.LastSeenAnimView
 import androidx.core.animation.doOnEnd
 import ru.svoyakmartin.rickandmortyapi.databinding.FragmentCharacterBinding
 
@@ -114,11 +115,14 @@ class CharactersFragment : Fragment() {
             buttonAutoTheme.setOnClickListener {
                 setNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
             }
+            lastSeenAnimView.apply {
+                setLocation("Citadel of Ricks")
+                setAliveStatus(LastSeenAnimView.AliveStatus.DEAD)
+            }
         }
     }
 
     private fun setNightMode(mode: Int) {
         AppCompatDelegate.setDefaultNightMode(mode)
     }
-
 }

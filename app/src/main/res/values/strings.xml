@@ -19,4 +19,8 @@
     <string name="address_empty_error">Введите адрес</string>
     <string name="email_empty_error">Введите e-mail</string>
     <string name="no_send_error">Не найдены приложения для отправки</string>
+    <string name="status_alive">Alive</string>
+    <string name="status_dead">Dead</string>
+    <string name="status_unknown">Unknown</string>
+    <string name="last_seen_text">Last seen on:</string>
 </resources>
