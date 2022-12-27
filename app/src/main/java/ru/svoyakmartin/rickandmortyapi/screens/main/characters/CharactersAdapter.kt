@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import ru.svoyakmartin.rickandmortyapi.data.items
 import ru.svoyakmartin.rickandmortyapi.databinding.CharacterItemViewBinding
 import ru.svoyakmartin.rickandmortyapi.models.Character
 
@@ -42,12 +41,8 @@ class CharactersAdapter(
 
     override fun getItemCount(): Int = differ.currentList.size
 
-    fun submitList(newItems: List<Character>) {
+    fun submitList(newItems: List<Character>?) {
         differ.submitList(newItems)
-    }
-
-    fun currentList(): List<Character> {
-        return differ.currentList
     }
 }
 

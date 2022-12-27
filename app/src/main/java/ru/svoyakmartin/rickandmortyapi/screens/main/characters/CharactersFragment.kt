@@ -6,11 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.svoyakmartin.rickandmortyapi.R
-import ru.svoyakmartin.rickandmortyapi.data.addNewItems
-import ru.svoyakmartin.rickandmortyapi.data.items
 import ru.svoyakmartin.rickandmortyapi.databinding.FragmentCharacterBinding
 import ru.svoyakmartin.rickandmortyapi.models.Character
 import ru.svoyakmartin.rickandmortyapi.screens.main.locations.LocationsFragment
@@ -25,11 +24,9 @@ class CharactersFragment : Fragment(), CharactersClickListener {
 //        const val ROTATE_ANIMATOR_DURATION = 5000L
 //        const val TRANSLATION_ANIMATOR_DURATION = 3000L
 //    }
-
+    private lateinit var viewModel: CharactersViewModel
     private lateinit var binding: FragmentCharacterBinding
-    private val adapter = CharactersAdapter(this).apply {
-        submitList(items)
-    }
+    private val adapter = CharactersAdapter(this)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,6 +34,7 @@ class CharactersFragment : Fragment(), CharactersClickListener {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentCharacterBinding.inflate(inflater, container, false)
+        viewModel = ViewModelProvider(this).get(CharactersViewModel::class.java)
 
         return binding.root
     }
@@ -45,12 +43,15 @@ class CharactersFragment : Fragment(), CharactersClickListener {
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
+            viewModel.items.observe(viewLifecycleOwner) {
+                submitList()
+            }
+
             charactersRecyclerView.adapter = adapter
             charactersRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     if ((charactersRecyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition() == adapter.itemCount - 1) {
-                        addNewItems(3)
-                        adapter.submitList(items)
+                        viewModel.addNewItems(3)
                     }
                 }
             })
@@ -68,10 +69,7 @@ class CharactersFragment : Fragment(), CharactersClickListener {
             }
 
             buttonShuffle.setOnClickListener {
-                items = adapter.currentList().toMutableList().apply {
-                    shuffle()
-                }.toList()
-                adapter.submitList(items)
+                viewModel.shuffleItems()
             }
 
 //            val anim = AnimationUtils.loadAnimation(context, R.anim.button_start_anim).apply {
@@ -138,6 +136,10 @@ class CharactersFragment : Fragment(), CharactersClickListener {
 //                setAliveStatus(LastSeenAnimView.AliveStatus.DEAD)
 //            }
         }
+    }
+
+    private fun submitList() {
+        adapter.submitList(viewModel.items.value?.toList())
     }
 
     private fun setNightMode(mode: Int) {
