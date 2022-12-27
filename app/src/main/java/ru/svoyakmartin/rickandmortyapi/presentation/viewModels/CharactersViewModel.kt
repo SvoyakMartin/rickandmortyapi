@@ -1,4 +1,4 @@
-package ru.svoyakmartin.rickandmortyapi.screens.main.characters
+package ru.svoyakmartin.rickandmortyapi.presentation.viewModels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -6,7 +6,7 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import ru.svoyakmartin.rickandmortyapi.data.getExampleDataList
 import ru.svoyakmartin.rickandmortyapi.data.getNewItem
-import ru.svoyakmartin.rickandmortyapi.models.Character
+import ru.svoyakmartin.rickandmortyapi.domain.models.Character
 
 class CharactersViewModel : ViewModel() {
     private val _items = MutableLiveData<ArrayList<Character>>().apply {

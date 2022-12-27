@@ -1,6 +1,6 @@
 package ru.svoyakmartin.rickandmortyapi.data
 
-import ru.svoyakmartin.rickandmortyapi.models.Character
+import ru.svoyakmartin.rickandmortyapi.domain.models.Character
 
 fun getExampleDataList(): ArrayList<Character> {
     return arrayListOf(

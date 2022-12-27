@@ -1,4 +1,4 @@
-package ru.svoyakmartin.rickandmortyapi.models
+package ru.svoyakmartin.rickandmortyapi.domain.models
 
 data class Character(
     val id : Int,// The id of the character.

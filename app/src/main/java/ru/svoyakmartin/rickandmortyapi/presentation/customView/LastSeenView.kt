@@ -1,4 +1,4 @@
-package ru.svoyakmartin.rickandmortyapi.customView
+package ru.svoyakmartin.rickandmortyapi.presentation.customView
 
 import android.content.Context
 import android.content.res.ColorStateList

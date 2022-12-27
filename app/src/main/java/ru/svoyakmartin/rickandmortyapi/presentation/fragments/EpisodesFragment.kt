@@ -1,4 +1,4 @@
-package ru.svoyakmartin.rickandmortyapi.screens.main.episodes
+package ru.svoyakmartin.rickandmortyapi.presentation.fragments
 
 import android.content.Intent
 import android.os.Bundle

@@ -1,4 +1,4 @@
-package ru.svoyakmartin.rickandmortyapi.screens.main.locations
+package ru.svoyakmartin.rickandmortyapi.presentation.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import ru.svoyakmartin.rickandmortyapi.R
 import ru.svoyakmartin.rickandmortyapi.databinding.FragmentLocationBinding
-import ru.svoyakmartin.rickandmortyapi.screens.main.episodes.EpisodesFragment
 
 class LocationsFragment : Fragment() {
     private lateinit var binding: FragmentLocationBinding
