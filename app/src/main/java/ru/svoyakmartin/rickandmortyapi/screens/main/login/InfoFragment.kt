@@ -24,6 +24,7 @@ class InfoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         arguments?.let {
             binding.info.text = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                @Suppress("DEPRECATION")
                 it.getSerializable(LoginFragment.CHARACTER_KEY)
             } else {
                 it.getSerializable(LoginFragment.CHARACTER_KEY, Character::class.java)
