@@ -10,7 +10,7 @@ object AuthApi {
             Maybe.just(getNewItem(0))
 
         } else {
-            Maybe.empty()
+            Maybe.error(Throwable("Неверный логин или пароль!"))
         }
     }
 }

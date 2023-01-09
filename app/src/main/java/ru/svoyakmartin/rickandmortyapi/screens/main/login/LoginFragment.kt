@@ -25,6 +25,10 @@ class LoginFragment : Fragment() {
      * Если авторизация прошла успешно, то должен открыться фрагмент с информацией о пользователе.
      * Если авторизация не прошла, то должен показаться сообщение об ошибке.
      * Все запросы должны быть выполнены с помощью RxJava.*/
+    companion object {
+        const val CHARACTER_KEY = "character"
+        private const val DEBOUNCE_TIMEOUT = 1000L
+    }
 
     private val disposables = CompositeDisposable()
     private lateinit var binding: FragmentLoginBinding
@@ -44,19 +48,25 @@ class LoginFragment : Fragment() {
         with(binding) {
             disposables.add(
                 loginEditText.textChanges()
-                    .debounce(1000, TimeUnit.MILLISECONDS)
+                    .debounce(DEBOUNCE_TIMEOUT, TimeUnit.MILLISECONDS)
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(
-                        onNext = { setEnabledButton(login = it.toString()) },
-                        onError = { it.printStackTrace() }
+                        onNext = {
+                            setEnabledButton(login = it.toString())
+                            loginLayout.error = null
+                        }
                     )
             )
 
             disposables.add(
                 passwordEditText.textChanges()
-                    .debounce(10000, TimeUnit.MILLISECONDS)
+                    .debounce(DEBOUNCE_TIMEOUT, TimeUnit.MILLISECONDS)
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(
-                        onNext = { setEnabledButton(password = it.toString()) },
-                        onError = { it.printStackTrace() },
+                        onNext = {
+                            setEnabledButton(password = it.toString())
+                            passwordLayout.error = null
+                        }
                     )
             )
 
@@ -79,11 +89,14 @@ class LoginFragment : Fragment() {
                 )
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe {
-                        if (it != null) {
+                    .subscribe(
+                        /* onSuccess() */ {
                             goToInfoFragment(it)
+                        },
+                        /* onError() */ {
+                            onLoginError(it.message.toString())
                         }
-                    }
+                    )
             )
         }
     }
@@ -93,6 +106,13 @@ class LoginFragment : Fragment() {
         password: String = binding.passwordEditText.text.toString()
     ) {
         binding.loginButton.isEnabled = login.trim().isNotEmpty() && password.trim().isNotEmpty()
+    }
+
+    private fun onLoginError(message: String) {
+        with(binding) {
+            loginLayout.error = message
+            passwordLayout.error = message
+        }
     }
 
     private fun goToInfoFragment(character: Character? = null) {
@@ -112,9 +132,5 @@ class LoginFragment : Fragment() {
         super.onDestroy()
 
         disposables.clear()
-    }
-
-    companion object {
-        const val CHARACTER_KEY = "character"
     }
 }
