@@ -1,5 +1,7 @@
 package ru.svoyakmartin.rickandmortyapi.models
 
+import java.io.Serializable
+
 data class Character(
     val id : Int,// The id of the character.
     val name: String,//	The name of the character.
@@ -15,4 +17,4 @@ data class Character(
     val episode: List<String>,// List of episodes in which this character appeared.
     val url: String,// Link to the character's own URL endpoint.
     val created: String// Time at which the character was created in the database.
-)
+) : Serializable

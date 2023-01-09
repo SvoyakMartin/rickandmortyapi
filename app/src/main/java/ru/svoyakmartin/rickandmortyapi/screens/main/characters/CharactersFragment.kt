@@ -34,7 +34,7 @@ class CharactersFragment : Fragment(), CharactersClickListener {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentCharacterBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this).get(CharactersViewModel::class.java)
+        viewModel = ViewModelProvider(this)[CharactersViewModel::class.java]
 
         return binding.root
     }

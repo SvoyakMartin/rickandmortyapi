@@ -3,7 +3,7 @@ package ru.svoyakmartin.rickandmortyapi.screens.main
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import ru.svoyakmartin.rickandmortyapi.R
-import ru.svoyakmartin.rickandmortyapi.screens.main.characters.CharactersFragment
+import ru.svoyakmartin.rickandmortyapi.screens.main.login.LoginFragment
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .setReorderingAllowed(true)
-                .add(R.id.fragmentContainerView, CharactersFragment())
+                .add(R.id.fragmentContainerView, LoginFragment())
                 .commit()
         }
     }
