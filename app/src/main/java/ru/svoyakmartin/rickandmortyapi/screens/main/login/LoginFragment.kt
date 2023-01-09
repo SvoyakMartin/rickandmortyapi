@@ -45,7 +45,6 @@ class LoginFragment : Fragment() {
             disposables.add(
                 loginEditText.textChanges()
                     .debounce(1000, TimeUnit.MILLISECONDS)
-                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(
                         onNext = { setEnabledButton(login = it.toString()) },
                         onError = { it.printStackTrace() }
@@ -55,7 +54,6 @@ class LoginFragment : Fragment() {
             disposables.add(
                 passwordEditText.textChanges()
                     .debounce(10000, TimeUnit.MILLISECONDS)
-                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(
                         onNext = { setEnabledButton(password = it.toString()) },
                         onError = { it.printStackTrace() },
