@@ -1,4 +1,4 @@
-package ru.svoyakmartin.rickandmortyapi.screens.main.login
+package ru.svoyakmartin.rickandmortyapi.presentation.fragments
 
 import android.os.Build
 import android.os.Bundle
@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import ru.svoyakmartin.rickandmortyapi.databinding.FragmentInfoBinding
-import ru.svoyakmartin.rickandmortyapi.models.Character
 
 class InfoFragment : Fragment() {
     private lateinit var binding: FragmentInfoBinding

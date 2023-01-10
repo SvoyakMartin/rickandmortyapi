@@ -1,4 +1,4 @@
-package ru.svoyakmartin.rickandmortyapi.customView
+package ru.svoyakmartin.rickandmortyapi.presentation.customView
 
 import android.content.Context
 import android.content.res.ColorStateList
@@ -25,7 +25,7 @@ class LastSeenView
 
     init {
         with(binding) {
-            //debag!->
+            //TODO: debag!->
             statusText.text = "Alive"
             lastSeenHeader.text = "Last seen on:"
             lastSeenLocation.text = "Citadel of Ricks"

@@ -1,4 +1,4 @@
-package ru.svoyakmartin.rickandmortyapi.screens.main.characters
+package ru.svoyakmartin.rickandmortyapi.presentation.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,8 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.svoyakmartin.rickandmortyapi.R
 import ru.svoyakmartin.rickandmortyapi.databinding.FragmentCharacterBinding
-import ru.svoyakmartin.rickandmortyapi.models.Character
-import ru.svoyakmartin.rickandmortyapi.screens.main.locations.LocationsFragment
+import ru.svoyakmartin.rickandmortyapi.domain.models.Character
+import ru.svoyakmartin.rickandmortyapi.screens.main.characters.CharactersAdapter
+import ru.svoyakmartin.rickandmortyapi.screens.main.characters.CharactersClickListener
+import ru.svoyakmartin.rickandmortyapi.presentation.viewModels.CharactersViewModel
 
 
 class CharactersFragment : Fragment(), CharactersClickListener {

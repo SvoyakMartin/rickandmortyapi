@@ -1,4 +1,4 @@
-package ru.svoyakmartin.rickandmortyapi.models
+package ru.svoyakmartin.rickandmortyapi.domain.models
 
 import java.io.Serializable
 

@@ -1,4 +1,4 @@
-package ru.svoyakmartin.rickandmortyapi.screens.main.login
+package ru.svoyakmartin.rickandmortyapi.presentation.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -15,7 +15,8 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import ru.svoyakmartin.rickandmortyapi.R
 import ru.svoyakmartin.rickandmortyapi.databinding.FragmentLoginBinding
-import ru.svoyakmartin.rickandmortyapi.models.Character
+import ru.svoyakmartin.rickandmortyapi.domain.models.Character
+import ru.svoyakmartin.rickandmortyapi.presentation.viewModels.LoginViewModel
 import java.util.concurrent.TimeUnit
 
 class LoginFragment : Fragment() {

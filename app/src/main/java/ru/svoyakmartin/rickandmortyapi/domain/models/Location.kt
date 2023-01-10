@@ -1,4 +1,4 @@
-package ru.svoyakmartin.rickandmortyapi.models
+package ru.svoyakmartin.rickandmortyapi.domain.models
 
 data class Location(
     val id: Int,// The id of the location.

@@ -1,9 +1,10 @@
-package ru.svoyakmartin.rickandmortyapi.screens.main.characters
+package ru.svoyakmartin.rickandmortyapi.presentation.viewHolders
 
 import androidx.recyclerview.widget.RecyclerView
 import ru.svoyakmartin.rickandmortyapi.R
 import ru.svoyakmartin.rickandmortyapi.databinding.CharacterItemViewBinding
-import ru.svoyakmartin.rickandmortyapi.models.Character
+import ru.svoyakmartin.rickandmortyapi.domain.models.Character
+import ru.svoyakmartin.rickandmortyapi.screens.main.characters.CharactersClickListener
 
 class CharactersViewHolder(private val binding: CharacterItemViewBinding): RecyclerView.ViewHolder(binding.root){
 

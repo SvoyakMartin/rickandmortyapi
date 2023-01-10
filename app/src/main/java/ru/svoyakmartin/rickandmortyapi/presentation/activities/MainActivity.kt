@@ -1,9 +1,9 @@
-package ru.svoyakmartin.rickandmortyapi.screens.main
+package ru.svoyakmartin.rickandmortyapi.presentation.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import ru.svoyakmartin.rickandmortyapi.R
-import ru.svoyakmartin.rickandmortyapi.screens.main.login.LoginFragment
+import ru.svoyakmartin.rickandmortyapi.presentation.fragments.LoginFragment
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
