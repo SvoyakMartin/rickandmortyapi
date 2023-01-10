@@ -1,16 +1,16 @@
 package ru.svoyakmartin.rickandmortyapi.data
 
-import io.reactivex.Maybe
+import io.reactivex.Single
 import ru.svoyakmartin.rickandmortyapi.models.Character
 
 object AuthApi {
 
-    fun auth(login: String, password: String): Maybe<Character?> {
+    fun auth(login: String, password: String): Single<Character?> {
         return if (login == "admin" && password == "admin") {
-            Maybe.just(getNewItem(0))
+            Single.just(getNewItem(0))
 
         } else {
-            Maybe.error(Throwable("Неверный логин или пароль!"))
+            Single.error(Throwable("Неверный логин или пароль!"))
         }
     }
 }

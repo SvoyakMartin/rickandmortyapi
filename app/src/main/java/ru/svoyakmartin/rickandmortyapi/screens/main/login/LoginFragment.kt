@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
 import com.jakewharton.rxbinding2.widget.textChanges
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
@@ -46,28 +47,37 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
+
+            val loginObservable = loginEditText.textChanges()
             disposables.add(
-                loginEditText.textChanges()
-                    .debounce(DEBOUNCE_TIMEOUT, TimeUnit.MILLISECONDS)
+                loginObservable.debounce(DEBOUNCE_TIMEOUT, TimeUnit.MILLISECONDS)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(
                         onNext = {
-                            setEnabledButton(login = it.toString())
                             loginLayout.error = null
                         }
                     )
             )
 
+            val passwordObservable = passwordEditText.textChanges()
             disposables.add(
-                passwordEditText.textChanges()
-                    .debounce(DEBOUNCE_TIMEOUT, TimeUnit.MILLISECONDS)
+                passwordObservable.debounce(DEBOUNCE_TIMEOUT, TimeUnit.MILLISECONDS)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(
                         onNext = {
-                            setEnabledButton(password = it.toString())
                             passwordLayout.error = null
                         }
                     )
+            )
+
+            disposables.add(
+                Observable.combineLatest(
+                    loginObservable,
+                    passwordObservable
+                ) { login, password -> login.trim().isNotEmpty() && password.trim().isNotEmpty() }
+                    .subscribe {
+                        loginButton.isEnabled = it
+                    }
             )
 
             loginButton.apply {
@@ -101,13 +111,6 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun setEnabledButton(
-        login: String = binding.loginEditText.text.toString(),
-        password: String = binding.passwordEditText.text.toString()
-    ) {
-        binding.loginButton.isEnabled = login.trim().isNotEmpty() && password.trim().isNotEmpty()
-    }
-
     private fun onLoginError(message: String) {
         with(binding) {
             loginLayout.error = message
@@ -128,9 +131,8 @@ class LoginFragment : Fragment() {
             .commit()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-
+    override fun onDestroyView() {
+        super.onDestroyView()
         disposables.clear()
     }
 }
