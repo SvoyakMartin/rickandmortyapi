@@ -25,4 +25,10 @@
     <string name="last_seen_text">Last seen on:</string>
 
     <string name="first_seen_in">first seen in</string>
+
+    <string name="login_hint">login</string>
+    <string name="password_hint">password</string>
+    <string name="login_button_text">Login</string>
+    <string name="invalid_login">Invalid login</string>
+    <string name="invalid_password">Invalid password</string>
 </resources>
