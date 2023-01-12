@@ -46,6 +46,7 @@ class LoginFragment : Fragment() {
             val loginObservable = loginEditText.textChanges()
             disposables.add(
                 loginObservable.debounce(DEBOUNCE_TIMEOUT, TimeUnit.MILLISECONDS)
+                    .skip(1)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(
                         onNext = {
@@ -57,6 +58,7 @@ class LoginFragment : Fragment() {
             val passwordObservable = passwordEditText.textChanges()
             disposables.add(
                 passwordObservable.debounce(DEBOUNCE_TIMEOUT, TimeUnit.MILLISECONDS)
+                    .skip(1)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(
                         onNext = {
@@ -83,12 +85,14 @@ class LoginFragment : Fragment() {
                 }
             }
 
-            viewModel.character.observe(viewLifecycleOwner){
-                goToInfoFragment(it)
+            viewModel.character.observe(viewLifecycleOwner) {
+                it?.let { goToInfoFragment(it) }
             }
 
-            viewModel.error.observe(viewLifecycleOwner){
-                onLoginError(it)
+            viewModel.error.observe(viewLifecycleOwner) {
+                if (it.isNotEmpty()) {
+                    onLoginError(it)
+                }
             }
         }
     }
@@ -117,6 +121,8 @@ class LoginFragment : Fragment() {
             .addToBackStack("UserStack")
             .replace(R.id.fragmentContainerView, infoFragment)
             .commit()
+
+        viewModel.clear()
     }
 
     override fun onDestroyView() {

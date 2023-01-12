@@ -33,5 +33,10 @@ class LoginViewModel : ViewModel() {
         }
     }
 
+    fun clear(){
+        _error.value = ""
+        _character.value = null
+    }
+
 
 }
