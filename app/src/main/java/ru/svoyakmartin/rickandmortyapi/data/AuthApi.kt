@@ -1,17 +1,14 @@
 package ru.svoyakmartin.rickandmortyapi.data
 
-import io.reactivex.Single
 import ru.svoyakmartin.rickandmortyapi.data.repository.TempRepository
-import ru.svoyakmartin.rickandmortyapi.domain.models.Character
+import ru.svoyakmartin.rickandmortyapi.presentation.fragments.LoginFragment.Companion.CHARACTER_KEY
 
 object AuthApi {
-
-    fun auth(login: String, password: String): Single<Character?> {
+    fun auth(login: String, password: String): Map<String, Any> {
         return if (login == "admin" && password == "admin") {
-            Single.just(TempRepository().getNewItem(0))
-
+            mapOf(CHARACTER_KEY to TempRepository().getNewItem(0))
         } else {
-            Single.error(Throwable("Неверный логин или пароль!"))
+            mapOf("error" to "Неверный логин или пароль!")
         }
     }
 }
