@@ -21,12 +21,6 @@ import java.util.concurrent.TimeUnit
 
 class LoginFragment : Fragment() {
 
-    /** Создать фрагмент для авторизации состоящий из двух полей ввода loginEditText и passwordEditText, а также кнопки loginButton.
-     * Кнопка должна быть неактивна, пока пользователь не введет логин и пароль.
-     * При нажатии на кнопку должен происходить запрос на авторизацию. (замокать ответ)
-     * Если авторизация прошла успешно, то должен открыться фрагмент с информацией о пользователе.
-     * Если авторизация не прошла, то должен показаться сообщение об ошибке.
-     * Все запросы должны быть выполнены с помощью RxJava.*/
     companion object {
         const val CHARACTER_KEY = "character"
         private const val DEBOUNCE_TIMEOUT = 1000L
@@ -52,6 +46,7 @@ class LoginFragment : Fragment() {
             val loginObservable = loginEditText.textChanges()
             disposables.add(
                 loginObservable.debounce(DEBOUNCE_TIMEOUT, TimeUnit.MILLISECONDS)
+                    .skip(1)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(
                         onNext = {
@@ -63,6 +58,7 @@ class LoginFragment : Fragment() {
             val passwordObservable = passwordEditText.textChanges()
             disposables.add(
                 passwordObservable.debounce(DEBOUNCE_TIMEOUT, TimeUnit.MILLISECONDS)
+                    .skip(1)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(
                         onNext = {
@@ -88,27 +84,22 @@ class LoginFragment : Fragment() {
                     authFromApi()
                 }
             }
+
+            viewModel.character.observe(viewLifecycleOwner) {
+                it?.let { goToInfoFragment(it) }
+            }
+
+            viewModel.error.observe(viewLifecycleOwner) {
+                if (it.isNotEmpty()) {
+                    onLoginError(it)
+                }
+            }
         }
     }
 
     private fun authFromApi() {
         with(binding) {
-            disposables.add(
-                viewModel.login(
-                    loginEditText.text.toString(),
-                    passwordEditText.text.toString()
-                )
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                        /* onSuccess() */ {
-                            goToInfoFragment(it)
-                        },
-                        /* onError() */ {
-                            onLoginError(it.message.toString())
-                        }
-                    )
-            )
+            viewModel.login(loginEditText.text.toString(), passwordEditText.text.toString())
         }
     }
 
@@ -130,6 +121,8 @@ class LoginFragment : Fragment() {
             .addToBackStack("UserStack")
             .replace(R.id.fragmentContainerView, infoFragment)
             .commit()
+
+        viewModel.clear()
     }
 
     override fun onDestroyView() {
