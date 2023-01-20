@@ -1,16 +1,16 @@
 <resources>
     <string name="app_name">RickAndMortyApi</string>
 
-    <string name="button_save_data">Сохранить</string>
-    <string name="button_send_data">Отправить</string>
-    <string name="button_light_theme_text">Light</string>
-    <string name="button_dark_theme_text">Dark</string>
-    <string name="button_auto_theme_text">Auto</string>
+    <string name="button_save_data">Save</string>
+    <string name="button_send_data">Send</string>
+    <string name="light_theme_text">Light</string>
+    <string name="dark_theme_text">Dark</string>
+    <string name="system_theme_text">System</string>
     <string name="button_shuffle_text">Shuffle</string>
 
-    <string name="name_hint">Имя</string>
-    <string name="age_hint">Возраст</string>
-    <string name="address_hint">Адрес</string>
+    <string name="name_hint">Name</string>
+    <string name="age_hint">Age</string>
+    <string name="address_hint">Address</string>
     <string name="email_hint">E-mail</string>
 
     <string name="name_empty_error">Введите имя</string>
@@ -31,4 +31,6 @@
     <string name="login_button_text">Login</string>
     <string name="invalid_login">Invalid login</string>
     <string name="invalid_password">Invalid password</string>
+
+    <string name="settings_theme_text">Theme</string>
 </resources>

@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -57,18 +56,6 @@ class CharactersFragment : Fragment(), CharactersClickListener {
                     }
                 }
             })
-
-            buttonLightTheme.setOnClickListener {
-                setNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
-
-            buttonDarkTheme.setOnClickListener {
-                setNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            }
-
-            buttonAutoTheme.setOnClickListener {
-                setNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-            }
 
             buttonShuffle.setOnClickListener {
                 viewModel.shuffleItems()
@@ -142,10 +129,6 @@ class CharactersFragment : Fragment(), CharactersClickListener {
 
     private fun submitList() {
         adapter.submitList(viewModel.items.value?.toList())
-    }
-
-    private fun setNightMode(mode: Int) {
-        AppCompatDelegate.setDefaultNightMode(mode)
     }
 
     override fun onCharacterClick(character: Character) {
