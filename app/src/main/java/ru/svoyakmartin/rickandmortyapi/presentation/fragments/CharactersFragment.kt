@@ -49,8 +49,11 @@ class CharactersFragment : Fragment(), CharactersClickListener {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     if ((charactersRecyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition() == adapter.itemCount - 1) {
                         var size = viewModel.getCharactersSize()
-                        val character = Character(++size, "demo Scroll", "", "", "", "", "", "", "")
-                        viewModel.addCharacter(character)
+                        for (i in 1..3) {
+                            val character =
+                                Character(++size, "demo Scroll", "", "", "", "", "", "", "")
+                            viewModel.addCharacter(character)
+                        }
                     }
                 }
             })
