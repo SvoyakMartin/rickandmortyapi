@@ -14,12 +14,12 @@ class UserPreferencesRepository private constructor(context: Context) {
 
     private fun saveNightMode(mode: Int) {
         sharedPreferences.change {
-            putInt(THEME_KEY, mode)
+            putInt(NIGHT_MODE_KEY, mode)
         }
     }
 
     fun readSavedNightMode(): Int {
-        return sharedPreferences.getInt(THEME_KEY, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        return sharedPreferences.getInt(NIGHT_MODE_KEY, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
     }
 
     fun setNightMode(mode: Int) {
@@ -29,7 +29,7 @@ class UserPreferencesRepository private constructor(context: Context) {
 
     companion object {
         const val PREFERENCE_FILE_KEY = "settings"
-        const val THEME_KEY = "theme"
+        const val NIGHT_MODE_KEY = "nightMode"
 
         @Volatile
         private var INSTANCE: UserPreferencesRepository? = null

@@ -12,7 +12,7 @@ class CharactersViewHolder(private val binding: CharacterItemViewBinding): Recyc
         with(binding){
             characterImage.setImageResource(R.drawable.ic_launcher_foreground)
             characterName.text = item.name
-            episodeName.text = item.episode[0]
+            episodeName.text = item.id.toString()
 
             itemView.setOnClickListener{
                 clickListener.onCharacterClick(item)

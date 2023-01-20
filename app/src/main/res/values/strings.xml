@@ -6,7 +6,11 @@
     <string name="light_theme_text">Light</string>
     <string name="dark_theme_text">Dark</string>
     <string name="system_theme_text">System</string>
-    <string name="button_shuffle_text">Shuffle</string>
+    <string name="add_button_text">Add</string>
+    <string name="button_settings_text">Settings</string>
+    <string name="delete_all_button_text">Delete all</string>
+    <string name="delete_button_text">Delete</string>
+    <string name="edit_button_text">Edit</string>
 
     <string name="name_hint">Name</string>
     <string name="age_hint">Age</string>
@@ -32,5 +36,5 @@
     <string name="invalid_login">Invalid login</string>
     <string name="invalid_password">Invalid password</string>
 
-    <string name="settings_theme_text">Theme</string>
+    <string name="settings_night_mode_text">Night mode</string>
 </resources>

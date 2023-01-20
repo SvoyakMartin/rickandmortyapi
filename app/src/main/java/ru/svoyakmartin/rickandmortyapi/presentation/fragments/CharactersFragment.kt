@@ -5,29 +5,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import ru.svoyakmartin.rickandmortyapi.App
 import ru.svoyakmartin.rickandmortyapi.R
 import ru.svoyakmartin.rickandmortyapi.databinding.FragmentCharacterBinding
 import ru.svoyakmartin.rickandmortyapi.domain.models.Character
 import ru.svoyakmartin.rickandmortyapi.screens.main.characters.CharactersAdapter
 import ru.svoyakmartin.rickandmortyapi.screens.main.characters.CharactersClickListener
 import ru.svoyakmartin.rickandmortyapi.presentation.viewModels.CharactersViewModel
+import ru.svoyakmartin.rickandmortyapi.presentation.viewModels.CharactersViewModelFactory
 
 
 class CharactersFragment : Fragment(), CharactersClickListener {
-//    companion object {
-//        const val ANIM_START = 0f
-//        const val ANIM_STEP = 100f
-//        const val ONE_ANIMATOR_DURATION = 2000L
-//        const val ONE_ANIMATOR_REPEATS = 3
-//        const val ROTATE_ANIMATOR_DURATION = 5000L
-//        const val TRANSLATION_ANIMATOR_DURATION = 3000L
-//    }
-    private lateinit var viewModel: CharactersViewModel
+    private val viewModel: CharactersViewModel by viewModels {
+        CharactersViewModelFactory((requireActivity().application as App).repository)
+    }
     private lateinit var binding: FragmentCharacterBinding
     private val adapter = CharactersAdapter(this)
+    private var isDelete = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,7 +32,6 @@ class CharactersFragment : Fragment(), CharactersClickListener {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentCharacterBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this)[CharactersViewModel::class.java]
 
         return binding.root
     }
@@ -44,99 +40,60 @@ class CharactersFragment : Fragment(), CharactersClickListener {
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
-            viewModel.items.observe(viewLifecycleOwner) {
-                submitList()
+            viewModel.allCharacters.observe(viewLifecycleOwner) {
+                submitList(it)
             }
 
             charactersRecyclerView.adapter = adapter
             charactersRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     if ((charactersRecyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition() == adapter.itemCount - 1) {
-                        viewModel.addNewItems(3)
+                        var size = viewModel.getCharactersSize()
+                        val character = Character(++size, "demo Scroll", "", "", "", "", "", "", "")
+                        viewModel.addCharacter(character)
                     }
                 }
             })
 
-            buttonShuffle.setOnClickListener {
-                viewModel.shuffleItems()
+            settingsButton.setOnClickListener {
+                parentFragmentManager
+                    .beginTransaction()
+                    .setReorderingAllowed(true)
+                    .addToBackStack("UserStack")
+                    .replace(R.id.fragmentContainerView, SettingsFragment())
+                    .commit()
             }
 
-//            val anim = AnimationUtils.loadAnimation(context, R.anim.button_start_anim).apply {
-//                interpolator = BounceInterpolator()
-//            }
-//
-//            val animator = ValueAnimator.ofFloat().apply {
-//                interpolator = AccelerateDecelerateInterpolator()
-//                duration = CharactersFragment.ONE_ANIMATOR_DURATION
-//                repeatCount = CharactersFragment.ONE_ANIMATOR_REPEATS
-//            }
-//
-//            val animatorSet = AnimatorSet()
-//
-//            with(binding) {
-//                val animator_r =
-//                    ObjectAnimator.ofFloat(buttonAnim, View.ROTATION,
-//                        CharactersFragment.ANIM_START, 120f, 80f, 90f)
-//                        .apply {
-//                            interpolator = AccelerateDecelerateInterpolator()
-//                            duration = CharactersFragment.ROTATE_ANIMATOR_DURATION
-//                        }
-//
-//                val animator_t =
-//                    ObjectAnimator.ofFloat(buttonAnim, View.TRANSLATION_Y,
-//                        CharactersFragment.ANIM_START, 140f).apply {
-//                        interpolator = BounceInterpolator()
-//                        duration = CharactersFragment.TRANSLATION_ANIMATOR_DURATION
-//                    }
-//
-//                buttonAnimTwo.setOnClickListener {
-//                    if (!animatorSet.isRunning) {
-//                        animatorSet.apply {
-//                            playTogether(animator_r, animator_t)
-//                            doOnEnd {
-//                                buttonAnim.apply {
-//                                    translationY = CharactersFragment.ANIM_START
-//                                    rotation = CharactersFragment.ANIM_START
-//                                }
-//                            }
-//                            start()
-//                        }
-//                    }
-//                }
-//
-//                buttonAnim.setOnClickListener {
-//                    if (!animator.isRunning) {
-//                        val currentY = it.y
-//                        animator.apply {
-//                            setFloatValues(
-//                                CharactersFragment.ANIM_START,
-//                                CharactersFragment.ANIM_STEP,
-//                                CharactersFragment.ANIM_START, -CharactersFragment.ANIM_STEP,
-//                                CharactersFragment.ANIM_START
-//                            )
-//                            addUpdateListener {
-//                                buttonAnim.y = currentY + animatedValue as Float
-//                            }
-//                            doOnEnd { buttonAnimTwo.visibility = View.VISIBLE }
-//                        }.start()
-//                    }
-//            lastSeenAnimView.apply {
-//                setLocation("Citadel of Ricks")
-//                setAliveStatus(LastSeenAnimView.AliveStatus.DEAD)
-//            }
+            addButton.setOnClickListener {
+                var size = viewModel.getCharactersSize()
+                val character = Character(++size, "demo Added", "", "", "", "", "", "", "")
+                viewModel.addCharacter(character)
+            }
+
+            deleteAllButton.setOnClickListener {
+                viewModel.deleteAllCharacters()
+            }
+
+            deleteButton.setOnCheckedChangeListener { _, check ->
+                isDelete = check
+            }
         }
     }
 
-    private fun submitList() {
-        adapter.submitList(viewModel.items.value?.toList())
+    private fun submitList(list: List<Character>) {
+        adapter.submitList(list)
     }
 
     override fun onCharacterClick(character: Character) {
-        parentFragmentManager
-            .beginTransaction()
-            .setReorderingAllowed(true)
-            .addToBackStack("UserStack")
-            .replace(R.id.fragmentContainerView, LocationsFragment())
-            .commit()
+        if (isDelete) {
+            viewModel.deleteCharacter(character)
+        } else {
+            parentFragmentManager
+                .beginTransaction()
+                .setReorderingAllowed(true)
+                .addToBackStack("UserStack")
+                .replace(R.id.fragmentContainerView, LocationsFragment())
+                .commit()
+        }
     }
 }

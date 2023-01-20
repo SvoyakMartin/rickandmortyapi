@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import ru.svoyakmartin.rickandmortyapi.R
 import ru.svoyakmartin.rickandmortyapi.data.repository.UserPreferencesRepository
+import ru.svoyakmartin.rickandmortyapi.presentation.fragments.CharactersFragment
 import ru.svoyakmartin.rickandmortyapi.presentation.fragments.SettingsFragment
 
 class MainActivity : AppCompatActivity() {
@@ -14,7 +15,7 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .setReorderingAllowed(true)
-                .add(R.id.fragmentContainerView, SettingsFragment())
+                .add(R.id.fragmentContainerView, CharactersFragment())
                 .commit()
         }
     }

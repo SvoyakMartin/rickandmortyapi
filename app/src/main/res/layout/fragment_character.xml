@@ -7,20 +7,48 @@
     tools:context=".presentation.fragments.CharactersFragment">
 
     <Button
-        android:id="@+id/button_shuffle"
+        android:id="@+id/add_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/button_shuffle_text"
+        android:text="@string/add_button_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/delete_button"
+        app:layout_constraintStart_toEndOf="@id/delete_all_button" />
+
+    <ToggleButton
+        android:id="@+id/delete_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textOff = "@string/edit_button_text"
+        android:textOn="@string/delete_button_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/add_button" />
+
+    <Button
+        android:id="@+id/settings_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button_settings_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/delete_all_button"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/delete_all_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/delete_all_button_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/add_button"
+        app:layout_constraintStart_toEndOf="@id/settings_button" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/characters_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@+id/button_shuffle"
+        app:layout_constraintBottom_toTopOf="@id/add_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
