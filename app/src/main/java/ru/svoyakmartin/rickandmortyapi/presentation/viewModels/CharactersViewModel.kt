@@ -3,25 +3,18 @@ package ru.svoyakmartin.rickandmortyapi.presentation.viewModels
 import androidx.lifecycle.*
 import kotlinx.coroutines.launch
 import ru.svoyakmartin.rickandmortyapi.data.repository.Repository
-import ru.svoyakmartin.rickandmortyapi.domain.models.Character
 
 class CharactersViewModel(private val repository: Repository) : ViewModel() {
     val allCharacters = repository.allCharacters.asLiveData()
 
-    fun addCharacter(character: Character) = viewModelScope.launch {
-        repository.insertCharacter(character)
+    init {
+        viewModelScope.launch {
+            repository.getStatistic()
+        }
     }
 
-    fun deleteCharacter(character: Character) = viewModelScope.launch {
-        repository.deleteCharacter(character)
-    }
-
-    fun deleteAllCharacters() = viewModelScope.launch {
-        repository.deleteAllCharacters()
-    }
-
-    fun getCharactersSize(): Int {
-        return allCharacters.value?.size ?: 0
+    fun getCharacters() = viewModelScope.launch {
+        repository.getCharacters()
     }
 }
 

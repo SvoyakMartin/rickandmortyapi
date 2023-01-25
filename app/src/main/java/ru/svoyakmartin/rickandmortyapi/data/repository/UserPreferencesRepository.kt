@@ -27,12 +27,28 @@ class UserPreferencesRepository private constructor(context: Context) {
         saveNightMode(mode)
     }
 
+    fun saveLastPage(page: Int) {
+        sharedPreferences.change {
+            putInt(LAST_PAGE_KEY, page)
+        }
+    }
+
+    fun readSavedLastPage(): Int {
+        return sharedPreferences.getInt(LAST_PAGE_KEY, 1)
+    }
+
     companion object {
         const val PREFERENCE_FILE_KEY = "settings"
         const val NIGHT_MODE_KEY = "nightMode"
+        const val LAST_PAGE_KEY = "lastPage"
 
         @Volatile
         private var INSTANCE: UserPreferencesRepository? = null
+
+        fun getInstance(): UserPreferencesRepository? {
+            return INSTANCE
+
+        }
 
         fun getInstance(context: Context): UserPreferencesRepository {
             return INSTANCE ?: synchronized(this) {

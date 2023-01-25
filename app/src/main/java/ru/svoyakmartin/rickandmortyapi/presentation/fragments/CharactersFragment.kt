@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.svoyakmartin.rickandmortyapi.App
 import ru.svoyakmartin.rickandmortyapi.R
 import ru.svoyakmartin.rickandmortyapi.databinding.FragmentCharacterBinding
-import ru.svoyakmartin.rickandmortyapi.domain.models.Character
+import ru.svoyakmartin.rickandmortyapi.data.db.models.Character
 import ru.svoyakmartin.rickandmortyapi.screens.main.characters.CharactersAdapter
 import ru.svoyakmartin.rickandmortyapi.screens.main.characters.CharactersClickListener
 import ru.svoyakmartin.rickandmortyapi.presentation.viewModels.CharactersViewModel
@@ -24,7 +24,7 @@ class CharactersFragment : Fragment(), CharactersClickListener {
     }
     private lateinit var binding: FragmentCharacterBinding
     private val adapter = CharactersAdapter(this)
-    private var isDelete = false
+    private var isLoading = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,45 +41,31 @@ class CharactersFragment : Fragment(), CharactersClickListener {
 
         with(binding) {
             viewModel.allCharacters.observe(viewLifecycleOwner) {
-                submitList(it)
+                if (it.isNullOrEmpty()) {
+                    loadNextPart()
+                } else {
+                    submitList(it)
+                    isLoading = false
+                    binding.loadingProgressBar.visibility = View.GONE
+                }
             }
 
             charactersRecyclerView.adapter = adapter
             charactersRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     if ((charactersRecyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition() == adapter.itemCount - 1) {
-                        var size = viewModel.getCharactersSize()
-                        for (i in 1..3) {
-                            val character =
-                                Character(++size, "demo Scroll", "", "", "", "", "", "", "")
-                            viewModel.addCharacter(character)
-                        }
+                        loadNextPart()
                     }
                 }
             })
+        }
+    }
 
-            settingsButton.setOnClickListener {
-                parentFragmentManager
-                    .beginTransaction()
-                    .setReorderingAllowed(true)
-                    .addToBackStack("UserStack")
-                    .replace(R.id.fragmentContainerView, SettingsFragment())
-                    .commit()
-            }
-
-            addButton.setOnClickListener {
-                var size = viewModel.getCharactersSize()
-                val character = Character(++size, "demo Added", "", "", "", "", "", "", "")
-                viewModel.addCharacter(character)
-            }
-
-            deleteAllButton.setOnClickListener {
-                viewModel.deleteAllCharacters()
-            }
-
-            deleteButton.setOnCheckedChangeListener { _, check ->
-                isDelete = check
-            }
+    private fun loadNextPart() {
+        if (!isLoading) {
+            isLoading = true
+            binding.loadingProgressBar.visibility = View.VISIBLE
+            viewModel.getCharacters()
         }
     }
 
@@ -88,15 +74,11 @@ class CharactersFragment : Fragment(), CharactersClickListener {
     }
 
     override fun onCharacterClick(character: Character) {
-        if (isDelete) {
-            viewModel.deleteCharacter(character)
-        } else {
-            parentFragmentManager
-                .beginTransaction()
-                .setReorderingAllowed(true)
-                .addToBackStack("UserStack")
-                .replace(R.id.fragmentContainerView, LocationsFragment())
-                .commit()
-        }
+        parentFragmentManager
+            .beginTransaction()
+            .setReorderingAllowed(true)
+            .addToBackStack("UserStack")
+            .replace(R.id.fragmentContainerView, LocationsFragment())
+            .commit()
     }
 }
