@@ -6,5 +6,5 @@ package ru.svoyakmartin.rickandmortyapi
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 class ExampleUnitTest {
-    // TODO:
+
 }

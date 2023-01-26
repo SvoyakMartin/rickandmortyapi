@@ -5,13 +5,7 @@ import kotlinx.coroutines.launch
 import ru.svoyakmartin.rickandmortyapi.data.repository.Repository
 
 class CharactersViewModel(private val repository: Repository) : ViewModel() {
-    val allCharacters = repository.allCharacters.asLiveData()
-
-    init {
-        viewModelScope.launch {
-            repository.getStatistic()
-        }
-    }
+    val allCharacters = repository.allCharacters
 
     fun getCharacters() = viewModelScope.launch {
         repository.getCharacters()

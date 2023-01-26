@@ -2,6 +2,8 @@ package ru.svoyakmartin.rickandmortyapi.data.remote.models
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import ru.svoyakmartin.rickandmortyapi.data.repository.Gender
+import ru.svoyakmartin.rickandmortyapi.data.repository.Status
 
 @Serializable
 data class CharacterDTO(
@@ -50,25 +52,3 @@ data class AdditionalFieldDTO(
     @SerialName("url")
     var url: String
 )
-
-@Serializable
-enum class Status{
-    @SerialName("Alive")
-    ALIVE,
-    @SerialName("Dead")
-    DEAD,
-    @SerialName("unknown")
-    UNKNOWN
-}
-
-@Serializable
-enum class Gender{
-    @SerialName("Female")
-    FEMALE,
-    @SerialName("Male")
-    MALE,
-    @SerialName("Genderless")
-    GENDERLESS,
-    @SerialName("unknown")
-    UNKNOWN
-}

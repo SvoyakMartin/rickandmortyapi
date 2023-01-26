@@ -1,4 +1,4 @@
-package ru.svoyakmartin.rickandmortyapi.screens.main.characters
+package ru.svoyakmartin.rickandmortyapi.presentation.adapters
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater

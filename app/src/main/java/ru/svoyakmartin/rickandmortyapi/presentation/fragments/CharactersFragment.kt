@@ -4,16 +4,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.launch
 import ru.svoyakmartin.rickandmortyapi.App
 import ru.svoyakmartin.rickandmortyapi.R
-import ru.svoyakmartin.rickandmortyapi.databinding.FragmentCharacterBinding
+import ru.svoyakmartin.rickandmortyapi.databinding.FragmentCharactersBinding
 import ru.svoyakmartin.rickandmortyapi.data.db.models.Character
-import ru.svoyakmartin.rickandmortyapi.screens.main.characters.CharactersAdapter
-import ru.svoyakmartin.rickandmortyapi.screens.main.characters.CharactersClickListener
+import ru.svoyakmartin.rickandmortyapi.presentation.adapters.CharactersAdapter
+import ru.svoyakmartin.rickandmortyapi.presentation.adapters.CharactersClickListener
 import ru.svoyakmartin.rickandmortyapi.presentation.viewModels.CharactersViewModel
 import ru.svoyakmartin.rickandmortyapi.presentation.viewModels.CharactersViewModelFactory
 
@@ -22,7 +27,7 @@ class CharactersFragment : Fragment(), CharactersClickListener {
     private val viewModel: CharactersViewModel by viewModels {
         CharactersViewModelFactory((requireActivity().application as App).repository)
     }
-    private lateinit var binding: FragmentCharacterBinding
+    private lateinit var binding: FragmentCharactersBinding
     private val adapter = CharactersAdapter(this)
     private var isLoading = false
 
@@ -31,7 +36,7 @@ class CharactersFragment : Fragment(), CharactersClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentCharacterBinding.inflate(inflater, container, false)
+        binding = FragmentCharactersBinding.inflate(inflater, container, false)
 
         return binding.root
     }
@@ -40,13 +45,16 @@ class CharactersFragment : Fragment(), CharactersClickListener {
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
-            viewModel.allCharacters.observe(viewLifecycleOwner) {
-                if (it.isNullOrEmpty()) {
-                    loadNextPart()
-                } else {
-                    submitList(it)
-                    isLoading = false
-                    binding.loadingProgressBar.visibility = View.GONE
+            lifecycleScope.launch {
+                viewModel.allCharacters.flowWithLifecycle(lifecycle)
+                    .collect {
+                    if (it.isNullOrEmpty()) {
+                        loadNextPart()
+                    } else {
+                        submitList(it)
+                        isLoading = false
+                        binding.loadingProgressBar.visibility = View.GONE
+                    }
                 }
             }
 
@@ -74,11 +82,14 @@ class CharactersFragment : Fragment(), CharactersClickListener {
     }
 
     override fun onCharacterClick(character: Character) {
-        parentFragmentManager
-            .beginTransaction()
-            .setReorderingAllowed(true)
-            .addToBackStack("UserStack")
-            .replace(R.id.fragmentContainerView, LocationsFragment())
-            .commit()
+        parentFragmentManager.commit {
+            setReorderingAllowed(true)
+            addToBackStack("UserStack")
+            replace(
+                R.id.fragmentContainerView,
+                CharacterDetailsFragment::class.java,
+                bundleOf("character" to character)
+            )
+        }
     }
 }

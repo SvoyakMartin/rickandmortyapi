@@ -3,6 +3,7 @@ package ru.svoyakmartin.rickandmortyapi.presentation.activities
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import ru.svoyakmartin.rickandmortyapi.R
 import ru.svoyakmartin.rickandmortyapi.databinding.ActivityMainBinding
 import ru.svoyakmartin.rickandmortyapi.presentation.fragments.CharactersFragment
@@ -20,26 +21,45 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .setReorderingAllowed(true)
-                .add(R.id.fragmentContainerView, CharactersFragment())
-                .commit()
+            goToFragment(CharactersFragment())
         }
 
         with(binding) {
-            settingsButton.setOnClickListener { goToFragment(SettingsFragment()) }
+            settingsButton.setOnClickListener { goToFragment(SettingsFragment(), true) }
             charactersButton.setOnClickListener { goToFragment(CharactersFragment()) }
             locationsButton.setOnClickListener { goToFragment(LocationsFragment()) }
             episodesButton.setOnClickListener { goToFragment(EpisodesFragment()) }
         }
     }
 
-    private fun goToFragment(fragment: Fragment) {
-        supportFragmentManager
-            .beginTransaction()
-            .setReorderingAllowed(true)
-            .addToBackStack("UserStack")
-            .replace(R.id.fragmentContainerView, fragment)
-            .commit()
+    private fun goToFragment(fragment: Fragment, addToBackStack: Boolean = false) {
+        val tag = fragment::class.java.name.substringAfterLast('.')
+        val container = R.id.fragmentContainerView
+
+        supportFragmentManager.apply {
+//            val oldFragment = findFragmentByTag(tag)
+
+            commit {
+                setReorderingAllowed(true)
+
+                if (addToBackStack) {
+                    addToBackStack("UserStack")
+                }
+
+                replace(container, fragment, tag)
+
+                // TODO: додумать переиспользование фрагментов или сохранять скролл в самом фрагменте
+
+//                fragments.forEach {
+//                    hide(it)
+//                }
+//
+//                if (oldFragment == null) {
+//                    add(container, fragment, tag)
+//                } else {
+//                    show(oldFragment)
+//                }
+            }
+        }
     }
 }

@@ -106,9 +106,12 @@ class LastSeenAnimView
 
         val wStatus = statusTextPaint.measureText(getStatusText(aliveStatus))
         val wHeader = headerTextPaint.measureText(context.getString(R.string.last_seen_text))
+        val wPlaceHolder =
+            headerTextPaint.measureText(context.getString(R.string.last_seen_placeholder))
         val wLocation = locationTextPaint.measureText(location)
 
-        val width = circlePadding * 2 + circleRadius * 2 + max(wStatus, max(wHeader, wLocation))
+        val width = circlePadding * 2 + circleRadius * 2 +
+                max(wStatus, max(max(wHeader, wPlaceHolder), wLocation))
         val height = circlePadding + statusTextSize + lastSeenTextSize + locationTextSize
 
 //        when (MeasureSpec.getMode(widthMeasureSpec)){
@@ -124,6 +127,7 @@ class LastSeenAnimView
         super.onDraw(canvas)
         canvas?.let {
             drawStatus(it)
+
             if (isLastSeenVisible) {
                 drawHeader(canvas)
                 drawLocation(canvas)
@@ -131,28 +135,39 @@ class LastSeenAnimView
                 if (generatedText.length <= location.length) {
                     showGenerateLocation()
                 }
+            } else {
+                drawPlaceHolder(canvas)
             }
         }
     }
-
+    @Suppress("unused")
     fun setSearchIterations(value: Int) {
         searchIterations = if (value < 1) 1 else value
     }
 
+    @Suppress("unused")
     fun setLocation(value: String) {
         location = value
     }
 
+    @Suppress("unused")
     fun setLocationColor(color: Int) {
         locationColor = color
     }
 
+    @Suppress("unused")
     fun setLocationFindColor(color: Int) {
         locationFindColor = color
     }
 
+    @Suppress("unused")
     fun setAliveStatus(status: AliveStatus) {
         aliveStatus = status
+    }
+
+    @Suppress("unused")
+    fun isFind():Boolean {
+        return isLastSeenVisible
     }
 
     private fun getPaint(paintStyle: PaintStyle): Paint {
@@ -230,6 +245,15 @@ class LastSeenAnimView
         )
     }
 
+    private fun drawPlaceHolder(canvas: Canvas) {
+        canvas.drawText(
+            context.getString(R.string.last_seen_placeholder),
+            circleRadius * 2 + circlePadding * 2,
+            statusTextSize + circlePadding + lastSeenTextSize,
+            headerTextPaint
+        )
+    }
+
     private fun drawLocation(canvas: Canvas) {
         canvas.drawText(
             generatedText,
@@ -257,7 +281,11 @@ class LastSeenAnimView
     }
 
     private fun showGenerateLocation() {
-        if (location.isNotEmpty() && generatedText.length <= location.length) {
+        if (location.isEmpty()) {
+            location
+            location = context.getString(R.string.last_seen_unknown)
+        }
+        if (generatedText.length <= location.length) {
             generateLocation()
             invalidate()
         }
@@ -324,6 +352,7 @@ class LastSeenAnimView
 
         companion object {
             @JvmField
+            @Suppress("unused")
             val CREATOR = object : Parcelable.Creator<SavedState> {
                 override fun createFromParcel(source: Parcel): SavedState = SavedState(source)
                 override fun newArray(size: Int): Array<SavedState?> = arrayOfNulls(size)

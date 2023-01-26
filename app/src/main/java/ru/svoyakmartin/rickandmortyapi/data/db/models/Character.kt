@@ -2,8 +2,8 @@ package ru.svoyakmartin.rickandmortyapi.data.db.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ru.svoyakmartin.rickandmortyapi.data.remote.models.Gender
-import ru.svoyakmartin.rickandmortyapi.data.remote.models.Status
+import ru.svoyakmartin.rickandmortyapi.data.repository.Gender
+import ru.svoyakmartin.rickandmortyapi.data.repository.Status
 import java.io.Serializable
 
 @Entity(tableName = "characters")

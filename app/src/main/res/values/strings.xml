@@ -1,40 +1,27 @@
 <resources>
     <string name="app_name">RickAndMortyApi</string>
 
-    <string name="button_save_data">Save</string>
-    <string name="button_send_data">Send</string>
-    <string name="light_theme_text">Light</string>
-    <string name="dark_theme_text">Dark</string>
-    <string name="system_theme_text">System</string>
-
+    <!--    MAIN ACTIVITY-->
     <string name="settings_button_text">Settings</string>
     <string name="characters_button_text">Characters</string>
     <string name="locations_button_text">Locations</string>
     <string name="episodes_button_text">Episodes</string>
 
-    <string name="name_hint">Name</string>
-    <string name="age_hint">Age</string>
-    <string name="address_hint">Address</string>
-    <string name="email_hint">E-mail</string>
+    <!--    SETTINGS-->
+    <string name="settings_night_mode_text">Night mode</string>
+    <string name="light_theme_text">Light</string>
+    <string name="dark_theme_text">Dark</string>
+    <string name="system_theme_text">System</string>
 
-    <string name="name_empty_error">Введите имя</string>
-    <string name="age_empty_error">Введите возраст</string>
-    <string name="address_empty_error">Введите адрес</string>
-    <string name="email_empty_error">Введите e-mail</string>
-    <string name="no_send_error">Не найдены приложения для отправки</string>
-
+    <!--    CUSTOM VIEW-->
     <string name="status_alive">Alive</string>
     <string name="status_dead">Dead</string>
     <string name="status_unknown">Unknown</string>
     <string name="last_seen_text">Last seen on:</string>
+    <string name="last_seen_placeholder">»TAP TO FIND«</string>
+    <string name="last_seen_unknown">unknown</string>
 
-    <string name="first_seen_in">first seen in</string>
-
-    <string name="login_hint">login</string>
-    <string name="password_hint">password</string>
-    <string name="login_button_text">Login</string>
-    <string name="invalid_login">Invalid login</string>
-    <string name="invalid_password">Invalid password</string>
-
-    <string name="settings_night_mode_text">Night mode</string>
+    <!--    CHARACTER DETAILS FRAGMENT-->
+    <string name="origin_location_text">origin location: %1$s</string>
+    <string name="origin_location_unknown">unknown</string>
 </resources>

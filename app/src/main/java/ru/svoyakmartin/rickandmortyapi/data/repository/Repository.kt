@@ -1,5 +1,6 @@
 package ru.svoyakmartin.rickandmortyapi.data.repository
 
+import kotlinx.coroutines.flow.*
 import ru.svoyakmartin.rickandmortyapi.data.db.RoomDAO
 import ru.svoyakmartin.rickandmortyapi.data.db.models.Character
 import ru.svoyakmartin.rickandmortyapi.data.db.models.Episode
@@ -42,10 +43,6 @@ class Repository(private val roomDAO: RoomDAO) {
 
     }
 
-    suspend fun insertCharacter(character: Character) {
-        roomDAO.insertCharacter(character)
-    }
-
     private suspend fun insertCharactersAndDependencies() {
 //        if (episodesId.size == 1) {
 //            val response = retrofit.getEpisode(episodesId.first())
@@ -58,23 +55,20 @@ class Repository(private val roomDAO: RoomDAO) {
 //        }
     }
 
-    suspend fun insertLocation(location: Location) {
-        roomDAO.insertLocation(location)
+    fun getLocation(id: Int): Flow<Location?> {
+        return roomDAO.getLocation(id)
     }
 
-    suspend fun insertEpisode(episode: Episode) {
-        roomDAO.insertEpisode(episode)
-    }
+    fun getEpisodesByCharactersId(id: Int): Flow<List<Episode>?> {
+        return flow {
+            roomDAO.getEpisodesByCharactersId(id)
+                .collect {
+                    if (it != null){
+                        emit(it)
+                    }
 
-    suspend fun getCharacter(id: Int) {
-        // TODO:
-    }
+                }
+        }
 
-    suspend fun getLocation(id: Int) {
-        // TODO:
-    }
-
-    suspend fun getEpisode(id: Int) {
-        // TODO:
     }
 }
