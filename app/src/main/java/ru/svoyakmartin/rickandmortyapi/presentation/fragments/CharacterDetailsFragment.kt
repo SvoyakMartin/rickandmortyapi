@@ -5,9 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.launch
 import ru.svoyakmartin.rickandmortyapi.App
@@ -29,6 +31,7 @@ class CharacterDetailsFragment : Fragment() {
     private var originLocation: Location? = null
     private var lastSeenLocation: Location? = null
     private var episodes: List<Episode>? = null
+    private var isEpisodesVisible = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,21 +49,37 @@ class CharacterDetailsFragment : Fragment() {
 
         binding.apply {
             with(character) {
-                lifecycleScope.launch {
-                    viewModel.getEpisodesByCharactersId(id).flowWithLifecycle(lifecycle)
-                        .collect {
-                            episodes = it
-                            showEpisodes()
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        launch {
+                            viewModel.getEpisodesByCharactersId(id)
+                                .collect {
+                                    episodes = it
+                                    showEpisodes()
+                                }
                         }
-                }
 
-                location?.let {
-                    lifecycleScope.launch {
-                        viewModel.getLocation(it).flowWithLifecycle(lifecycle)
-                            .collect {
-                                lastSeenLocation = it
-                                setLastSeen()
+                        location?.let {
+                            launch {
+                                viewModel.getLocation(it)
+                                    .collect {
+                                        lastSeenLocation = it
+                                        setLastSeen()
+                                    }
                             }
+                        }
+
+                        if (origin == null) {
+                            setOrigin()
+                        } else {
+                            launch {
+                                viewModel.getLocation(origin)
+                                    .collect {
+                                        originLocation = it
+                                        setOrigin()
+                                    }
+                            }
+                        }
                     }
                 }
 
@@ -73,18 +92,6 @@ class CharacterDetailsFragment : Fragment() {
                 characterSpecies.text = speciesAndType
                 characterGender.text = gender.name
                 lastSeen.setAliveStatus(AliveStatus.valueOf(status.name))
-
-                if (origin == null) {
-                    setOrigin()
-                } else {
-                    lifecycleScope.launch {
-                        viewModel.getLocation(origin).flowWithLifecycle(lifecycle)
-                            .collect {
-                                originLocation = it
-                                setOrigin()
-                            }
-                    }
-                }
             }
         }
     }
@@ -110,11 +117,59 @@ class CharacterDetailsFragment : Fragment() {
             )
             setOnClickListener {
                 // TODO: goto location
+
             }
         }
     }
 
     private fun showEpisodes() {
-        // TODO:
+        val size = episodes?.size ?: 0
+        with(binding) {
+            characterEpisodes.text = getString(R.string.episodes_header_text, size)
+
+            if (size > 0) {
+                showHideEpisodes.apply {
+                    visibility = View.VISIBLE
+
+                    setOnClickListener {
+                        isEpisodesVisible = !isEpisodesVisible
+
+                        episodesContainer.visibility =
+                            if (isEpisodesVisible) View.VISIBLE else View.GONE
+                        // для скрытия пустого скролла
+                        episodesScroll.visibility = episodesContainer.visibility
+
+                        setTextColor(
+                            context.getColor(
+                                if (isEpisodesVisible)
+                                    R.color.dark_red
+                                else
+                                    R.color.dark_green
+                            )
+                        )
+                        text = getString(
+                            if (isEpisodesVisible)
+                                R.string.episodes_hide
+                            else
+                                R.string.episodes_show
+                        )
+                    }
+                }
+
+                episodes?.forEach { episode ->
+                    val textView = TextView(context).apply {
+                        val episodeName = "${episode.episode} - ${episode.name}"
+
+                        text = episodeName
+
+                        setOnClickListener {
+                            // TODO: go to episode
+                        }
+                    }
+
+                    episodesContainer.addView(textView)
+                }
+            }
+        }
     }
 }

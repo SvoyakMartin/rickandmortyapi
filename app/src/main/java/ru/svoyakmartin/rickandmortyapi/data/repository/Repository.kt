@@ -22,7 +22,7 @@ class Repository(private val roomDAO: RoomDAO) {
         }
     }
 
-    suspend fun getCharacters() {
+    suspend fun getCharactersPartFromWeb() {
         val response = retrofit.getCharacters(lastPage)
         response.body()?.apply {
             val characters = ArrayList<Character>()
@@ -31,7 +31,7 @@ class Repository(private val roomDAO: RoomDAO) {
             results.forEach {
                 val character = it.toCharacter()
                 characters.add(character)
-                charactersEpisodes[character.id] = it.getEpisodesId()
+                charactersEpisodes[character.id] = it.getEpisodesIds()
             }
 
             if (info.pages > lastPage) {
@@ -43,32 +43,49 @@ class Repository(private val roomDAO: RoomDAO) {
 
     }
 
-    private suspend fun insertCharactersAndDependencies() {
-//        if (episodesId.size == 1) {
-//            val response = retrofit.getEpisode(episodesId.first())
-//        } else {
-//            val ids = episodesId.joinToString(",", transform = Int::toString)
-//            val response = retrofit.getEpisodesById(ids)
-//            response.body()?.apply {
-//
-//            }
-//        }
-    }
-
     fun getLocation(id: Int): Flow<Location?> {
         return roomDAO.getLocation(id)
     }
 
-    fun getEpisodesByCharactersId(id: Int): Flow<List<Episode>?> {
+    fun getMissingEpisodeIdsByCharacterId(characterId: Int): Flow<List<Int>?> {
+        return roomDAO.getMissingEpisodeIdsByCharacterId(characterId)
+    }
+
+    suspend fun insertEpisodesAndDependencies(
+        episodes: List<Episode>,
+        charactersEpisodes: Map<Int, List<Int>>
+    ) {
+        roomDAO.insertEpisodesAndDependencies(episodes, charactersEpisodes)
+    }
+
+    suspend fun getEpisodesByIds(ids: String) {
+        val response = retrofit.getEpisodesByIds(ids)
+        response.body()?.apply {
+            val episodes = ArrayList<Episode>()
+            val charactersEpisodes = mutableMapOf<Int, List<Int>>()
+
+            forEach {
+                val episode = it.toEpisode()
+                episodes.add(episode)
+                charactersEpisodes[it.id] = it.getCharactersIds()
+            }
+
+            insertEpisodesAndDependencies(episodes, charactersEpisodes)
+        }
+    }
+
+    fun getEpisodesByCharactersId(characterId: Int): Flow<List<Episode>?> {
         return flow {
-            roomDAO.getEpisodesByCharactersId(id)
+            getMissingEpisodeIdsByCharacterId(characterId)
                 .collect {
-                    if (it != null){
-                        emit(it)
+                    if (!it.isNullOrEmpty()) {
+                        getEpisodesByIds(it.joinToString())
                     }
 
+                    roomDAO.getEpisodesByCharactersId(characterId).collect {
+                        emit(it)
+                    }
                 }
         }
-
     }
 }

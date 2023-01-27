@@ -1,7 +1,9 @@
 package ru.svoyakmartin.rickandmortyapi.data.repository
 
 import ru.svoyakmartin.rickandmortyapi.data.db.models.Character
+import ru.svoyakmartin.rickandmortyapi.data.db.models.Episode
 import ru.svoyakmartin.rickandmortyapi.data.remote.models.CharacterDTO
+import ru.svoyakmartin.rickandmortyapi.data.remote.models.EpisodeDTO
 import ru.svoyakmartin.rickandmortyapi.data.remote.models.Root
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -23,13 +25,8 @@ fun CharacterDTO.toCharacter(): Character {
     )
 }
 
-fun CharacterDTO.getEpisodesId(): List<Int> {
-    val ids = arrayListOf<Int>()
-    episode.forEach {
-        ids.add(getIdFromUrl(it))
-    }
-
-    return ids
+fun CharacterDTO.getEpisodesIds(): List<Int> {
+    return getIdsListFromUrlList(episode)
 }
 
 fun getIdFromUrl(url: String): Int {
@@ -43,11 +40,35 @@ fun getTimeFromString(timeStamp: String): Long {
 }
 
 fun Root.toMap(): Map<String, Int> {
-    with(data.stats){
+    with(data.stats) {
         return mapOf(
             "characters" to characters.info.count,
             "locations" to locations.info.count,
             "episodes" to episodes.info.count
         )
     }
+}
+
+fun EpisodeDTO.toEpisode(): Episode {
+    return Episode(
+        id,
+        name,
+        airDate,
+        episode,
+        url,
+        getTimeFromString(created)
+    )
+}
+
+fun EpisodeDTO.getCharactersIds(): List<Int> {
+   return getIdsListFromUrlList(characters)
+}
+
+fun getIdsListFromUrlList(urlList: List<String>): List<Int> {
+    val ids = arrayListOf<Int>()
+    urlList.forEach {
+        ids.add(getIdFromUrl(it))
+    }
+
+    return ids
 }

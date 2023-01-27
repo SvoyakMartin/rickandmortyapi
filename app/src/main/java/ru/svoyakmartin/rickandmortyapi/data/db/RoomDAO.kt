@@ -24,6 +24,9 @@ interface RoomDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCharacters(characters: List<Character>)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertEpisodes(episodes: List<Episode>)
+
     @Transaction
     suspend fun insertCharactersAndDependencies(
         characters: List<Character>,
@@ -38,6 +41,23 @@ interface RoomDAO {
         }
 
         insertCharacters(characters)
+        insertCharactersAndEpisodes(charactersEpisodesList)
+    }
+
+    @Transaction
+    suspend fun insertEpisodesAndDependencies(
+        episodes: List<Episode>,
+        charactersEpisodes: Map<Int, List<Int>>
+    ) {
+        val charactersEpisodesList = arrayListOf<CharactersAndEpisodes>()
+
+        charactersEpisodes.forEach { (episodeID, charactersIds) ->
+            charactersIds.forEach { characterID ->
+                charactersEpisodesList.add(CharactersAndEpisodes(characterID, episodeID))
+            }
+        }
+
+        insertEpisodes(episodes)
         insertCharactersAndEpisodes(charactersEpisodesList)
     }
 
@@ -93,6 +113,13 @@ interface RoomDAO {
                 ")"
     )
     fun getEpisodesByCharactersId(characterId: Int): Flow<List<Episode>?>
+
+    @Query("SELECT episodeId AS id \n" +
+            "FROM characters_episodes \n" +
+            "LEFT JOIN episodes ON episodeId = id \n" +
+            "WHERE characterId = :characterId \n" +
+            "AND id IS NULL")
+    fun getMissingEpisodeIdsByCharacterId(characterId: Int): Flow<List<Int>?>
 
     @Query("SELECT * FROM locations WHERE id = :id")
     fun getLocation(id: Int): Flow<Location>

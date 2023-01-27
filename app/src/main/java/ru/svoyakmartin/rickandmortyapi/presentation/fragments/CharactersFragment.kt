@@ -8,8 +8,9 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
@@ -45,15 +46,16 @@ class CharactersFragment : Fragment(), CharactersClickListener {
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
-            lifecycleScope.launch {
-                viewModel.allCharacters.flowWithLifecycle(lifecycle)
-                    .collect {
-                    if (it.isNullOrEmpty()) {
-                        loadNextPart()
-                    } else {
-                        submitList(it)
-                        isLoading = false
-                        binding.loadingProgressBar.visibility = View.GONE
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
+                    viewModel.allCharacters.collect {
+                        if (it.isNullOrEmpty()) {
+                            loadNextPart()
+                        } else {
+                            submitList(it)
+                            isLoading = false
+                            loadingProgressBar.visibility = View.GONE
+                        }
                     }
                 }
             }

@@ -18,10 +18,13 @@
     <string name="status_dead">Dead</string>
     <string name="status_unknown">Unknown</string>
     <string name="last_seen_text">Last seen on:</string>
-    <string name="last_seen_placeholder">»TAP TO FIND«</string>
+    <string name="last_seen_placeholder">» tap to find</string>
     <string name="last_seen_unknown">unknown</string>
 
     <!--    CHARACTER DETAILS FRAGMENT-->
     <string name="origin_location_text">origin location: %1$s</string>
     <string name="origin_location_unknown">unknown</string>
+    <string name="episodes_header_text">Episodes: %1$d</string>
+    <string name="episodes_show">↓ show ↓</string>
+    <string name="episodes_hide">↑ hide ↑</string>
 </resources>

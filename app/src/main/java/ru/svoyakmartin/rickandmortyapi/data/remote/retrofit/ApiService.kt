@@ -23,11 +23,11 @@ interface ApiService {
     @GET("episode")
     suspend fun getEpisodes(@Query("page") page: Int): Response<EpisodesDTO>
 
-    @GET("episode/{id}")
-    suspend fun getEpisodesById(@Path("id") id: String): Response<List<EpisodeDTO>>
+    @GET("episode/[{id}]")
+    suspend fun getEpisodesByIds(@Path("id") id: String): Response<List<EpisodeDTO>>
 
     @GET("episode/{id}")
-    suspend fun getEpisode(@Path("id") id: Int): Response<EpisodeDTO>
+    suspend fun getEpisodeById(@Path("id") id: Int): Response<EpisodeDTO>
 
     @GET
     suspend fun getStatistic(@Url url: String = "https://rickandmortyapi.com/page-data/sq/d/1506520932.json"): Response<Root>
