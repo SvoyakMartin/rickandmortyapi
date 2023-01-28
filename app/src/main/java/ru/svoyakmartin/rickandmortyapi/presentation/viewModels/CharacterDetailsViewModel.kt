@@ -5,6 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.flowOn
 import ru.svoyakmartin.rickandmortyapi.data.repository.Repository
+import javax.inject.Inject
 
 class CharacterDetailsViewModel(private val repository: Repository) : ViewModel() {
     fun getLocation(id: Int) = repository.getLocation(id)
@@ -16,7 +17,7 @@ class CharacterDetailsViewModel(private val repository: Repository) : ViewModel(
         .conflate()
 }
 
-class CharacterDetailsViewModelFactory(private val repository: Repository) :
+class CharacterDetailsViewModelFactory @Inject constructor(private val repository: Repository) :
     ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(CharacterDetailsViewModel::class.java)) {

@@ -1,5 +1,6 @@
 package ru.svoyakmartin.rickandmortyapi.presentation.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -22,12 +23,13 @@ import ru.svoyakmartin.rickandmortyapi.presentation.adapters.CharactersAdapter
 import ru.svoyakmartin.rickandmortyapi.presentation.adapters.CharactersClickListener
 import ru.svoyakmartin.rickandmortyapi.presentation.viewModels.CharactersViewModel
 import ru.svoyakmartin.rickandmortyapi.presentation.viewModels.CharactersViewModelFactory
+import javax.inject.Inject
 
 
 class CharactersFragment : Fragment(), CharactersClickListener {
-    private val viewModel: CharactersViewModel by viewModels {
-        CharactersViewModelFactory((requireActivity().application as App).repository)
-    }
+    @Inject
+    lateinit var viewModelFactory: CharactersViewModelFactory
+    private val viewModel: CharactersViewModel by viewModels { viewModelFactory }
     private lateinit var binding: FragmentCharactersBinding
     private val adapter = CharactersAdapter(this)
     private var isLoading = false
@@ -42,12 +44,18 @@ class CharactersFragment : Fragment(), CharactersClickListener {
         return binding.root
     }
 
+    override fun onAttach(context: Context) {
+        (requireActivity().application as App).appComponent.inject(this)
+
+        super.onAttach(context)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
             viewLifecycleOwner.lifecycleScope.launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     viewModel.allCharacters.collect {
                         if (it.isNullOrEmpty()) {
                             loadNextPart()

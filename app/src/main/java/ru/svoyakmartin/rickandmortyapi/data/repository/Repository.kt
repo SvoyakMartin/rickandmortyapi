@@ -8,7 +8,7 @@ import ru.svoyakmartin.rickandmortyapi.data.db.models.Location
 import ru.svoyakmartin.rickandmortyapi.data.remote.retrofit.ApiService
 import javax.inject.Inject
 
-class Repository (private val roomDAO: RoomDAO) {
+class Repository @Inject constructor(private val roomDAO: RoomDAO) {
     val allCharacters = roomDAO.getAllCharacters()
     val allLocations = roomDAO.getAllLocations()
     val allEpisodes = roomDAO.getAllEpisodes()

@@ -63,7 +63,7 @@ class UserPreferencesRepository private constructor(context: Context) {
         }
     }
 
-    fun SharedPreferences.change(block: SharedPreferences.Editor.() -> Unit) {
+    private fun SharedPreferences.change(block: SharedPreferences.Editor.() -> Unit) {
         edit().apply {
             block()
             apply()

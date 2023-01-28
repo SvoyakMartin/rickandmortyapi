@@ -5,6 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.svoyakmartin.rickandmortyapi.data.repository.Repository
+import javax.inject.Inject
 
 class CharactersViewModel(private val repository: Repository) : ViewModel() {
     val allCharacters = repository.allCharacters
@@ -17,7 +18,8 @@ class CharactersViewModel(private val repository: Repository) : ViewModel() {
     }
 }
 
-class CharactersViewModelFactory(private val repository: Repository) : ViewModelProvider.Factory {
+class CharactersViewModelFactory @Inject constructor(private val repository: Repository) :
+    ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(CharactersViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")

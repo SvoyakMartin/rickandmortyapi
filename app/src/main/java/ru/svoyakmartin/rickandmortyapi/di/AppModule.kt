@@ -4,22 +4,24 @@ import android.app.Application
 import android.content.Context
 import dagger.Module
 import dagger.Provides
+import ru.svoyakmartin.rickandmortyapi.data.db.RoomDAO
 import ru.svoyakmartin.rickandmortyapi.data.db.RoomDB
 import javax.inject.Singleton
 
 
-@Module(includes = [NetworkModule::class, NetworkModule::class])
+@Module
 class AppModule(private val application: Application) {
 
     @Singleton
     @Provides
     fun provideAppContext(): Context {
-        return application
+        return application.applicationContext
     }
-    @Provides
+
     @Singleton
-    fun provideRoomDB(): RoomDB {
-        return RoomDB.getDatabase(application)
+    @Provides
+    fun provideRoomDAO(): RoomDAO {
+        return RoomDB.getDatabase(application).getDao()
     }
 
 

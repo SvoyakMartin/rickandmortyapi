@@ -1,11 +1,12 @@
 package ru.svoyakmartin.rickandmortyapi.presentation.fragments
 
+import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -22,11 +23,18 @@ import ru.svoyakmartin.rickandmortyapi.presentation.customView.LastSeenAnimView.
 import ru.svoyakmartin.rickandmortyapi.presentation.util.serializable
 import ru.svoyakmartin.rickandmortyapi.presentation.viewModels.CharacterDetailsViewModel
 import ru.svoyakmartin.rickandmortyapi.presentation.viewModels.CharacterDetailsViewModelFactory
+import javax.inject.Inject
 
 class CharacterDetailsFragment : Fragment() {
-    private val viewModel: CharacterDetailsViewModel by viewModels {
-        CharacterDetailsViewModelFactory((requireActivity().application as App).repository)
+    @Inject
+    lateinit var viewModelFactory: CharacterDetailsViewModelFactory
+    private val viewModel: CharacterDetailsViewModel by viewModels { viewModelFactory }
+
+    override fun onAttach(context: Context) {
+        (requireActivity().application as App).appComponent.inject(this)
+        super.onAttach(context)
     }
+
     private lateinit var binding: FragmentCharacterDetailsBinding
     private var originLocation: Location? = null
     private var lastSeenLocation: Location? = null
