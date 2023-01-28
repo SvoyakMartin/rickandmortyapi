@@ -5,25 +5,27 @@ import ru.svoyakmartin.rickandmortyapi.data.db.RoomDAO
 import ru.svoyakmartin.rickandmortyapi.data.db.models.Character
 import ru.svoyakmartin.rickandmortyapi.data.db.models.Episode
 import ru.svoyakmartin.rickandmortyapi.data.db.models.Location
-import ru.svoyakmartin.rickandmortyapi.data.remote.retrofit.RickAndMortyApi
+import ru.svoyakmartin.rickandmortyapi.data.remote.retrofit.ApiService
+import javax.inject.Inject
 
-class Repository(private val roomDAO: RoomDAO) {
+class Repository (private val roomDAO: RoomDAO) {
     val allCharacters = roomDAO.getAllCharacters()
     val allLocations = roomDAO.getAllLocations()
     val allEpisodes = roomDAO.getAllEpisodes()
     private val settings = UserPreferencesRepository.getInstance()!!
     private var lastPage = settings.readSavedLastPage()
-    private val retrofit = RickAndMortyApi.retrofitService
+    @Inject
+    lateinit var apiService: ApiService
     private lateinit var statistic: Map<String, Int>
 
     suspend fun getStatistic() {
-        retrofit.getStatistic().body()?.let {
+        apiService.getStatistic().body()?.let {
             statistic = it.toMap()
         }
     }
 
     suspend fun getCharactersPartFromWeb() {
-        val response = retrofit.getCharacters(lastPage)
+        val response = apiService.getCharacters(lastPage)
         response.body()?.apply {
             val characters = ArrayList<Character>()
             val charactersEpisodes = mutableMapOf<Int, List<Int>>()
@@ -59,7 +61,7 @@ class Repository(private val roomDAO: RoomDAO) {
     }
 
     suspend fun getEpisodesByIds(ids: String) {
-        val response = retrofit.getEpisodesByIds(ids)
+        val response = apiService.getEpisodesByIds(ids)
         response.body()?.apply {
             val episodes = ArrayList<Episode>()
             val charactersEpisodes = mutableMapOf<Int, List<Int>>()

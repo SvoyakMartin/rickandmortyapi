@@ -1,29 +1,45 @@
 package ru.svoyakmartin.rickandmortyapi.data.remote.retrofit
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import ru.svoyakmartin.rickandmortyapi.BuildConfig
 
-private const val BASE_URL = "https://rickandmortyapi.com/api/"
-private val contentType = "application/json".toMediaType()
+const val BASE_URL = "https://rickandmortyapi.com/api/"
 
-private val client = OkHttpClient()
-    .newBuilder()
-    .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
-    .build()
+fun getOkHttpClient(): OkHttpClient {
+    return OkHttpClient()
+        .newBuilder()
+        .addInterceptor(
+            HttpLoggingInterceptor().setLevel(
+                if (BuildConfig.DEBUG)
+                    HttpLoggingInterceptor.Level.BASIC
+                else
+                    HttpLoggingInterceptor.Level.NONE
+            )
+        )
+        .build()
+}
 
-private val json = Json { ignoreUnknownKeys = true }
+fun getJson(): Json {
+    return Json { ignoreUnknownKeys = true }
+}
 
-private val retrofit = Retrofit.Builder()
-    .baseUrl(BASE_URL)
-    .addConverterFactory(json.asConverterFactory(contentType))
-    .client(client)
-    .build()
+@OptIn(ExperimentalSerializationApi::class)
+fun getRetrofit (json: Json): Retrofit {
+    return Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+        // TODO: add call
+        .client(getOkHttpClient())
+        .build()
+}
 
-object RickAndMortyApi {
+class RickAndMortyApi(retrofit: Retrofit) {
     val retrofitService: ApiService by lazy {
         retrofit.create(ApiService::class.java)
     }
