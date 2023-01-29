@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import ru.svoyakmartin.rickandmortyapi.DB_NAME
 import ru.svoyakmartin.rickandmortyapi.data.db.models.*
 
 @Database(
@@ -19,7 +20,7 @@ abstract class RoomDB : RoomDatabase() {
         @Volatile
         private var INSTANCE: RoomDB? = null
 
-        fun getDatabase(context: Context): RoomDB {
+        fun getDatabase (context: Context): RoomDB {
             return (INSTANCE ?: synchronized(this) {
                 INSTANCE?.let {
                     return it
@@ -28,7 +29,7 @@ abstract class RoomDB : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     RoomDB::class.java,
-                    "DB.db"
+                    DB_NAME
                 )
                     .build()
                 INSTANCE = instance

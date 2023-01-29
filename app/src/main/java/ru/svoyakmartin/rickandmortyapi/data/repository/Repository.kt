@@ -6,86 +6,88 @@ import ru.svoyakmartin.rickandmortyapi.data.db.models.Character
 import ru.svoyakmartin.rickandmortyapi.data.db.models.Episode
 import ru.svoyakmartin.rickandmortyapi.data.db.models.Location
 import ru.svoyakmartin.rickandmortyapi.data.remote.retrofit.ApiService
+import ru.svoyakmartin.rickandmortyapi.di.annotations.AppScope
 import javax.inject.Inject
 
-class Repository @Inject constructor(private val roomDAO: RoomDAO) {
+@AppScope
+class Repository @Inject constructor(
+    private val roomDAO: RoomDAO,
+    private val settings: UserPreferencesRepository,
+    private val apiService: ApiService
+) {
     val allCharacters = roomDAO.getAllCharacters()
-    val allLocations = roomDAO.getAllLocations()
-    val allEpisodes = roomDAO.getAllEpisodes()
-    private val settings = UserPreferencesRepository.getInstance()!!
-    private var lastPage = settings.readSavedLastPage()
-    @Inject
-    lateinit var apiService: ApiService
-    private lateinit var statistic: Map<String, Int>
+//    val allLocations = roomDAO.getAllLocations()
+//    val allEpisodes = roomDAO.getAllEpisodes()
+    private var charactersLastPage = settings.readSavedCharactersLastPage()
+//    private lateinit var statistic: Map<String, Int>
 
-    suspend fun getStatistic() {
-        apiService.getStatistic().body()?.let {
-            statistic = it.toMap()
-        }
-    }
+//    suspend fun getStatistic() {
+//        apiService.getStatistic().body()?.let {
+//            statistic = it.toMap()
+//        }
+//    }
 
-    suspend fun getCharactersPartFromWeb() {
-        val response = apiService.getCharacters(lastPage)
+    suspend fun fetchNextCharactersPartFromWeb() {
+        val response = apiService.getCharacters(charactersLastPage)
         response.body()?.apply {
-            val characters = ArrayList<Character>()
-            val charactersEpisodes = mutableMapOf<Int, List<Int>>()
+            val charactersList = ArrayList<Character>()
+            val charactersAndEpisodesIdsMap = mutableMapOf<Int, List<Int>>()
 
-            results.forEach {
-                val character = it.toCharacter()
-                characters.add(character)
-                charactersEpisodes[character.id] = it.getEpisodesIds()
+            results.forEach { characterDTO ->
+                val character = characterDTO.toCharacter()
+                charactersList.add(character)
+                charactersAndEpisodesIdsMap[character.id] = characterDTO.getEpisodesIds()
             }
 
-            if (info.pages > lastPage) {
-                settings.saveLastPage(++lastPage)
+            if (info.pages > charactersLastPage) {
+                settings.saveCharactersLastPage(++charactersLastPage)
             }
 
-            roomDAO.insertCharactersAndDependencies(characters, charactersEpisodes)
+            roomDAO.insertCharactersAndDependencies(charactersList, charactersAndEpisodesIdsMap)
         }
-
     }
 
-    fun getLocation(id: Int): Flow<Location?> {
-        return roomDAO.getLocation(id)
+    fun getLocationById(id: Int): Flow<Location?> {
+        return roomDAO.getLocationById(id)
     }
 
-    fun getMissingEpisodeIdsByCharacterId(characterId: Int): Flow<List<Int>?> {
+    private fun getMissingEpisodeIdsByCharacterId(characterId: Int): Flow<List<Int>?> {
         return roomDAO.getMissingEpisodeIdsByCharacterId(characterId)
     }
 
-    suspend fun insertEpisodesAndDependencies(
-        episodes: List<Episode>,
-        charactersEpisodes: Map<Int, List<Int>>
+    private suspend fun insertEpisodesAndDependencies(
+        episodesList: List<Episode>,
+        charactersAndEpisodesIdsMap: Map<Int, List<Int>>
     ) {
-        roomDAO.insertEpisodesAndDependencies(episodes, charactersEpisodes)
+        roomDAO.insertEpisodesAndDependencies(episodesList, charactersAndEpisodesIdsMap)
     }
 
-    suspend fun getEpisodesByIds(ids: String) {
+    private suspend fun fetchEpisodesByIds(ids: String) {
         val response = apiService.getEpisodesByIds(ids)
         response.body()?.apply {
-            val episodes = ArrayList<Episode>()
-            val charactersEpisodes = mutableMapOf<Int, List<Int>>()
+            val episodesList = ArrayList<Episode>()
+            val charactersAndEpisodesIdsMap = mutableMapOf<Int, List<Int>>()
 
-            forEach {
-                val episode = it.toEpisode()
-                episodes.add(episode)
-                charactersEpisodes[it.id] = it.getCharactersIds()
+            forEach { episodeDTO ->
+                val episode = episodeDTO.toEpisode()
+                episodesList.add(episode)
+                charactersAndEpisodesIdsMap[episodeDTO.id] = episodeDTO.getCharactersIds()
             }
 
-            insertEpisodesAndDependencies(episodes, charactersEpisodes)
+            insertEpisodesAndDependencies(episodesList, charactersAndEpisodesIdsMap)
         }
     }
 
-    fun getEpisodesByCharactersId(characterId: Int): Flow<List<Episode>?> {
+    fun getEpisodesByCharacterId(characterId: Int): Flow<List<Episode>?> {
         return flow {
             getMissingEpisodeIdsByCharacterId(characterId)
-                .collect {
-                    if (!it.isNullOrEmpty()) {
-                        getEpisodesByIds(it.joinToString())
+                .collect { episodeIdsList ->
+                    if (!episodeIdsList.isNullOrEmpty()) {
+                        fetchEpisodesByIds(episodeIdsList.joinToString())
                     }
 
-                    roomDAO.getEpisodesByCharactersId(characterId).collect {
-                        emit(it)
+                    roomDAO.getEpisodesByCharactersId(characterId).collect { episodesList ->
+                        emit(episodesList)
                     }
                 }
         }

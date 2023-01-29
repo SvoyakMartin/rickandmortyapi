@@ -1,4 +1,4 @@
-package ru.svoyakmartin.rickandmortyapi.di
+package ru.svoyakmartin.rickandmortyapi.di.modules
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
@@ -12,31 +12,34 @@ import retrofit2.Converter
 import retrofit2.Retrofit
 import ru.svoyakmartin.rickandmortyapi.BuildConfig
 import ru.svoyakmartin.rickandmortyapi.data.remote.retrofit.ApiService
-import ru.svoyakmartin.rickandmortyapi.data.remote.retrofit.BASE_URL
-import javax.inject.Singleton
+import ru.svoyakmartin.rickandmortyapi.di.annotations.AppScope
 
 @Module
 class NetworkModule {
-    private val json = Json {ignoreUnknownKeys = true}
+    private val json = Json { ignoreUnknownKeys = true }
 
+    @AppScope
     @Provides
     fun provideApiService(retrofit: Retrofit): ApiService {
         return retrofit.create(ApiService::class.java)
     }
 
+    @AppScope
     @Provides
     fun provideRetrofit(
+        baseUrl: String,
         okHttpClient: OkHttpClient,
         jsonConverterFactory: Converter.Factory
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(baseUrl)
             .addConverterFactory(jsonConverterFactory)
             // TODO: add call
             .client(okHttpClient)
             .build()
     }
 
+    @AppScope
     @Provides
     fun provideOkHttpClient(
         httpLoggingInterceptor: HttpLoggingInterceptor
@@ -47,6 +50,7 @@ class NetworkModule {
             .build()
     }
 
+    @AppScope
     @Provides
     fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
         return HttpLoggingInterceptor().setLevel(
@@ -57,9 +61,12 @@ class NetworkModule {
         )
     }
 
-    @Singleton
+    @AppScope
     @Provides
     @OptIn(ExperimentalSerializationApi::class)
-    fun provideJsonConverterFactory(): Converter.Factory = json.asConverterFactory("application/json".toMediaType())
+    fun provideJsonConverterFactory(): Converter.Factory =
+        json.asConverterFactory("application/json".toMediaType())
 
+    @Provides
+    fun provideBaseUrl() = "https://rickandmortyapi.com/api/"
 }

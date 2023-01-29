@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import dagger.Lazy
 import kotlinx.coroutines.launch
 import ru.svoyakmartin.rickandmortyapi.App
 import ru.svoyakmartin.rickandmortyapi.R
@@ -22,14 +23,14 @@ import ru.svoyakmartin.rickandmortyapi.data.db.models.Character
 import ru.svoyakmartin.rickandmortyapi.presentation.adapters.CharactersAdapter
 import ru.svoyakmartin.rickandmortyapi.presentation.adapters.CharactersClickListener
 import ru.svoyakmartin.rickandmortyapi.presentation.viewModels.CharactersViewModel
-import ru.svoyakmartin.rickandmortyapi.presentation.viewModels.CharactersViewModelFactory
+import ru.svoyakmartin.rickandmortyapi.presentation.viewModels.ViewModelFactory
 import javax.inject.Inject
 
 
 class CharactersFragment : Fragment(), CharactersClickListener {
     @Inject
-    lateinit var viewModelFactory: CharactersViewModelFactory
-    private val viewModel: CharactersViewModel by viewModels { viewModelFactory }
+    lateinit var viewModelFactory: Lazy<ViewModelFactory>
+    private val viewModel: CharactersViewModel by viewModels { viewModelFactory.get() }
     private lateinit var binding: FragmentCharactersBinding
     private val adapter = CharactersAdapter(this)
     private var isLoading = false
@@ -83,7 +84,7 @@ class CharactersFragment : Fragment(), CharactersClickListener {
         if (!isLoading) {
             isLoading = true
             binding.loadingProgressBar.visibility = View.VISIBLE
-            viewModel.getCharacters()
+            viewModel.fetchNextCharactersPartFromWeb()
         }
     }
 

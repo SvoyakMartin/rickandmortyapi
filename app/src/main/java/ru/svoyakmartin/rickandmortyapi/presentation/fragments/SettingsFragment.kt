@@ -1,16 +1,27 @@
 package ru.svoyakmartin.rickandmortyapi.presentation.fragments
 
+import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.Fragment
+import ru.svoyakmartin.rickandmortyapi.App
 import ru.svoyakmartin.rickandmortyapi.data.repository.UserPreferencesRepository
 import ru.svoyakmartin.rickandmortyapi.databinding.FragmentSettingsBinding
+import javax.inject.Inject
 
 class SettingsFragment : Fragment() {
     private lateinit var binding: FragmentSettingsBinding
+
+    @Inject
+    lateinit var settings: UserPreferencesRepository
+
+    override fun onAttach(context: Context) {
+        (requireActivity().application as App).appComponent.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,8 +38,6 @@ class SettingsFragment : Fragment() {
     }
 
     private fun initViews() {
-        val settings = UserPreferencesRepository.getInstance(requireActivity())
-
         with(binding) {
 
             themeRadioGroup.setOnCheckedChangeListener { _, id ->

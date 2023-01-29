@@ -16,6 +16,7 @@ fun <T : Serializable?> Bundle.serializable(key: String, clazz: Class<T>): T {
         (getSerializable(key) as T)
 }
 
+@Suppress("UNUSED")
 val Context.appComponent: AppComponent
     get() = when (this){
         is App -> appComponent

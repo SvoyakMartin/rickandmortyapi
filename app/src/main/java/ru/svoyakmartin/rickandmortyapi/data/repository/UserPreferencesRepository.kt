@@ -3,6 +3,7 @@ package ru.svoyakmartin.rickandmortyapi.data.repository
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
+import ru.svoyakmartin.rickandmortyapi.PREFERENCE_FILE_KEY
 
 
 class UserPreferencesRepository private constructor(context: Context) {
@@ -27,34 +28,27 @@ class UserPreferencesRepository private constructor(context: Context) {
         saveNightMode(mode)
     }
 
-    fun saveLastPage(page: Int) {
+    fun saveCharactersLastPage(page: Int) {
         sharedPreferences.change {
-            putInt(LAST_PAGE_KEY, page)
+            putInt(CHARACTERS_LAST_PAGE_KEY, page)
         }
     }
 
-    fun readSavedLastPage(): Int {
-        return sharedPreferences.getInt(LAST_PAGE_KEY, 1)
+    fun readSavedCharactersLastPage(): Int {
+        return sharedPreferences.getInt(CHARACTERS_LAST_PAGE_KEY, 1)
     }
 
+
     companion object {
-        const val PREFERENCE_FILE_KEY = "settings"
         const val NIGHT_MODE_KEY = "nightMode"
-        const val LAST_PAGE_KEY = "lastPage"
+        const val CHARACTERS_LAST_PAGE_KEY = "charactersLastPage"
 
         @Volatile
         private var INSTANCE: UserPreferencesRepository? = null
 
-        fun getInstance(): UserPreferencesRepository? {
-            return INSTANCE
-
-        }
-
         fun getInstance(context: Context): UserPreferencesRepository {
             return INSTANCE ?: synchronized(this) {
-                INSTANCE?.let {
-                    return it
-                }
+                INSTANCE?.let { return it }
 
                 val instance = UserPreferencesRepository(context)
                 INSTANCE = instance

@@ -2,10 +2,8 @@ package ru.svoyakmartin.rickandmortyapi.data.db
 
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
-import ru.svoyakmartin.rickandmortyapi.data.db.models.Character
-import ru.svoyakmartin.rickandmortyapi.data.db.models.CharactersAndEpisodes
-import ru.svoyakmartin.rickandmortyapi.data.db.models.Episode
-import ru.svoyakmartin.rickandmortyapi.data.db.models.Location
+import ru.svoyakmartin.rickandmortyapi.*
+import ru.svoyakmartin.rickandmortyapi.data.db.models.*
 
 @Dao
 interface RoomDAO {
@@ -19,108 +17,107 @@ interface RoomDAO {
     fun getAllEpisodes(): Flow<List<Episode>?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertCharacter(character: Character)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCharacters(characters: List<Character>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertEpisodes(episodes: List<Episode>)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertLocations(episodes: List<Location>)
+
     @Transaction
     suspend fun insertCharactersAndDependencies(
-        characters: List<Character>,
-        charactersEpisodes: Map<Int, List<Int>>
+        charactersList: List<Character>,
+        charactersAndEpisodesIdsMap: Map<Int, List<Int>>
     ) {
-        val charactersEpisodesList = arrayListOf<CharactersAndEpisodes>()
+        val charactersAndEpisodesList = arrayListOf<CharactersAndEpisodes>()
 
-        charactersEpisodes.forEach { (characterID, episodeIds) ->
+        charactersAndEpisodesIdsMap.forEach { (characterID, episodeIds) ->
             episodeIds.forEach { episodeId ->
-                charactersEpisodesList.add(CharactersAndEpisodes(characterID, episodeId))
+                charactersAndEpisodesList.add(CharactersAndEpisodes(characterID, episodeId))
             }
         }
 
-        insertCharacters(characters)
-        insertCharactersAndEpisodes(charactersEpisodesList)
+        insertCharacters(charactersList)
+        insertCharactersAndEpisodes(charactersAndEpisodesList)
     }
 
     @Transaction
     suspend fun insertEpisodesAndDependencies(
-        episodes: List<Episode>,
-        charactersEpisodes: Map<Int, List<Int>>
+        episodesList: List<Episode>,
+        charactersAndEpisodesIdsMap: Map<Int, List<Int>>
     ) {
-        val charactersEpisodesList = arrayListOf<CharactersAndEpisodes>()
+        val charactersAndEpisodesList = arrayListOf<CharactersAndEpisodes>()
 
-        charactersEpisodes.forEach { (episodeID, charactersIds) ->
+        charactersAndEpisodesIdsMap.forEach { (episodeID, charactersIds) ->
             charactersIds.forEach { characterID ->
-                charactersEpisodesList.add(CharactersAndEpisodes(characterID, episodeID))
+                charactersAndEpisodesList.add(CharactersAndEpisodes(characterID, episodeID))
             }
         }
 
-        insertEpisodes(episodes)
-        insertCharactersAndEpisodes(charactersEpisodesList)
+        insertEpisodes(episodesList)
+        insertCharactersAndEpisodes(charactersAndEpisodesList)
     }
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCharactersAndEpisodes(charactersEpisodes: List<CharactersAndEpisodes>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertLocation(location: Location)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertEpisode(episode: Episode)
+    suspend fun insertCharactersAndLocation(charactersEpisodes: List<CharactersAndLocations>)
 
     @Query(
-        "SELECT * " +
-                "FROM characters " +
-                "WHERE id IN (" +
-                "   SELECT characterId " +
-                "   FROM characters_locations " +
-                "   WHERE locationId = :locationId" +
+        "SELECT * \n" +
+                "FROM $CHARACTERS_TABLE_NAME \n" +
+                "WHERE id IN ( \n" +
+                "   SELECT characterId \n" +
+                "   FROM $CHARACTERS_LOCATIONS_TABLE_NAME \n" +
+                "   WHERE locationId = :locationId \n" +
                 ")"
     )
-    fun getCharactersFromLocation(locationId: Int): Flow<List<Character>>
+    fun getCharactersFromLocationId(locationId: Int): Flow<List<Character>>
 
     @Query(
-        "SELECT * " +
-                "FROM characters " +
-                "WHERE id IN (" +
-                "   SELECT characterId " +
-                "   FROM characters_episodes " +
-                "   WHERE episodeId = :episodeId" +
+        "SELECT * \n" +
+                "FROM $CHARACTERS_TABLE_NAME \n" +
+                "WHERE id IN ( \n" +
+                "   SELECT characterId \n" +
+                "   FROM $CHARACTERS_EPISODES_TABLE_NAME \n" +
+                "   WHERE episodeId = :episodeId \n" +
                 ")"
     )
-    fun getCharactersFromEpisode(episodeId: Int): Flow<List<Character>>
+    fun getCharactersFromEpisodeId(episodeId: Int): Flow<List<Character>>
 
     @Query(
-        "SELECT * " +
-                "FROM locations " +
-                "WHERE id IN (" +
-                "   SELECT locationId " +
-                "   FROM characters_locations " +
-                "   WHERE characterId = :characterId" +
+        "SELECT * \n" +
+                "FROM $LOCATIONS_TABLE_NAME \n" +
+                "WHERE id IN ( \n" +
+                "   SELECT locationId \n" +
+                "   FROM $CHARACTERS_LOCATIONS_TABLE_NAME \n" +
+                "   WHERE characterId = :characterId \n" +
                 ")"
     )
-    fun getLocationsFromCharacter(characterId: Int): Flow<List<Location>>
+    fun getLocationsFromCharacterId(characterId: Int): Flow<List<Location>>
 
     @Query(
-        "SELECT * " +
-                "FROM episodes " +
-                "WHERE id IN (" +
-                "   SELECT episodeId " +
-                "   FROM characters_episodes " +
-                "   WHERE characterId = :characterId" +
+        "SELECT * \n" +
+                "FROM $EPISODES_TABLE_NAME \n" +
+                "WHERE id IN ( \n" +
+                "   SELECT episodeId \n" +
+                "   FROM $CHARACTERS_EPISODES_TABLE_NAME \n" +
+                "   WHERE characterId = :characterId \n" +
                 ")"
     )
     fun getEpisodesByCharactersId(characterId: Int): Flow<List<Episode>?>
 
-    @Query("SELECT episodeId AS id \n" +
-            "FROM characters_episodes \n" +
-            "LEFT JOIN episodes ON episodeId = id \n" +
-            "WHERE characterId = :characterId \n" +
-            "AND id IS NULL")
+    @Query(
+        "SELECT episodeId \n" +
+                "FROM $CHARACTERS_EPISODES_TABLE_NAME \n" +
+                "LEFT JOIN $EPISODES_TABLE_NAME ON episodeId = id \n" +
+                "WHERE characterId = :characterId \n" +
+                "AND id IS NULL"
+    )
     fun getMissingEpisodeIdsByCharacterId(characterId: Int): Flow<List<Int>?>
 
-    @Query("SELECT * FROM locations WHERE id = :id")
-    fun getLocation(id: Int): Flow<Location>
+    @Query("SELECT * FROM $LOCATIONS_TABLE_NAME WHERE id = :locationId")
+    fun getLocationById(locationId: Int): Flow<Location>
 }

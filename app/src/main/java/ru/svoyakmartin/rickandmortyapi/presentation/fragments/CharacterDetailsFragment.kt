@@ -12,6 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
+import dagger.Lazy
 import kotlinx.coroutines.launch
 import ru.svoyakmartin.rickandmortyapi.App
 import ru.svoyakmartin.rickandmortyapi.R
@@ -22,13 +23,13 @@ import ru.svoyakmartin.rickandmortyapi.databinding.FragmentCharacterDetailsBindi
 import ru.svoyakmartin.rickandmortyapi.presentation.customView.LastSeenAnimView.AliveStatus
 import ru.svoyakmartin.rickandmortyapi.presentation.util.serializable
 import ru.svoyakmartin.rickandmortyapi.presentation.viewModels.CharacterDetailsViewModel
-import ru.svoyakmartin.rickandmortyapi.presentation.viewModels.CharacterDetailsViewModelFactory
+import ru.svoyakmartin.rickandmortyapi.presentation.viewModels.ViewModelFactory
 import javax.inject.Inject
 
 class CharacterDetailsFragment : Fragment() {
     @Inject
-    lateinit var viewModelFactory: CharacterDetailsViewModelFactory
-    private val viewModel: CharacterDetailsViewModel by viewModels { viewModelFactory }
+    lateinit var viewModelFactory: Lazy<ViewModelFactory>
+    private val viewModel: CharacterDetailsViewModel by viewModels { viewModelFactory.get() }
 
     override fun onAttach(context: Context) {
         (requireActivity().application as App).appComponent.inject(this)
@@ -69,7 +70,7 @@ class CharacterDetailsFragment : Fragment() {
 
                         location?.let {
                             launch {
-                                viewModel.getLocation(it)
+                                viewModel.getLocationById(it)
                                     .collect {
                                         lastSeenLocation = it
                                         setLastSeen()
@@ -81,7 +82,7 @@ class CharacterDetailsFragment : Fragment() {
                             setOrigin()
                         } else {
                             launch {
-                                viewModel.getLocation(origin)
+                                viewModel.getLocationById(origin)
                                     .collect {
                                         originLocation = it
                                         setOrigin()
