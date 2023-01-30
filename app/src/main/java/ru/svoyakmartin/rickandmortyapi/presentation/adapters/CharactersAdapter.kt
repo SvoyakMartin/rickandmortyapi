@@ -1,4 +1,4 @@
-package ru.svoyakmartin.rickandmortyapi.presentation.adapters
+package ru.svoyakmartin.rickandmortyapi.screens.main.characters
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import ru.svoyakmartin.rickandmortyapi.databinding.CharacterItemViewBinding
-import ru.svoyakmartin.rickandmortyapi.data.db.models.Character
+import ru.svoyakmartin.rickandmortyapi.domain.models.Character
 import ru.svoyakmartin.rickandmortyapi.presentation.viewHolders.CharactersViewHolder
 
 class CharactersAdapter(

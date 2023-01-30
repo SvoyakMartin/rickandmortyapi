@@ -9,11 +9,12 @@
 
     <ImageView
         android:id="@+id/character_image"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:padding="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_launcher_foreground"
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
@@ -28,23 +29,23 @@
         tools:text="Rick" />
 
     <TextView
-        android:id="@+id/character_species"
+        android:id="@+id/first_seen_in"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textAppearance="?attr/textAppearanceBody1"
+        android:text="@string/first_seen_in"
+        android:textAppearance="?attr/textAppearanceBody2"
         app:layout_constraintEnd_toEndOf="@+id/character_name"
         app:layout_constraintStart_toStartOf="@+id/character_name"
-        app:layout_constraintTop_toBottomOf="@+id/character_name"
-        tools:text="Human" />
+        app:layout_constraintTop_toBottomOf="@+id/character_name" />
 
     <TextView
-        android:id="@+id/character_gender"
+        android:id="@+id/episode_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textAppearance="?attr/textAppearanceBody1"
         app:layout_constraintEnd_toEndOf="@+id/character_name"
         app:layout_constraintStart_toStartOf="@+id/character_name"
-        app:layout_constraintTop_toBottomOf="@+id/character_species"
-        tools:text="Male" />
+        app:layout_constraintTop_toBottomOf="@+id/first_seen_in"
+        tools:text="Close Rick-counters of the Rick Kind" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
