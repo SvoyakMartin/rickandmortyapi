@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="8dp"
+    tools:context=".presentation.fragments.CharacterDetailsFragment">
+
+    <ImageView
+        android:id="@+id/character_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription"
+        tools:src="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/character_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:textAppearance="?attr/textAppearanceHeadline4"
+        app:layout_constraintEnd_toStartOf="@id/last_seen"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/character_image"
+        tools:text="Rick" />
+
+    <TextView
+        android:id="@+id/character_species"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceBody1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/character_name"
+        tools:text="Human" />
+
+    <TextView
+        android:id="@+id/character_gender"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceBody1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/character_species"
+        tools:text="MALE" />
+
+    <TextView
+        android:id="@+id/character_origin_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceBody1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/character_gender"
+        tools:text="@string/origin_location_text" />
+
+    <TextView
+        android:id="@+id/character_episodes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceBody1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/character_origin_location"
+        tools:text="Episodes: 13" />
+
+    <TextView
+        android:id="@+id/show_hide_episodes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="8dp"
+        android:paddingEnd="0dp"
+        android:textAppearance="?attr/textAppearanceBody1"
+        android:textColor="@color/dark_green"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@id/character_episodes"
+        app:layout_constraintTop_toTopOf="@id/character_episodes"
+        android:text="@string/episodes_show"
+        tools:visibility="visible" />
+
+    <ru.svoyakmartin.rickandmortyapi.presentation.customView.LastSeenAnimView
+        android:id="@+id/last_seen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/character_image" />
+
+    <ScrollView
+        android:id="@+id/episodes_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/character_episodes">
+
+        <LinearLayout
+            android:id="@+id/episodes_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible" />
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
