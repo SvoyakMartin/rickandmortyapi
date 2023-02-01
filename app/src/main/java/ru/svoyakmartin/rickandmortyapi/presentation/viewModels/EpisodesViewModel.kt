@@ -8,8 +8,8 @@ import ru.svoyakmartin.rickandmortyapi.data.repository.Repository
 import ru.svoyakmartin.rickandmortyapi.presentation.util.stateInStarted5000
 import javax.inject.Inject
 
-class CharactersViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
-    val allCharacters = repository.allCharacters
+class EpisodesViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
+    val allEpisodes = repository.allEpisodes
         .flowOn(Dispatchers.IO)
         .conflate()
         .stateInStarted5000(viewModelScope, listOf())
@@ -22,7 +22,7 @@ class CharactersViewModel @Inject constructor(private val repository: Repository
         _isLoading.value = value
     }
 
-    fun fetchNextCharactersPartFromWeb() = viewModelScope.launch {
-        repository.fetchNextCharactersPartFromWeb()
+    fun fetchNextEpisodesPartFromWeb() = viewModelScope.launch {
+        repository.fetchNextEpisodesPartFromWeb()
     }
 }

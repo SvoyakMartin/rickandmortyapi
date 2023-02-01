@@ -16,9 +16,11 @@ class Repository @Inject constructor(
     private val apiService: ApiService
 ) {
     val allCharacters = roomDAO.getAllCharacters()
-//    val allLocations = roomDAO.getAllLocations()
-//    val allEpisodes = roomDAO.getAllEpisodes()
+    val allLocations = roomDAO.getAllLocations()
+    val allEpisodes = roomDAO.getAllEpisodes()
     private var charactersLastPage = settings.readSavedCharactersLastPage()
+    private var episodesLastPage = settings.readSavedEpisodesLastPage()
+    private var locationsLastPage = settings.readSavedLocationsLastPage()
 //    private lateinit var statistic: Map<String, Int>
 
 //    suspend fun getStatistic() {
@@ -47,20 +49,60 @@ class Repository @Inject constructor(
         }
     }
 
-    fun getLocationById(id: Int): Flow<Location?> {
-        return roomDAO.getLocationById(id)
+    suspend fun fetchNextEpisodesPartFromWeb() {
+        val response = apiService.getEpisodes(episodesLastPage)
+        response.body()?.apply {
+            val episodesList = ArrayList<Episode>()
+            val charactersAndEpisodesIdsMap = mutableMapOf<Int, List<Int>>()
+
+            results.forEach { episodesDTO ->
+                val episode = episodesDTO.toEpisode()
+                episodesList.add(episode)
+                charactersAndEpisodesIdsMap[episode.id] = episodesDTO.getCharactersIds()
+            }
+
+            if (info.pages > episodesLastPage) {
+                settings.saveEpisodesLastPage(++episodesLastPage)
+            }
+
+            roomDAO.insertEpisodesAndDependencies(episodesList, charactersAndEpisodesIdsMap)
+        }
     }
 
-    private fun getMissingEpisodeIdsByCharacterId(characterId: Int): Flow<List<Int>?> {
-        return roomDAO.getMissingEpisodeIdsByCharacterId(characterId)
+    suspend fun fetchNextLocationsPartFromWeb() {
+        val response = apiService.getLocations(locationsLastPage)
+        response.body()?.apply {
+            val locationsList = ArrayList<Location>()
+            val charactersAndLocationsIdsMap = mutableMapOf<Int, List<Int>>()
+
+            results.forEach { locationsDTO ->
+                val location = locationsDTO.toLocation()
+                locationsList.add(location)
+                charactersAndLocationsIdsMap[location.id] = locationsDTO.getCharactersIds()
+            }
+
+            if (info.pages > locationsLastPage) {
+                settings.saveLocationsLastPage(++locationsLastPage)
+            }
+
+            roomDAO.insertLocationsAndDependencies(locationsList, charactersAndLocationsIdsMap)
+        }
     }
 
-    private suspend fun insertEpisodesAndDependencies(
-        episodesList: List<Episode>,
-        charactersAndEpisodesIdsMap: Map<Int, List<Int>>
-    ) {
-        roomDAO.insertEpisodesAndDependencies(episodesList, charactersAndEpisodesIdsMap)
+    fun getLocationById(locationId: Int): Flow<Location?> {
+        return flow {
+            roomDAO.getLocationById(locationId)
+                .collect { location ->
+
+                    if (location != null) {
+                        emit(location)
+                    } else {
+                        emit(fetchLocationById(locationId.toString()))
+                    }
+                }
+        }
     }
+
 
     private suspend fun fetchEpisodesByIds(ids: String) {
         val response = apiService.getEpisodesByIds(ids)
@@ -74,20 +116,86 @@ class Repository @Inject constructor(
                 charactersAndEpisodesIdsMap[episodeDTO.id] = episodeDTO.getCharactersIds()
             }
 
-            insertEpisodesAndDependencies(episodesList, charactersAndEpisodesIdsMap)
+            roomDAO.insertEpisodesAndDependencies(episodesList, charactersAndEpisodesIdsMap)
+        }
+    }
+
+    private suspend fun fetchLocationById(id: String): Location? {
+        val response = apiService.getLocationById(id)
+        response.body()?.apply {
+            val location = this.toLocation()
+
+            val charactersAndLocationsIdsMap = mutableMapOf<Int, List<Int>>()
+
+            charactersAndLocationsIdsMap[location.id] = this.getCharactersIds()
+
+            roomDAO.insertLocationsAndDependencies(
+                arrayListOf(location),
+                charactersAndLocationsIdsMap
+            )
+
+            return location
+        }
+        return null
+    }
+
+
+    private suspend fun fetchCharactersByIds(ids: String) {
+        val response = apiService.getCharactersById(ids)
+        response.body()?.apply {
+            val charactersList = ArrayList<Character>()
+            val charactersAndEpisodesIdsMap = mutableMapOf<Int, List<Int>>()
+
+            forEach { characterDTO ->
+                val character = characterDTO.toCharacter()
+                charactersList.add(character)
+                charactersAndEpisodesIdsMap[characterDTO.id] = characterDTO.getEpisodesIds()
+            }
+
+            roomDAO.insertCharactersAndDependencies(charactersList, charactersAndEpisodesIdsMap)
         }
     }
 
     fun getEpisodesByCharacterId(characterId: Int): Flow<List<Episode>?> {
         return flow {
-            getMissingEpisodeIdsByCharacterId(characterId)
+            roomDAO.getMissingEpisodeIdsByCharacterId(characterId)
                 .collect { episodeIdsList ->
                     if (!episodeIdsList.isNullOrEmpty()) {
                         fetchEpisodesByIds(episodeIdsList.joinToString())
                     }
 
-                    roomDAO.getEpisodesByCharactersId(characterId).collect { episodesList ->
+                    roomDAO.getEpisodesByCharacterId(characterId).collect { episodesList ->
                         emit(episodesList)
+                    }
+                }
+        }
+    }
+
+    fun getCharactersByEpisodeId(episodeId: Int): Flow<List<Character>?> {
+        return flow {
+            roomDAO.getMissingCharacterIdsByEpisodeId(episodeId)
+                .collect { characterIdsList ->
+                    if (!characterIdsList.isNullOrEmpty()) {
+                        fetchCharactersByIds(characterIdsList.joinToString())
+                    }
+
+                    roomDAO.getCharactersByEpisodeId(episodeId).collect { episodesList ->
+                        emit(episodesList)
+                    }
+                }
+        }
+    }
+
+    fun getCharactersByLocationId(locationId: Int): Flow<List<Character>?> {
+        return flow {
+            roomDAO.getMissingCharacterIdsByLocationId(locationId)
+                .collect { characterIdsList ->
+                    if (!characterIdsList.isNullOrEmpty()) {
+                        fetchCharactersByIds(characterIdsList.joinToString())
+                    }
+
+                    roomDAO.getCharactersByLocationId(locationId).collect { locationsList ->
+                        emit(locationsList)
                     }
                 }
         }

@@ -2,13 +2,13 @@ package ru.svoyakmartin.rickandmortyapi.presentation.viewHolders
 
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import ru.svoyakmartin.rickandmortyapi.databinding.CharacterItemViewBinding
 import ru.svoyakmartin.rickandmortyapi.data.db.models.Character
-import ru.svoyakmartin.rickandmortyapi.presentation.adapters.CharactersClickListener
+import ru.svoyakmartin.rickandmortyapi.databinding.CharacterItemBinding
+import ru.svoyakmartin.rickandmortyapi.presentation.adapters.CharacterClickListener
 
-class CharactersViewHolder(private val binding: CharacterItemViewBinding): RecyclerView.ViewHolder(binding.root){
+class CharactersViewHolder(private val binding: CharacterItemBinding): RecyclerView.ViewHolder(binding.root){
 
-    fun bind(item: Character, clickListener: CharactersClickListener){
+    fun bind(item: Character, clickListener: CharacterClickListener){
         with(binding){
             characterName.text = item.name
             characterGender.text = item.gender.name

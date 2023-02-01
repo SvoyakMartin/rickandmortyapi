@@ -6,10 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import ru.svoyakmartin.rickandmortyapi.R
 import ru.svoyakmartin.rickandmortyapi.databinding.ActivityMainBinding
-import ru.svoyakmartin.rickandmortyapi.presentation.fragments.CharactersFragment
-import ru.svoyakmartin.rickandmortyapi.presentation.fragments.EpisodesFragment
-import ru.svoyakmartin.rickandmortyapi.presentation.fragments.LocationsFragment
-import ru.svoyakmartin.rickandmortyapi.presentation.fragments.SettingsFragment
+import ru.svoyakmartin.rickandmortyapi.presentation.fragments.StartFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -21,45 +18,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         if (savedInstanceState == null) {
-            goToFragment(CharactersFragment())
-        }
-
-        with(binding) {
-            settingsButton.setOnClickListener { goToFragment(SettingsFragment(), true) }
-            charactersButton.setOnClickListener { goToFragment(CharactersFragment()) }
-            locationsButton.setOnClickListener { goToFragment(LocationsFragment()) }
-            episodesButton.setOnClickListener { goToFragment(EpisodesFragment()) }
+            goToFragment(StartFragment())
         }
     }
 
-    private fun goToFragment(fragment: Fragment, addToBackStack: Boolean = false) {
-        val tag = fragment::class.java.name.substringAfterLast('.')
-        val container = R.id.fragmentContainerView
-
-        supportFragmentManager.apply {
-//            val oldFragment = findFragmentByTag(tag)
-
-            commit {
-                setReorderingAllowed(true)
-
-                if (addToBackStack) {
-                    addToBackStack("UserStack")
-                }
-
-                replace(container, fragment, tag)
-
-                // TODO: додумать переиспользование фрагментов или сохранять скролл в самом фрагменте
-
-//                fragments.forEach {
-//                    hide(it)
-//                }
-//
-//                if (oldFragment == null) {
-//                    add(container, fragment, tag)
-//                } else {
-//                    show(oldFragment)
-//                }
-            }
+    private fun goToFragment(fragment: Fragment) {
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            replace(R.id.base_fragment_container, fragment)
         }
     }
 }

@@ -22,7 +22,7 @@ class LastSeenAnimView
     defStyleRS: Int = 0
 ) : View(context, attrs, defStyleAttr, defStyleRS) {
     private val circleRadius = context.toDp(12f)
-    private val circlePadding = context.toDp(8f)
+    private val circlePadding = context.toDp(4f)
     private val statusTextSize = context.toDp(20f)
     private val lastSeenTextSize = context.toDp(14f)
     private val locationTextSize = context.toDp(16f)
@@ -54,13 +54,6 @@ class LastSeenAnimView
     private val random = Random(Date().time)
 
     init {
-        setOnClickListener {
-            if (!isLastSeenVisible) {
-                isLastSeenVisible = true
-                showGenerateLocation()
-            }
-        }
-
         attrs?.let {
             initAttrs(it, defStyleAttr, defStyleRS)
         }
@@ -100,7 +93,7 @@ class LastSeenAnimView
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-//        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 //        val wSize = MeasureSpec.getSize(widthMeasureSpec)
 //        val hSize = MeasureSpec.getSize(heightMeasureSpec)
 
@@ -112,7 +105,7 @@ class LastSeenAnimView
 
         val width = circlePadding * 2 + circleRadius * 2 +
                 max(wStatus, max(max(wHeader, wPlaceHolder), wLocation))
-        val height = circlePadding + statusTextSize + lastSeenTextSize + locationTextSize
+        val height = circlePadding * 2 + statusTextSize + lastSeenTextSize + locationTextSize
 
 //        when (MeasureSpec.getMode(widthMeasureSpec)){
 //            MeasureSpec.UNSPECIFIED ->{}
@@ -140,6 +133,14 @@ class LastSeenAnimView
             }
         }
     }
+
+    fun onClick() {
+        if (!isLastSeenVisible) {
+            isLastSeenVisible = true
+            showGenerateLocation()
+        }
+    }
+
     @Suppress("unused")
     fun setSearchIterations(value: Int) {
         searchIterations = if (value < 1) 1 else value
@@ -148,6 +149,7 @@ class LastSeenAnimView
     @Suppress("unused")
     fun setLocation(value: String) {
         location = value
+        requestLayout()
     }
 
     @Suppress("unused")
@@ -166,8 +168,8 @@ class LastSeenAnimView
     }
 
     @Suppress("unused")
-    fun isFind():Boolean {
-        return isLastSeenVisible
+    fun isFinded(): Boolean {
+        return isLastSeenVisible && generatedText.length == location.length
     }
 
     private fun getPaint(paintStyle: PaintStyle): Paint {

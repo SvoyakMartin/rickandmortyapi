@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -14,8 +16,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import dagger.Lazy
 import kotlinx.coroutines.launch
-import ru.svoyakmartin.rickandmortyapi.App
-import ru.svoyakmartin.rickandmortyapi.R
+import ru.svoyakmartin.rickandmortyapi.*
 import ru.svoyakmartin.rickandmortyapi.data.db.models.Character
 import ru.svoyakmartin.rickandmortyapi.data.db.models.Episode
 import ru.svoyakmartin.rickandmortyapi.data.db.models.Location
@@ -30,17 +31,12 @@ class CharacterDetailsFragment : Fragment() {
     @Inject
     lateinit var viewModelFactory: Lazy<ViewModelFactory>
     private val viewModel: CharacterDetailsViewModel by viewModels { viewModelFactory.get() }
+    private lateinit var binding: FragmentCharacterDetailsBinding
 
     override fun onAttach(context: Context) {
         (requireActivity().application as App).appComponent.inject(this)
         super.onAttach(context)
     }
-
-    private lateinit var binding: FragmentCharacterDetailsBinding
-    private var originLocation: Location? = null
-    private var lastSeenLocation: Location? = null
-    private var episodes: List<Episode>? = null
-    private var isEpisodesVisible = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,40 +50,36 @@ class CharacterDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val character = arguments?.serializable("character", Character::class.java)!!
+        val character = arguments?.serializable(CHARACTERS_FIELD, Character::class.java)!!
 
         binding.apply {
             with(character) {
                 viewLifecycleOwner.lifecycleScope.launch {
                     viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                         launch {
-                            viewModel.getEpisodesByCharactersId(id)
-                                .collect {
-                                    episodes = it
-                                    showEpisodes()
-                                }
+                            viewModel.getEpisodesByCharacterId(id)
+                                .collect { setEpisodesView(it) }
                         }
 
                         location?.let {
                             launch {
                                 viewModel.getLocationById(it)
-                                    .collect {
-                                        lastSeenLocation = it
-                                        setLastSeen()
-                                    }
+                                    .collect { setLastSeen(it) }
                             }
                         }
 
                         if (origin == null) {
-                            setOrigin()
+                            setOrigin(origin)
                         } else {
                             launch {
                                 viewModel.getLocationById(origin)
-                                    .collect {
-                                        originLocation = it
-                                        setOrigin()
-                                    }
+                                    .collect { setOrigin(it) }
                             }
+                        }
+
+                        launch {
+                            viewModel.isEpisodesVisible
+                                .collect { showHideEpisodes(it) }
                         }
                     }
                 }
@@ -105,34 +97,39 @@ class CharacterDetailsFragment : Fragment() {
         }
     }
 
-    private fun setLastSeen() {
-        lastSeenLocation?.let {
+    private fun setLastSeen(location: Location?) {
+        location?.let {
             binding.lastSeen.apply {
                 setOnClickListener {
-                    if (isFind()) {
-                        // TODO: goto location
+                    if (isFinded()) {
+                        goToLocation(location)
+                    } else {
+                        onClick()
                     }
                 }
-                setLocation(it.name)
+
+                setLocation(location.name)
             }
         }
     }
 
-    private fun setOrigin() {
+    private fun setOrigin(location: Location?) {
         binding.characterOriginLocation.apply {
             text = getString(
                 R.string.origin_location_text,
-                originLocation?.name ?: getString(R.string.origin_location_unknown)
+                location?.name ?: getString(R.string.origin_location_unknown)
             )
-            setOnClickListener {
-                // TODO: goto location
-
+            location?.let {
+                setOnClickListener {
+                    goToLocation(location)
+                }
             }
         }
     }
 
-    private fun showEpisodes() {
-        val size = episodes?.size ?: 0
+    private fun setEpisodesView(episodesList: List<Episode>?) {
+        val size = episodesList?.size ?: 0
+
         with(binding) {
             characterEpisodes.text = getString(R.string.episodes_header_text, size)
 
@@ -141,44 +138,75 @@ class CharacterDetailsFragment : Fragment() {
                     visibility = View.VISIBLE
 
                     setOnClickListener {
-                        isEpisodesVisible = !isEpisodesVisible
-
-                        episodesContainer.visibility =
-                            if (isEpisodesVisible) View.VISIBLE else View.GONE
-                        // для скрытия пустого скролла
-                        episodesScroll.visibility = episodesContainer.visibility
-
-                        setTextColor(
-                            context.getColor(
-                                if (isEpisodesVisible)
-                                    R.color.dark_red
-                                else
-                                    R.color.dark_green
-                            )
-                        )
-                        text = getString(
-                            if (isEpisodesVisible)
-                                R.string.episodes_hide
-                            else
-                                R.string.episodes_show
-                        )
+                        viewModel.changeEpisodesVisible()
                     }
                 }
 
-                episodes?.forEach { episode ->
+                episodesList?.forEach { episode ->
                     val textView = TextView(context).apply {
                         val episodeName = "${episode.episode} - ${episode.name}"
 
                         text = episodeName
 
                         setOnClickListener {
-                            // TODO: go to episode
+                            goToEpisode(episode)
                         }
                     }
 
                     episodesContainer.addView(textView)
                 }
             }
+        }
+    }
+
+    private fun showHideEpisodes(isEpisodesVisible: Boolean) {
+        with(binding) {
+            episodesContainer.visibility =
+                if (isEpisodesVisible) View.VISIBLE else View.GONE
+            episodesScroll.visibility = episodesContainer.visibility
+
+            showHideEpisodes.apply {
+                setTextColor(
+                    context.getColor(
+                        if (isEpisodesVisible)
+                            R.color.dark_red
+                        else
+                            R.color.dark_green
+                    )
+                )
+                text = getString(
+                    if (isEpisodesVisible)
+                        R.string.episodes_hide
+                    else
+                        R.string.episodes_show
+                )
+            }
+        }
+    }
+
+    private fun goToEpisode(episode: Episode) {
+        requireActivity().supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            addToBackStack(DEFAULT_BACK_STACK)
+
+            replace(
+                R.id.base_fragment_container,
+                EpisodeDetailsFragment::class.java,
+                bundleOf(EPISODES_FIELD to episode)
+            )
+        }
+    }
+
+    private fun goToLocation(location: Location) {
+        requireActivity().supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            addToBackStack(DEFAULT_BACK_STACK)
+
+            replace(
+                R.id.base_fragment_container,
+                LocationDetailsFragment::class.java,
+                bundleOf(LOCATIONS_FIELD to location)
+            )
         }
     }
 }

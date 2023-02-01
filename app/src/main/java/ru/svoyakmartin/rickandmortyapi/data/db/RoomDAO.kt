@@ -23,7 +23,7 @@ interface RoomDAO {
     suspend fun insertEpisodes(episodes: List<Episode>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertLocations(episodes: List<Location>)
+    suspend fun insertLocations(locations: List<Location>)
 
     @Transaction
     suspend fun insertCharactersAndDependencies(
@@ -59,11 +59,28 @@ interface RoomDAO {
         insertCharactersAndEpisodes(charactersAndEpisodesList)
     }
 
+    @Transaction
+    suspend fun insertLocationsAndDependencies(
+        locationsList: List<Location>,
+        charactersAndLocationsIdsMap: Map<Int, List<Int>>
+    ) {
+        val charactersAndLocationsList = arrayListOf<CharactersAndLocations>()
+
+        charactersAndLocationsIdsMap.forEach { (locationID, charactersIds) ->
+            charactersIds.forEach { characterID ->
+                charactersAndLocationsList.add(CharactersAndLocations(characterID, locationID))
+            }
+        }
+
+        insertLocations(locationsList)
+        insertCharactersAndLocations(charactersAndLocationsList)
+    }
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCharactersAndEpisodes(charactersEpisodes: List<CharactersAndEpisodes>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertCharactersAndLocation(charactersEpisodes: List<CharactersAndLocations>)
+    suspend fun insertCharactersAndLocations(charactersLocations: List<CharactersAndLocations>)
 
     @Query(
         "SELECT * \n" +
@@ -107,7 +124,29 @@ interface RoomDAO {
                 "   WHERE characterId = :characterId \n" +
                 ")"
     )
-    fun getEpisodesByCharactersId(characterId: Int): Flow<List<Episode>?>
+    fun getEpisodesByCharacterId(characterId: Int): Flow<List<Episode>?>
+
+    @Query(
+        "SELECT * \n" +
+                "FROM $CHARACTERS_TABLE_NAME \n" +
+                "WHERE id IN ( \n" +
+                "   SELECT characterId \n" +
+                "   FROM $CHARACTERS_EPISODES_TABLE_NAME \n" +
+                "   WHERE episodeId = :episodeId \n" +
+                ")"
+    )
+    fun getCharactersByEpisodeId(episodeId: Int): Flow<List<Character>?>
+
+    @Query(
+        "SELECT * \n" +
+                "FROM $CHARACTERS_TABLE_NAME \n" +
+                "WHERE id IN ( \n" +
+                "   SELECT characterId \n" +
+                "   FROM $CHARACTERS_LOCATIONS_TABLE_NAME \n" +
+                "   WHERE locationId = :locationId \n" +
+                ")"
+    )
+    fun getCharactersByLocationId(locationId: Int): Flow<List<Character>?>
 
     @Query(
         "SELECT episodeId \n" +
@@ -118,6 +157,24 @@ interface RoomDAO {
     )
     fun getMissingEpisodeIdsByCharacterId(characterId: Int): Flow<List<Int>?>
 
+    @Query(
+        "SELECT characterId \n" +
+                "FROM $CHARACTERS_EPISODES_TABLE_NAME \n" +
+                "LEFT JOIN $CHARACTERS_TABLE_NAME ON characterId = id \n" +
+                "WHERE episodeId = :episodeId \n" +
+                "AND id IS NULL"
+    )
+    fun getMissingCharacterIdsByEpisodeId(episodeId: Int): Flow<List<Int>?>
+
+    @Query(
+        "SELECT characterId \n" +
+                "FROM $CHARACTERS_LOCATIONS_TABLE_NAME \n" +
+                "LEFT JOIN $CHARACTERS_TABLE_NAME ON characterId = id \n" +
+                "WHERE locationId = :locationId \n" +
+                "AND id IS NULL"
+    )
+    fun getMissingCharacterIdsByLocationId(locationId: Int): Flow<List<Int>?>
+
     @Query("SELECT * FROM $LOCATIONS_TABLE_NAME WHERE id = :locationId")
-    fun getLocationById(locationId: Int): Flow<Location>
+    fun getLocationById(locationId: Int): Flow<Location?>
 }

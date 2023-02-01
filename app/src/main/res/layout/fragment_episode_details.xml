@@ -7,68 +7,46 @@
     android:layout_margin="8dp"
     tools:context=".presentation.fragments.CharacterDetailsFragment">
 
-    <ImageView
-        android:id="@+id/character_image"
+    <TextView
+        android:id="@+id/episode_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textAppearance="?attr/textAppearanceHeadline4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="ContentDescription"
-        tools:src="@tools:sample/avatars" />
+        tools:text="Pilot" />
 
     <TextView
-        android:id="@+id/character_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:textAppearance="?attr/textAppearanceHeadline4"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/character_image"
-        tools:text="Rick" />
-
-    <TextView
-        android:id="@+id/character_species"
+        android:id="@+id/episode_code"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textAppearance="?attr/textAppearanceBody1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/last_seen"
-        tools:text="Human" />
+        app:layout_constraintTop_toBottomOf="@id/episode_name"
+        tools:text="S01E01" />
 
     <TextView
-        android:id="@+id/character_gender"
+        android:id="@+id/episode_data"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textAppearance="?attr/textAppearanceBody1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/character_species"
-        tools:text="MALE" />
+        app:layout_constraintTop_toBottomOf="@id/episode_code"
+        tools:text="02.12.2013" />
 
     <TextView
-        android:id="@+id/character_origin_location"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?attr/textAppearanceBody1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/character_gender"
-        tools:text="@string/origin_location_text" />
-
-    <TextView
-        android:id="@+id/character_episodes"
+        android:id="@+id/episode_characters"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?attr/textAppearanceBody1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/character_origin_location"
-        tools:text="Episodes: 13" />
+        app:layout_constraintTop_toBottomOf="@id/episode_data"
+        tools:text="Episode characters: 13" />
 
     <TextView
-        android:id="@+id/show_hide_episodes"
+        android:id="@+id/show_hide_characters"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingStart="8dp"
@@ -76,31 +54,22 @@
         android:textAppearance="?attr/textAppearanceBody1"
         android:textColor="@color/dark_green"
         android:visibility="gone"
-        app:layout_constraintStart_toEndOf="@id/character_episodes"
-        app:layout_constraintTop_toTopOf="@id/character_episodes"
+        app:layout_constraintStart_toEndOf="@id/episode_characters"
+        app:layout_constraintTop_toTopOf="@id/episode_characters"
         android:text="@string/episodes_show"
         tools:visibility="visible" />
 
-    <ru.svoyakmartin.rickandmortyapi.presentation.customView.LastSeenAnimView
-        android:id="@+id/last_seen"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/character_name" />
-
     <ScrollView
-        android:id="@+id/episodes_scroll"
+        android:id="@+id/characters_scroll"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/character_episodes">
+        app:layout_constraintTop_toBottomOf="@+id/episode_characters">
 
         <LinearLayout
-            android:id="@+id/episodes_container"
+            android:id="@+id/characters_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"

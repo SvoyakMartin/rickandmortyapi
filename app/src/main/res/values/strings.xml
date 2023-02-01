@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">RickAndMortyApi</string>
 
-    <!--    MAIN ACTIVITY-->
-    <string name="settings_button_text">Settings</string>
-    <string name="characters_button_text">Characters</string>
-    <string name="locations_button_text">Locations</string>
-    <string name="episodes_button_text">Episodes</string>
+    <!--    START FRAGMENT-->
+    <string name="settings_text">Settings</string>
+    <string name="characters_text">Characters</string>
+    <string name="locations_text">Locations</string>
+    <string name="episodes_text">Episodes</string>
 
     <!--    SETTINGS-->
     <string name="settings_night_mode_text">Night mode</string>
@@ -17,8 +17,8 @@
     <string name="status_alive">Alive</string>
     <string name="status_dead">Dead</string>
     <string name="status_unknown">Unknown</string>
-    <string name="last_seen_text">Last seen on:</string>
-    <string name="last_seen_placeholder">» tap to find</string>
+    <string name="last_seen_text">last seen on:</string>
+    <string name="last_seen_placeholder">tap to find 🔍</string>
     <string name="last_seen_unknown">unknown</string>
 
     <!--    CHARACTER DETAILS FRAGMENT-->
@@ -27,4 +27,13 @@
     <string name="episodes_header_text">Episodes: %1$d</string>
     <string name="episodes_show">↓ show ↓</string>
     <string name="episodes_hide">↑ hide ↑</string>
+
+    <!--    EPISODE DETAILS FRAGMENT-->
+    <string name="episode_characters_header_text">Episode characters: %1$d</string>
+
+    <!--    EPISODE DETAILS FRAGMENT-->
+    <string name="location_characters_header_text">Location residents: %1$d</string>
+
+    <!--    EPISODE DETAILS FRAGMENT-->
+    <string name="back_pressed_toast_text">"to exit press again"</string>
 </resources>

@@ -8,9 +8,7 @@ import ru.svoyakmartin.rickandmortyapi.di.annotations.AppScope
 import ru.svoyakmartin.rickandmortyapi.di.modules.AppModule
 import ru.svoyakmartin.rickandmortyapi.di.modules.NetworkModule
 import ru.svoyakmartin.rickandmortyapi.di.modules.ViewModelsModule
-import ru.svoyakmartin.rickandmortyapi.presentation.fragments.CharacterDetailsFragment
-import ru.svoyakmartin.rickandmortyapi.presentation.fragments.CharactersFragment
-import ru.svoyakmartin.rickandmortyapi.presentation.fragments.SettingsFragment
+import ru.svoyakmartin.rickandmortyapi.presentation.fragments.*
 
 @AppScope
 @Component(modules = [AppModule::class, NetworkModule::class, ViewModelsModule::class])
@@ -25,5 +23,12 @@ interface AppComponent {
 
     fun inject(fragment: CharactersFragment)
     fun inject(fragment: CharacterDetailsFragment)
+
+    fun inject(fragment: EpisodesFragment)
+    fun inject(fragment: EpisodeDetailsFragment)
+
+    fun inject(fragment: LocationsFragment)
+    fun inject(fragment: LocationDetailsFragment)
+
     fun inject(fragment: SettingsFragment)
 }

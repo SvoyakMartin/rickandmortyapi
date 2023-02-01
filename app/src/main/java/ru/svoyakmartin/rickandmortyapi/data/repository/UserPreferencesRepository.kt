@@ -34,14 +34,35 @@ class UserPreferencesRepository private constructor(context: Context) {
         }
     }
 
+    fun saveEpisodesLastPage(page: Int) {
+        sharedPreferences.change {
+            putInt(EPISODES_LAST_PAGE_KEY, page)
+        }
+    }
+
+    fun saveLocationsLastPage(page: Int) {
+        sharedPreferences.change {
+            putInt(LOCATIONS_LAST_PAGE_KEY, page)
+        }
+    }
+
     fun readSavedCharactersLastPage(): Int {
         return sharedPreferences.getInt(CHARACTERS_LAST_PAGE_KEY, 1)
     }
 
+    fun readSavedEpisodesLastPage(): Int {
+        return sharedPreferences.getInt(EPISODES_LAST_PAGE_KEY, 1)
+    }
+
+    fun readSavedLocationsLastPage(): Int {
+        return sharedPreferences.getInt(LOCATIONS_LAST_PAGE_KEY, 1)
+    }
 
     companion object {
         const val NIGHT_MODE_KEY = "nightMode"
         const val CHARACTERS_LAST_PAGE_KEY = "charactersLastPage"
+        const val EPISODES_LAST_PAGE_KEY = "charactersLastPage"
+        const val LOCATIONS_LAST_PAGE_KEY = "locationsLastPage"
 
         @Volatile
         private var INSTANCE: UserPreferencesRepository? = null

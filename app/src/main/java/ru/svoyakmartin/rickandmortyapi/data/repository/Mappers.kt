@@ -2,8 +2,10 @@ package ru.svoyakmartin.rickandmortyapi.data.repository
 
 import ru.svoyakmartin.rickandmortyapi.data.db.models.Character
 import ru.svoyakmartin.rickandmortyapi.data.db.models.Episode
+import ru.svoyakmartin.rickandmortyapi.data.db.models.Location
 import ru.svoyakmartin.rickandmortyapi.data.remote.models.CharacterDTO
 import ru.svoyakmartin.rickandmortyapi.data.remote.models.EpisodeDTO
+import ru.svoyakmartin.rickandmortyapi.data.remote.models.LocationDTO
 import ru.svoyakmartin.rickandmortyapi.data.remote.models.Root
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -23,6 +25,21 @@ fun CharacterDTO.toCharacter(): Character {
         url,
         getTimeFromString(created)
     )
+}
+
+fun LocationDTO.toLocation(): Location {
+    return Location(
+        id,
+        name,
+        type,
+        dimension,
+        url,
+        getTimeFromString(created)
+    )
+}
+
+fun LocationDTO.getCharactersIds(): List<Int> {
+    return getIdsListFromUrlList(residents)
 }
 
 fun CharacterDTO.getEpisodesIds(): List<Int> {
