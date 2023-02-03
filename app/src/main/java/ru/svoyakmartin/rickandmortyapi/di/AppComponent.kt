@@ -4,7 +4,7 @@ import android.content.Context
 import dagger.BindsInstance
 import dagger.Component
 import ru.svoyakmartin.rickandmortyapi.data.repository.UserPreferencesRepository
-import ru.svoyakmartin.rickandmortyapi.di.annotations.AppScope
+import ru.svoyakmartin.coreDi.di.scope.AppScope
 import ru.svoyakmartin.rickandmortyapi.di.modules.AppModule
 import ru.svoyakmartin.rickandmortyapi.di.modules.NetworkModule
 import ru.svoyakmartin.rickandmortyapi.di.modules.ViewModelsModule

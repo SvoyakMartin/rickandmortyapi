@@ -27,9 +27,7 @@ val Context.appComponent: AppComponent
         else -> this.applicationContext.appComponent
     }
 
-fun Fragment.getShortClassName(): String {
-    return this::class.java.name.substringAfterLast('.')
-}
+fun Fragment.getShortClassName(): String = this.javaClass.simpleName
 
 fun <T> Flow<T>.stateInStarted5000(
     scope: CoroutineScope,

@@ -6,9 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -21,7 +19,7 @@ import ru.svoyakmartin.rickandmortyapi.data.db.models.Episode
 import ru.svoyakmartin.rickandmortyapi.databinding.FragmentEpisodeDetailsBinding
 import ru.svoyakmartin.rickandmortyapi.presentation.util.serializable
 import ru.svoyakmartin.rickandmortyapi.presentation.viewModels.EpisodeDetailsViewModel
-import ru.svoyakmartin.rickandmortyapi.presentation.viewModels.ViewModelFactory
+import ru.svoyakmartin.coreDi.di.viewModel.ViewModelFactory
 import javax.inject.Inject
 
 class EpisodeDetailsFragment : Fragment() {
@@ -128,15 +126,15 @@ class EpisodeDetailsFragment : Fragment() {
     }
 
     private fun goToCharacter(character: Character) {
-        requireActivity().supportFragmentManager.commit {
-            setReorderingAllowed(true)
-            addToBackStack(DEFAULT_BACK_STACK)
-
-            replace(
-                R.id.base_fragment_container,
-                CharacterDetailsFragment::class.java,
-                bundleOf(CHARACTERS_FIELD to character)
-            )
-        }
+//        requireActivity().supportFragmentManager.commit {
+//            setReorderingAllowed(true)
+//            addToBackStack(DEFAULT_BACK_STACK)
+//
+//            replace(
+//                R.id.base_fragment_container,
+//                CharacterDetailsFragment::class.java,
+//                bundleOf(CHARACTERS_FIELD to character)
+//            )
+//        }
     }
 }

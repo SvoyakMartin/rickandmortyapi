@@ -1,71 +1,42 @@
 package ru.svoyakmartin.rickandmortyapi.di.modules
 
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaType
+import dagger.multibindings.IntoSet
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Converter
 import retrofit2.Retrofit
-import ru.svoyakmartin.rickandmortyapi.BuildConfig
 import ru.svoyakmartin.rickandmortyapi.data.remote.retrofit.ApiService
-import ru.svoyakmartin.rickandmortyapi.di.annotations.AppScope
+import ru.svoyakmartin.coreNetwork.provider.HttpLoggingInterceptorProvider
+import ru.svoyakmartin.coreNetwork.provider.JsonConverterFactoryProvider
+import ru.svoyakmartin.coreNetwork.provider.OkHttpClientProvider
+import ru.svoyakmartin.coreNetwork.provider.RetrofitProvider
 
 @Module
 class NetworkModule {
-    private val json = Json { ignoreUnknownKeys = true }
-
-    @AppScope
     @Provides
     fun provideApiService(retrofit: Retrofit): ApiService {
         return retrofit.create(ApiService::class.java)
     }
 
-    @AppScope
     @Provides
     fun provideRetrofit(
         baseUrl: String,
         okHttpClient: OkHttpClient,
         jsonConverterFactory: Converter.Factory
-    ): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(baseUrl)
-            .addConverterFactory(jsonConverterFactory)
-            // TODO: add call
-            .client(okHttpClient)
-            .build()
-    }
+    ): Retrofit = RetrofitProvider.get(baseUrl, okHttpClient, jsonConverterFactory)
 
-    @AppScope
     @Provides
-    fun provideOkHttpClient(
-        httpLoggingInterceptor: HttpLoggingInterceptor
-    ): OkHttpClient {
-        return OkHttpClient()
-            .newBuilder()
-            .addInterceptor(httpLoggingInterceptor)
-            .build()
-    }
+    fun provideOkHttpClient(interceptors: Set<@JvmSuppressWildcards Interceptor>): OkHttpClient =
+        OkHttpClientProvider.get(interceptors)
 
-    @AppScope
     @Provides
-    fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
-        return HttpLoggingInterceptor().setLevel(
-            if (BuildConfig.DEBUG)
-                HttpLoggingInterceptor.Level.BASIC
-            else
-                HttpLoggingInterceptor.Level.NONE
-        )
-    }
+    @IntoSet
+    fun provideHttpLoggingInterceptor(): Interceptor = HttpLoggingInterceptorProvider.get()
 
-    @AppScope
     @Provides
-    @OptIn(ExperimentalSerializationApi::class)
-    fun provideJsonConverterFactory(): Converter.Factory =
-        json.asConverterFactory("application/json".toMediaType())
+    fun provideJsonConverterFactory(): Converter.Factory = JsonConverterFactoryProvider.get()
 
     @Provides
     fun provideBaseUrl() = "https://rickandmortyapi.com/api/"

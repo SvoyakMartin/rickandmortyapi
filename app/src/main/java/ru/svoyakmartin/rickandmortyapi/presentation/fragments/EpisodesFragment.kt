@@ -6,8 +6,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
-import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -17,15 +15,12 @@ import androidx.recyclerview.widget.RecyclerView
 import dagger.Lazy
 import kotlinx.coroutines.launch
 import ru.svoyakmartin.rickandmortyapi.App
-import ru.svoyakmartin.rickandmortyapi.DEFAULT_BACK_STACK
-import ru.svoyakmartin.rickandmortyapi.EPISODES_FIELD
-import ru.svoyakmartin.rickandmortyapi.R
 import ru.svoyakmartin.rickandmortyapi.data.db.models.Episode
 import ru.svoyakmartin.rickandmortyapi.databinding.FragmentEpisodesBinding
 import ru.svoyakmartin.rickandmortyapi.presentation.adapters.EpisodeClickListener
 import ru.svoyakmartin.rickandmortyapi.presentation.adapters.EpisodesAdapter
 import ru.svoyakmartin.rickandmortyapi.presentation.viewModels.EpisodesViewModel
-import ru.svoyakmartin.rickandmortyapi.presentation.viewModels.ViewModelFactory
+import ru.svoyakmartin.coreDi.di.viewModel.ViewModelFactory
 import javax.inject.Inject
 
 class EpisodesFragment : Fragment(), EpisodeClickListener {
@@ -106,15 +101,15 @@ class EpisodesFragment : Fragment(), EpisodeClickListener {
     }
 
     override fun onEpisodeClick(episode: Episode) {
-        requireActivity().supportFragmentManager.commit {
-            setReorderingAllowed(true)
-            addToBackStack(DEFAULT_BACK_STACK)
-
-            replace(
-                R.id.base_fragment_container,
-                EpisodeDetailsFragment::class.java,
-                bundleOf(EPISODES_FIELD to episode)
-            )
-        }
+//        requireActivity().supportFragmentManager.commit {
+//            setReorderingAllowed(true)
+//            addToBackStack(DEFAULT_BACK_STACK)
+//
+//            replace(
+//                R.id.base_fragment_container,
+//                EpisodeDetailsFragment::class.java,
+//                bundleOf(EPISODES_FIELD to episode)
+//            )
+//        }
     }
 }

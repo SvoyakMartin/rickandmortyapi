@@ -6,7 +6,7 @@ import dagger.Provides
 import ru.svoyakmartin.rickandmortyapi.data.db.RoomDAO
 import ru.svoyakmartin.rickandmortyapi.data.db.RoomDB
 import ru.svoyakmartin.rickandmortyapi.data.repository.UserPreferencesRepository
-import ru.svoyakmartin.rickandmortyapi.di.annotations.AppScope
+import ru.svoyakmartin.coreDi.di.scope.AppScope
 
 
 @Module

@@ -1,4 +1,4 @@
-package ru.svoyakmartin.rickandmortyapi.di.annotations
+package ru.svoyakmartin.coreDi.di.viewModel
 
 import androidx.lifecycle.ViewModel
 import dagger.MapKey

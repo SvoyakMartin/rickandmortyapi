@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
-import ru.svoyakmartin.rickandmortyapi.di.annotations.ViewModelKey
+import ru.svoyakmartin.coreDi.di.viewModel.ViewModelKey
 import ru.svoyakmartin.rickandmortyapi.presentation.viewModels.*
 
 @Module

@@ -1,4 +1,4 @@
-package ru.svoyakmartin.rickandmortyapi.di.annotations
+package ru.svoyakmartin.coreDi.di.scope
 
 import javax.inject.Scope
 

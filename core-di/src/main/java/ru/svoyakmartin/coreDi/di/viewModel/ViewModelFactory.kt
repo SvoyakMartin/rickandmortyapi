@@ -1,4 +1,4 @@
-package ru.svoyakmartin.rickandmortyapi.presentation.viewModels
+package ru.svoyakmartin.coreDi.di.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

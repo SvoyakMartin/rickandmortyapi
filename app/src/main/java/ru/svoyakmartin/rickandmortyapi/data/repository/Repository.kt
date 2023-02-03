@@ -6,7 +6,7 @@ import ru.svoyakmartin.rickandmortyapi.data.db.models.Character
 import ru.svoyakmartin.rickandmortyapi.data.db.models.Episode
 import ru.svoyakmartin.rickandmortyapi.data.db.models.Location
 import ru.svoyakmartin.rickandmortyapi.data.remote.retrofit.ApiService
-import ru.svoyakmartin.rickandmortyapi.di.annotations.AppScope
+import ru.svoyakmartin.coreDi.di.scope.AppScope
 import javax.inject.Inject
 
 @AppScope
