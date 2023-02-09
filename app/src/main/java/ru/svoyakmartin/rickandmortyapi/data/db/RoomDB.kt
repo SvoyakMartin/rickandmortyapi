@@ -8,7 +8,7 @@ import ru.svoyakmartin.rickandmortyapi.DB_NAME
 import ru.svoyakmartin.rickandmortyapi.data.db.models.*
 
 @Database(
-    entities = [Character::class, Episode::class, Location::class, CharactersAndEpisodes::class, CharactersAndLocations::class],
+    entities = [ru.svoyakmartin.featureCharacter.domain.model.Character::class, Episode::class, Location::class, CharactersAndEpisodes::class, CharactersAndLocations::class],
     version = 1,
     exportSchema = false
 )

@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class LocationsDTO(
     @SerialName("info")
-    var info: InfoDTO,
+    var info: ru.svoyakmartin.featureIinfo.InfoDTO,
 
     @SerialName("results")
     var results: List<LocationDTO>,

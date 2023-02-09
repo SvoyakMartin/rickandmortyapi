@@ -1,0 +1,3 @@
+package ru.svoyakmartin.coreDi.di.dependency
+
+interface FeatureExternalDependencies

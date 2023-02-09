@@ -3,17 +3,4 @@
     <attr name="backColor" format="color" />
     <attr name="frontColor" format="color" />
     <attr name="errorColor" format="color" />
-
-    <declare-styleable name="LastSeenAnimView">
-        <attr name="LSA_location" format="string"/>
-        <attr name="LSA_location_color" format="color"/>
-        <attr name="LSA_location_find_color" format="color"/>
-        <attr name="LSA_aliveStatus" format="enum">
-            <enum name="ALIVE" value="0"/>
-            <enum name="DEAD" value="1"/>
-            <enum name="UNKNOWN" value="2"/>
-        </attr>
-        <attr name="style" format="reference"/>
-        <attr name="LSA_search_iterations" format="integer"/>
-    </declare-styleable>
 </resources>

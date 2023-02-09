@@ -14,7 +14,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import dagger.Lazy
 import kotlinx.coroutines.launch
 import ru.svoyakmartin.rickandmortyapi.*
-import ru.svoyakmartin.rickandmortyapi.data.db.models.Character
 import ru.svoyakmartin.rickandmortyapi.data.db.models.Location
 import ru.svoyakmartin.rickandmortyapi.databinding.FragmentLocationDetailsBinding
 import ru.svoyakmartin.rickandmortyapi.presentation.util.serializable
@@ -70,7 +69,7 @@ class LocationDetailsFragment : Fragment() {
         }
     }
 
-    private fun setCharactersView(charactersList: List<Character>?) {
+    private fun setCharactersView(charactersList: List<ru.svoyakmartin.featureCharacter.domain.model.Character>?) {
         val size = charactersList?.size ?: 0
 
         with(binding) {
@@ -125,7 +124,7 @@ class LocationDetailsFragment : Fragment() {
         }
     }
 
-    private fun goToCharacter(character: Character) {
+    private fun goToCharacter(character: ru.svoyakmartin.featureCharacter.domain.model.Character) {
 //        requireActivity().supportFragmentManager.commit {
 //            setReorderingAllowed(true)
 //            addToBackStack(DEFAULT_BACK_STACK)

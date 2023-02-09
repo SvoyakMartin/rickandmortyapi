@@ -2,8 +2,11 @@ package ru.svoyakmartin.rickandmortyapi.data.db
 
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
+//import ru.svoyakmartin.featureCharacter.CHARACTERS_TABLE_NAME
 import ru.svoyakmartin.rickandmortyapi.*
 import ru.svoyakmartin.rickandmortyapi.data.db.models.*
+import ru.svoyakmartin.featureCharacter.domain.model.Character
+
 
 @Dao
 interface RoomDAO {
@@ -82,27 +85,27 @@ interface RoomDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCharactersAndLocations(charactersLocations: List<CharactersAndLocations>)
 
-    @Query(
-        "SELECT * \n" +
-                "FROM $CHARACTERS_TABLE_NAME \n" +
-                "WHERE id IN ( \n" +
-                "   SELECT characterId \n" +
-                "   FROM $CHARACTERS_LOCATIONS_TABLE_NAME \n" +
-                "   WHERE locationId = :locationId \n" +
-                ")"
-    )
-    fun getCharactersFromLocationId(locationId: Int): Flow<List<Character>>
+//    @Query(
+//        "SELECT * \n" +
+//                "FROM $CHARACTERS_TABLE_NAME \n" +
+//                "WHERE id IN ( \n" +
+//                "   SELECT characterId \n" +
+//                "   FROM $CHARACTERS_LOCATIONS_TABLE_NAME \n" +
+//                "   WHERE locationId = :locationId \n" +
+//                ")"
+//    )
+//    fun getCharactersFromLocationId(locationId: Int): Flow<List<ru.svoyakmartin.featureCharacter.domain.model.Character>>
 
-    @Query(
-        "SELECT * \n" +
-                "FROM $CHARACTERS_TABLE_NAME \n" +
-                "WHERE id IN ( \n" +
-                "   SELECT characterId \n" +
-                "   FROM $CHARACTERS_EPISODES_TABLE_NAME \n" +
-                "   WHERE episodeId = :episodeId \n" +
-                ")"
-    )
-    fun getCharactersFromEpisodeId(episodeId: Int): Flow<List<Character>>
+//    @Query(
+//        "SELECT * \n" +
+//                "FROM $CHARACTERS_TABLE_NAME \n" +
+//                "WHERE id IN ( \n" +
+//                "   SELECT characterId \n" +
+//                "   FROM $CHARACTERS_EPISODES_TABLE_NAME \n" +
+//                "   WHERE episodeId = :episodeId \n" +
+//                ")"
+//    )
+//    fun getCharactersFromEpisodeId(episodeId: Int): Flow<List<ru.svoyakmartin.featureCharacter.domain.model.Character>>
 
     @Query(
         "SELECT * \n" +
@@ -126,27 +129,27 @@ interface RoomDAO {
     )
     fun getEpisodesByCharacterId(characterId: Int): Flow<List<Episode>?>
 
-    @Query(
-        "SELECT * \n" +
-                "FROM $CHARACTERS_TABLE_NAME \n" +
-                "WHERE id IN ( \n" +
-                "   SELECT characterId \n" +
-                "   FROM $CHARACTERS_EPISODES_TABLE_NAME \n" +
-                "   WHERE episodeId = :episodeId \n" +
-                ")"
-    )
-    fun getCharactersByEpisodeId(episodeId: Int): Flow<List<Character>?>
+//    @Query(
+//        "SELECT * \n" +
+//                "FROM $CHARACTERS_TABLE_NAME \n" +
+//                "WHERE id IN ( \n" +
+//                "   SELECT characterId \n" +
+//                "   FROM $CHARACTERS_EPISODES_TABLE_NAME \n" +
+//                "   WHERE episodeId = :episodeId \n" +
+//                ")"
+//    )
+//    fun getCharactersByEpisodeId(episodeId: Int): Flow<List<ru.svoyakmartin.featureCharacter.domain.model.Character>?>
 
-    @Query(
-        "SELECT * \n" +
-                "FROM $CHARACTERS_TABLE_NAME \n" +
-                "WHERE id IN ( \n" +
-                "   SELECT characterId \n" +
-                "   FROM $CHARACTERS_LOCATIONS_TABLE_NAME \n" +
-                "   WHERE locationId = :locationId \n" +
-                ")"
-    )
-    fun getCharactersByLocationId(locationId: Int): Flow<List<Character>?>
+//    @Query(
+//        "SELECT * \n" +
+//                "FROM $CHARACTERS_TABLE_NAME \n" +
+//                "WHERE id IN ( \n" +
+//                "   SELECT characterId \n" +
+//                "   FROM $CHARACTERS_LOCATIONS_TABLE_NAME \n" +
+//                "   WHERE locationId = :locationId \n" +
+//                ")"
+//    )
+//    fun getCharactersByLocationId(locationId: Int): Flow<List<ru.svoyakmartin.featureCharacter.domain.model.Character>?>
 
     @Query(
         "SELECT episodeId \n" +
@@ -157,23 +160,23 @@ interface RoomDAO {
     )
     fun getMissingEpisodeIdsByCharacterId(characterId: Int): Flow<List<Int>?>
 
-    @Query(
-        "SELECT characterId \n" +
-                "FROM $CHARACTERS_EPISODES_TABLE_NAME \n" +
-                "LEFT JOIN $CHARACTERS_TABLE_NAME ON characterId = id \n" +
-                "WHERE episodeId = :episodeId \n" +
-                "AND id IS NULL"
-    )
-    fun getMissingCharacterIdsByEpisodeId(episodeId: Int): Flow<List<Int>?>
-
-    @Query(
-        "SELECT characterId \n" +
-                "FROM $CHARACTERS_LOCATIONS_TABLE_NAME \n" +
-                "LEFT JOIN $CHARACTERS_TABLE_NAME ON characterId = id \n" +
-                "WHERE locationId = :locationId \n" +
-                "AND id IS NULL"
-    )
-    fun getMissingCharacterIdsByLocationId(locationId: Int): Flow<List<Int>?>
+//    @Query(
+//        "SELECT characterId \n" +
+//                "FROM $CHARACTERS_EPISODES_TABLE_NAME \n" +
+//                "LEFT JOIN $CHARACTERS_TABLE_NAME ON characterId = id \n" +
+//                "WHERE episodeId = :episodeId \n" +
+//                "AND id IS NULL"
+//    )
+//    fun getMissingCharacterIdsByEpisodeId(episodeId: Int): Flow<List<Int>?>
+//
+//    @Query(
+//        "SELECT characterId \n" +
+//                "FROM $CHARACTERS_LOCATIONS_TABLE_NAME \n" +
+//                "LEFT JOIN $CHARACTERS_TABLE_NAME ON characterId = id \n" +
+//                "WHERE locationId = :locationId \n" +
+//                "AND id IS NULL"
+//    )
+//    fun getMissingCharacterIdsByLocationId(locationId: Int): Flow<List<Int>?>
 
     @Query("SELECT * FROM $LOCATIONS_TABLE_NAME WHERE id = :locationId")
     fun getLocationById(locationId: Int): Flow<Location?>

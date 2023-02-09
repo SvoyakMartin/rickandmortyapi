@@ -8,12 +8,6 @@ import retrofit2.http.Url
 import ru.svoyakmartin.rickandmortyapi.data.remote.models.*
 
 interface ApiService {
-    @GET("character")
-    suspend fun getCharacters(@Query("page") page: Int): Response<CharactersDTO>
-
-    @GET("character/[{id}]")
-    suspend fun getCharactersById(@Path("id") id: String): Response<List<CharacterDTO>>
-
     @GET("location")
     suspend fun getLocations(@Query("page") page: Int): Response<LocationsDTO>
 

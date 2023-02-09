@@ -5,23 +5,13 @@ import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
 import ru.svoyakmartin.coreDi.di.viewModel.ViewModelKey
+import ru.svoyakmartin.featureCharacter.ui.viewModel.CharacterDetailsViewModel
+import ru.svoyakmartin.featureCharacter.ui.viewModel.CharacterListViewModel
 import ru.svoyakmartin.rickandmortyapi.presentation.viewModels.*
 
 @Module
 interface ViewModelsModule {
-    @Binds
-    @IntoMap
-    @ViewModelKey(CharactersViewModel::class)
-    @Suppress("UNUSED")
-    fun bindCharactersViewModel(viewModel: CharactersViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(CharacterDetailsViewModel::class)
-    @Suppress("UNUSED")
-    fun bindCharacterDetailsViewModel(viewModel: CharacterDetailsViewModel): ViewModel
-
-    @Binds
+        @Binds
     @IntoMap
     @ViewModelKey(EpisodesViewModel::class)
     @Suppress("UNUSED")

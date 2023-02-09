@@ -1,31 +1,13 @@
 package ru.svoyakmartin.rickandmortyapi.data.repository
 
-import ru.svoyakmartin.rickandmortyapi.data.db.models.Character
 import ru.svoyakmartin.rickandmortyapi.data.db.models.Episode
 import ru.svoyakmartin.rickandmortyapi.data.db.models.Location
-import ru.svoyakmartin.rickandmortyapi.data.remote.models.CharacterDTO
 import ru.svoyakmartin.rickandmortyapi.data.remote.models.EpisodeDTO
 import ru.svoyakmartin.rickandmortyapi.data.remote.models.LocationDTO
 import ru.svoyakmartin.rickandmortyapi.data.remote.models.Root
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
-
-fun CharacterDTO.toCharacter(): Character {
-    return Character(
-        id,
-        name,
-        status,
-        species,
-        type,
-        gender,
-        if (origin.url.isEmpty()) null else getIdFromUrl(origin.url),
-        if (location.url.isEmpty()) null else getIdFromUrl(location.url),
-        image,
-        url,
-        getTimeFromString(created)
-    )
-}
 
 fun LocationDTO.toLocation(): Location {
     return Location(
@@ -42,7 +24,7 @@ fun LocationDTO.getCharactersIds(): List<Int> {
     return getIdsListFromUrlList(residents)
 }
 
-fun CharacterDTO.getEpisodesIds(): List<Int> {
+fun ru.svoyakmartin.featureCharacter.data.model.CharacterDTO.getEpisodesIds(): List<Int> {
     return getIdsListFromUrlList(episode)
 }
 

@@ -1,0 +1,13 @@
+package ru.svoyakmartin.featureSettingsApi
+
+import androidx.fragment.app.Fragment
+
+interface SettingsFeatureApi {
+    fun getFlowFragment(): Fragment
+    fun saveInt(key: String, value: Int)
+    fun readInt(key: String, defaultValue: Int): Int
+
+    companion object {
+        const val CHARACTERS_LAST_PAGE_KEY = "charactersLastPage"
+    }
+}
