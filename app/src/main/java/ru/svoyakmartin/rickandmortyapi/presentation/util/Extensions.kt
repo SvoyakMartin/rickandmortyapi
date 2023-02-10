@@ -16,19 +16,3 @@ val Context.appComponent: AppComponent
         is App -> appComponent
         else -> this.applicationContext.appComponent
     }
-
-fun <T> Flow<T>.stateInStarted5000(
-    scope: CoroutineScope,
-    initialValue: T
-): StateFlow<T> {
-    return stateIn(scope, SharingStarted.WhileSubscribed(5000), initialValue)
-}
-
-fun <T : Serializable?> Bundle.serializable(key: String, clazz: Class<T>): T {
-    @Suppress("UNCHECKED_CAST")
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-        getSerializable(key, clazz)!!
-    else
-        @Suppress("DEPRECATION")
-        (getSerializable(key) as T)
-}

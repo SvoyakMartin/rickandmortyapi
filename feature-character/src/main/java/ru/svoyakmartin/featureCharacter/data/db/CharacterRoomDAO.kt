@@ -2,15 +2,16 @@ package ru.svoyakmartin.featureCharacter.data.db
 
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
+import ru.svoyakmartin.featureCharacter.CHARACTERS_TABLE_NAME
 import ru.svoyakmartin.featureCharacter.domain.model.Character
 
 
 @Dao
 interface CharacterRoomDAO {
-    @Query("SELECT * FROM characters")
+    @Query("SELECT * FROM $CHARACTERS_TABLE_NAME")
     fun getAllCharacters(): Flow<List<Character>?>
 
-    @Query("SELECT * FROM characters WHERE id = :id")
+    @Query("SELECT * FROM $CHARACTERS_TABLE_NAME WHERE id = :id")
     fun getCharacterById(id: Int): Flow<Character?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

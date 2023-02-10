@@ -10,6 +10,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.core.os.ParcelCompat
 import ru.svoyakmartin.featureCharacter.R
+import ru.svoyakmartin.featureTheme.R as themeR
 import java.util.*
 import kotlin.math.max
 import kotlin.random.Random
@@ -72,11 +73,11 @@ class LastSeenAnimView
                 }
                 locationColor = getColor(
                     R.styleable.LastSeenAnimView_LSA_location_color,
-                    context.getColor(R.color.dark_green)
+                    context.getColor(themeR.color.dark_green)
                 )
                 locationFindColor = getInt(
                     R.styleable.LastSeenAnimView_LSA_location_find_color,
-                    context.getColor(R.color.dark_red)
+                    context.getColor(themeR.color.dark_red)
                 )
                 val status = getInt(
                     R.styleable.LastSeenAnimView_LSA_aliveStatus,
@@ -180,11 +181,11 @@ class LastSeenAnimView
             when (paintStyle) {
                 PaintStyle.ICON -> color = getStatusColor()
                 PaintStyle.STATUS -> {
-                    color = context.getColor(R.color.black)
+                    color = context.getColor(themeR.color.black)
                     textSize = statusTextSize
                 }
                 PaintStyle.HEADER -> {
-                    color = context.getColor(R.color.light_gray)
+                    color = context.getColor(themeR.color.light_gray)
                     textSize = lastSeenTextSize
                 }
                 PaintStyle.LOCATION -> {
@@ -208,9 +209,9 @@ class LastSeenAnimView
     private fun getStatusColor(status: AliveStatus = aliveStatus): Int {
         return context.getColor(
             when (status) {
-                AliveStatus.ALIVE -> R.color.dark_green
-                AliveStatus.DEAD -> R.color.dark_red
-                AliveStatus.UNKNOWN -> R.color.dark_gray
+                AliveStatus.ALIVE -> themeR.color.dark_green
+                AliveStatus.DEAD -> themeR.color.dark_red
+                AliveStatus.UNKNOWN -> themeR.color.dark_gray
             }
         )
     }

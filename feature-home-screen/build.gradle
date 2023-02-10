@@ -27,6 +27,7 @@ dependencies {
     implementation project(":feature-home-screen-api")
     implementation project(":feature-character-api")
     implementation project(":feature-settings-api")
+    implementation project(":feature-location-api")
 
     // Dagger
     implementation "com.google.dagger:dagger:2.44"

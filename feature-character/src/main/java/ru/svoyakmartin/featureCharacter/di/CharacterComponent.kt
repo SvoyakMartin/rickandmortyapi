@@ -22,7 +22,7 @@ interface CharacterComponent {
         fun create(dependencies: CharacterExternalDependencies): CharacterComponent
     }
 
-    fun inject(characterListFragment: CharacterListFragment)
-    fun inject(characterDetailsFragment: CharacterDetailsFragment)
-    fun inject(characterFeatureFlowFragment: CharacterFeatureFlowFragment)
+    fun inject(fragment: CharacterListFragment)
+    fun inject(fragment: CharacterDetailsFragment)
+    fun inject(fragment: CharacterFeatureFlowFragment)
 }

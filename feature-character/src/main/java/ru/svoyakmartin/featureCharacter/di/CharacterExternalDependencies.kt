@@ -4,6 +4,7 @@ import android.content.Context
 import retrofit2.Retrofit
 import ru.svoyakmartin.coreDi.di.dependency.FeatureExternalDependencies
 import ru.svoyakmartin.coreNavigation.router.global.GlobalRouter
+import ru.svoyakmartin.featureLocationApi.LocationFeatureApi
 import ru.svoyakmartin.featureSettingsApi.SettingsFeatureApi
 
 interface CharacterExternalDependencies : FeatureExternalDependencies {
@@ -11,4 +12,5 @@ interface CharacterExternalDependencies : FeatureExternalDependencies {
     val context: Context
     val globalRouter: GlobalRouter
     val settingsFeatureApi: SettingsFeatureApi
+    val locationFeatureApi: LocationFeatureApi
 }

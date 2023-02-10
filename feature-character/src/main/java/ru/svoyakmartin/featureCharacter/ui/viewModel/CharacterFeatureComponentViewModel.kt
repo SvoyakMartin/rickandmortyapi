@@ -1,7 +1,6 @@
 package ru.svoyakmartin.featureCharacter.ui.viewModel
 
 import androidx.lifecycle.ViewModel
-import ru.svoyakmartin.coreNavigation.router.flow.FlowRouter
 import ru.svoyakmartin.featureCharacter.di.CharacterExternalDependencies
 import ru.svoyakmartin.featureCharacter.di.DaggerCharacterComponent
 

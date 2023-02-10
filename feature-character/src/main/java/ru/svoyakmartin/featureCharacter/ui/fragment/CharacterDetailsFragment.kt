@@ -23,6 +23,7 @@ import ru.svoyakmartin.featureCharacter.domain.model.Character
 import ru.svoyakmartin.featureCharacter.ui.customView.LastSeenAnimView
 import ru.svoyakmartin.featureCharacter.ui.viewModel.CharacterDetailsViewModel
 import ru.svoyakmartin.featureCharacter.ui.viewModel.CharacterFeatureComponentViewModel
+import ru.svoyakmartin.featureTheme.R as themeR
 import javax.inject.Inject
 
 class CharacterDetailsFragment : FlowFragment() {
@@ -62,7 +63,7 @@ class CharacterDetailsFragment : FlowFragment() {
         }
     }
 
-    fun initViews(character: Character) {
+    private fun initViews(character: Character) {
         binding.apply {
             with(character) {
                 viewLifecycleOwner.lifecycleScope.launch {
@@ -72,22 +73,22 @@ class CharacterDetailsFragment : FlowFragment() {
 //                                .collect { setEpisodesView(it) }
 //                        }
 //
-//                        location?.let {
-//                            launch {
-//                                viewModel.getLocationById(it)
-//                                    .collect { setLastSeen(it) }
-//                            }
-//                        }
-//
-//                        if (origin == null) {
-////                            setOrigin(origin)
-//                        } else {
-//                            launch {
-////                                viewModel.getLocationById(origin)
-////                                    .collect { setOrigin(it) }
-//                            }
-//                        }
-//
+                        location?.let {
+                            launch {
+                                viewModel.getLocationMapById(it)
+                                    .collect { setLastSeen(it) }
+                            }
+                        }
+
+                        if (origin == null) {
+                            setOrigin(origin)
+                        } else {
+                            launch {
+                                viewModel.getLocationMapById(origin)
+                                    .collect {setOrigin(it) }
+                            }
+                        }
+
                         launch {
                             viewModel.isEpisodesVisible
                                 .collect { showHideEpisodes(it) }
@@ -108,35 +109,44 @@ class CharacterDetailsFragment : FlowFragment() {
         }
     }
 
-//    private fun setLastSeen(location: Location?) {
-//        location?.let {
-//            binding.lastSeen.apply {
-//                setOnClickListener {
-//                    if (isFinded()) {
-//                        goToLocation(location)
-//                    } else {
-//                        onClick()
-//                    }
-//                }
-//
-//                setLocation(location.name)
-//            }
-//        }
-//    }
+    private fun setLastSeen(locationMap: Map<String, Int>?) {
+        locationMap?.let {
+            binding.lastSeen.apply {
+                it.entries.forEach { entry ->
+                    setOnClickListener {
+                        if (isFinded()) {
+                            viewModel.navigateToLocation(entry.value)
+                        } else {
+                            onClick()
+                        }
+                    }
 
-//    private fun setOrigin(location: Location?) {
-//        binding.characterOriginLocation.apply {
-//            text = getString(
-//                R.string.origin_location_text,
-//                location?.name ?: getString(R.string.origin_location_unknown)
-//            )
-//            location?.let {
-//                setOnClickListener {
-//                    goToLocation(location)
-//                }
-//            }
-//        }
-//    }
+                    setLocation(entry.key)
+                }
+
+            }
+        }
+    }
+
+    private fun setOrigin(locationMap: Map<String, Int>?) {
+        binding.characterOriginLocation.apply {
+            var locationName:String? = null
+            locationMap?.let {
+                it.entries.forEach {entry ->
+                    locationName = entry.key
+
+                    setOnClickListener {
+                        viewModel.navigateToLocation(entry.value)
+                    }
+                }
+            }
+
+            text = getString(
+                R.string.origin_location_text,
+                locationName?: getString(R.string.origin_location_unknown)
+            )
+        }
+    }
 
 //    private fun setEpisodesView(episodesList: List<Episode>?) {
 //        val size = episodesList?.size ?: 0
@@ -180,9 +190,9 @@ class CharacterDetailsFragment : FlowFragment() {
                 setTextColor(
                     context.getColor(
                         if (isEpisodesVisible)
-                            R.color.dark_red
+                            themeR.color.dark_red
                         else
-                            R.color.dark_green
+                            themeR.color.dark_green
                     )
                 )
                 text = getString(
@@ -194,32 +204,6 @@ class CharacterDetailsFragment : FlowFragment() {
             }
         }
     }
-
-//    private fun goToEpisode(episode: Episode) {
-//        requireActivity().supportFragmentManager.commit {
-//            setReorderingAllowed(true)
-//            addToBackStack(DEFAULT_BACK_STACK)
-//
-//            replace(
-//                R.id.base_fragment_container,
-//                EpisodeDetailsFragment::class.java,
-//                bundleOf(EPISODES_FIELD to episode)
-//            )
-//        }
-//    }
-
-//    private fun goToLocation(location: Location) {
-//        requireActivity().supportFragmentManager.commit {
-//            setReorderingAllowed(true)
-//            addToBackStack(DEFAULT_BACK_STACK)
-//
-//            replace(
-//                R.id.base_fragment_container,
-//                LocationDetailsFragment::class.java,
-//                bundleOf(LOCATIONS_FIELD to location)
-//            )
-//        }
-//    }
 
     companion object {
         fun newInstance(characterId: Int): CharacterDetailsFragment =

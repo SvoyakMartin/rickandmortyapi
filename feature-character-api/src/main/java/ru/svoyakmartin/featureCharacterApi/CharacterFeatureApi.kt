@@ -8,6 +8,5 @@ import ru.svoyakmartin.coreNavigation.router.flow.FlowRouter
 
 interface CharacterFeatureApi {
     fun getFlowFragment(): Fragment
-    fun getDetailFragment(characterId: String): Fragment
-    fun getCharactersByIds(ids: List<Int>): Flow<List<Any>>
+    fun getDetailFragment(characterId: Int): Fragment
 }

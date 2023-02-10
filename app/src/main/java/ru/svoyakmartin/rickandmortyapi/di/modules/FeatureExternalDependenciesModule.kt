@@ -7,6 +7,7 @@ import ru.svoyakmartin.coreDi.di.dependency.FeatureExternalDependencies
 import ru.svoyakmartin.coreDi.di.dependency.FeatureExternalDependenciesKey
 import ru.svoyakmartin.featureCharacter.di.CharacterExternalDependencies
 import ru.svoyakmartin.featureHomeScreen.di.HomeScreenExternalDependencies
+import ru.svoyakmartin.featureLocation.di.LocationExternalDependencies
 import ru.svoyakmartin.featureSettings.di.SettingsExternalDependencies
 import ru.svoyakmartin.rickandmortyapi.di.AppComponent
 
@@ -27,4 +28,9 @@ interface FeatureExternalDependenciesModule {
     @IntoMap
     @FeatureExternalDependenciesKey(SettingsExternalDependencies::class)
     fun bindSettingsExternalDependencies(appComponent: AppComponent): FeatureExternalDependencies
+
+    @Binds
+    @IntoMap
+    @FeatureExternalDependenciesKey(LocationExternalDependencies::class)
+    fun bindLocationExternalDependencies(appComponent: AppComponent): FeatureExternalDependencies
 }

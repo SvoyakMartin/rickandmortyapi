@@ -18,6 +18,7 @@ import ru.svoyakmartin.featureCharacterApi.CharacterFeatureApi
 import ru.svoyakmartin.featureHomeScreen.R
 import ru.svoyakmartin.featureHomeScreen.databinding.FragmentHomeBinding
 import ru.svoyakmartin.featureHomeScreen.ui.viewModel.HomeScreenComponentViewModel
+import ru.svoyakmartin.featureLocationApi.LocationFeatureApi
 import ru.svoyakmartin.featureSettingsApi.SettingsFeatureApi
 import javax.inject.Inject
 import kotlin.system.exitProcess
@@ -36,6 +37,13 @@ class HomeScreenFragment : Fragment() {
 
     private val characterFragment by lazy {
         characterFeatureApi.getFlowFragment()
+    }
+
+    @Inject
+    lateinit var locationFeatureApi: LocationFeatureApi
+
+    private val locationFragment by lazy {
+        locationFeatureApi.getFlowFragment()
     }
 
     @Inject
@@ -99,7 +107,7 @@ class HomeScreenFragment : Fragment() {
     private fun setFragmentFromBottomMenu(menuItemId: Int?) {
         if (binding.startFragmentBottomNavigation.selectedItemId != menuItemId) {
             val fragment = when (menuItemId) {
-//                R.id.locations_item -> LocationsFragment()
+                R.id.locations_item -> locationFragment
 //                R.id.episodes_item -> EpisodesFragment()
                 R.id.settings_item -> settingsFragment
 //                //R.id.characters_item ->

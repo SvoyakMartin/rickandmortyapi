@@ -6,9 +6,11 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import ru.svoyakmartin.featureCharacter.DB_NAME
 import ru.svoyakmartin.featureCharacter.domain.model.Character
+import ru.svoyakmartin.featureCharacter.domain.model.CharactersAndEpisodes
+import ru.svoyakmartin.featureCharacter.domain.model.CharactersAndLocations
 
 @Database(
-    entities = [Character::class],
+    entities = [Character::class, CharactersAndEpisodes::class, CharactersAndLocations::class],
     version = 1,
     exportSchema = false
 )
@@ -19,7 +21,7 @@ abstract class CharacterRoomDB : RoomDatabase() {
         @Volatile
         private var INSTANCE: CharacterRoomDB? = null
 
-        fun getDatabase (context: Context): CharacterRoomDB {
+        fun getDatabase(context: Context): CharacterRoomDB {
             return (INSTANCE ?: synchronized(this) {
                 INSTANCE?.let {
                     return it

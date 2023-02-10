@@ -11,7 +11,7 @@ import ru.svoyakmartin.featureCharacter.ui.viewModel.CharacterFeatureComponentDe
 import ru.svoyakmartin.featureCharacter.ui.viewModel.CharacterFeatureComponentViewModel
 import javax.inject.Inject
 
-class CharacterFeatureFlowFragment() : FlowFragment() {
+class CharacterFeatureFlowFragment : FlowFragment() {
     @Inject
     lateinit var flowRouter: FlowRouter
 

@@ -9,5 +9,6 @@ interface SettingsFeatureApi {
 
     companion object {
         const val CHARACTERS_LAST_PAGE_KEY = "charactersLastPage"
+        const val LOCATIONS_LAST_PAGE_KEY = "locationsLastPage"
     }
 }

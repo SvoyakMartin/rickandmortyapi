@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -22,4 +23,8 @@ dependencies {
 
     // for toMediaType() and logging
     implementation 'com.squareup.okhttp3:logging-interceptor:4.10.0'
+
+    // Dagger
+    implementation "com.google.dagger:dagger:2.44"
+    kapt "com.google.dagger:dagger-compiler:2.44"
 }

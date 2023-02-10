@@ -7,6 +7,7 @@ import ru.svoyakmartin.featureCharacterApi.CharacterFeatureApi
 
 @Module
 interface CharacterFeatureApiModule {
+
     @Binds
     fun bindCharacterFeatureApi(api: CharacterFeatureApiImpl): CharacterFeatureApi
 }

@@ -28,7 +28,7 @@ class CharacterListFragment : Fragment() {
     lateinit var viewModelFactory: Lazy<ViewModelFactory>
     private val viewModel: CharacterListViewModel by viewModels { viewModelFactory.get() }
     private lateinit var binding: FragmentCharactersBinding
-    private val adapter: CharactersAdapter by lazy { CharactersAdapter(viewModel) }
+    private val adapter by lazy { CharactersAdapter(viewModel) }
 
     override fun onAttach(context: Context) {
         viewModel<CharacterFeatureComponentViewModel>().component.inject(this)

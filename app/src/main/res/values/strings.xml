@@ -1,12 +1,3 @@
 <resources>
     <string name="app_name">RickAndMortyApi</string>
-
-    <string name="episodes_show">↓ show ↓</string>
-    <string name="episodes_hide">↑ hide ↑</string>
-
-    <!--    EPISODE DETAILS FRAGMENT-->
-    <string name="episode_characters_header_text">Episode characters: %1$d</string>
-
-    <!--    EPISODE DETAILS FRAGMENT-->
-    <string name="location_characters_header_text">Location residents: %1$d</string>
 </resources>

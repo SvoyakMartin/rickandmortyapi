@@ -7,7 +7,7 @@ import ru.svoyakmartin.featureSettingsApi.SettingsFeatureApi
 import javax.inject.Inject
 
 
-class SettingsFeatureApiImpl @Inject constructor(val repository: UserPreferencesRepositoryImpl) :
+class SettingsFeatureApiImpl @Inject constructor(private val repository: UserPreferencesRepositoryImpl) :
     SettingsFeatureApi {
     override fun getFlowFragment(): Fragment = SettingsFeatureFlowFragment()
     override fun saveInt(key: String, value: Int) = repository.saveInt(key, value)

@@ -15,5 +15,5 @@ interface CharactersApi {
     suspend fun getCharacterById(@Path("id") id: Int): Response<CharacterDTO>
 
     @GET("character/[{id}]")
-    suspend fun getCharactersByIds(@Path("ids") ids: String): Response<List<CharacterDTO>>
+    suspend fun getCharactersByIds(@Path("id") ids: String): Response<List<CharacterDTO>>
 }

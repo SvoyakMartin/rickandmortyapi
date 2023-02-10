@@ -1,18 +1,21 @@
 package ru.svoyakmartin.featureCharacter.data
 
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import ru.svoyakmartin.featureCharacter.data.dataSource.CharactersApi
 import ru.svoyakmartin.featureCharacter.data.dataSource.toCharacter
 import ru.svoyakmartin.featureCharacter.data.db.CharacterRoomDAO
 import ru.svoyakmartin.featureCharacter.data.model.CharacterDTO
 import ru.svoyakmartin.featureCharacter.domain.model.Character
+import ru.svoyakmartin.featureLocationApi.LocationFeatureApi
 import ru.svoyakmartin.featureSettingsApi.SettingsFeatureApi
 import javax.inject.Inject
 
 class CharacterRepositoryImpl @Inject constructor(
     private val characterRoomDAO: CharacterRoomDAO,
     private val settings: SettingsFeatureApi,
-    private val apiService: CharactersApi
+    private val apiService: CharactersApi,
+    private val locationFeatureApi: LocationFeatureApi
 ) {
     val allCharacters = characterRoomDAO.getAllCharacters()
     private var charactersLastPage =
@@ -66,6 +69,10 @@ class CharacterRepositoryImpl @Inject constructor(
 
             emit(character)
         }
+    }
+
+    suspend fun getLocationMapById(locationId: Int) = flow {
+        locationFeatureApi.getLocationMapById(locationId).collect { emit(it) }
     }
 
     suspend fun fetchCharactersByIds(ids: String) {

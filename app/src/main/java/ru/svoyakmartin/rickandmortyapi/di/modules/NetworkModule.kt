@@ -7,11 +7,11 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Converter
 import retrofit2.Retrofit
-import ru.svoyakmartin.rickandmortyapi.data.remote.retrofit.ApiService
 import ru.svoyakmartin.coreNetwork.provider.HttpLoggingInterceptorProvider
 import ru.svoyakmartin.coreNetwork.provider.JsonConverterFactoryProvider
 import ru.svoyakmartin.coreNetwork.provider.OkHttpClientProvider
 import ru.svoyakmartin.coreNetwork.provider.RetrofitProvider
+import ru.svoyakmartin.rickandmortyapi.data.remote.retrofit.ApiService
 
 @Module
 class NetworkModule {

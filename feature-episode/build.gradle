@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id "org.jetbrains.kotlin.plugin.serialization" version "1.8.10"
 }
 
 android {
@@ -10,10 +12,38 @@ android {
         minSdk 26
         targetSdk 32
     }
+
+    buildFeatures{
+        viewBinding true
+    }
 }
 
 dependencies {
-//    implementation 'androidx.core:core-ktx:1.9.0'
-//    implementation 'androidx.appcompat:appcompat:1.6.0'
-//    implementation 'com.google.android.material:material:1.8.0'
+    // Project
+    implementation project(":core-di")
+    implementation project(":core-flow")
+    implementation project(":core-mvvm")
+    implementation project(":feature-theme")
+    implementation project(":core-navigation")
+    implementation project(":feature-info")
+    implementation project(":feature-episode-api")
+    implementation project(":feature-settings-api")
+
+    // Dagger
+    implementation "com.google.dagger:dagger:2.44"
+    kapt "com.google.dagger:dagger-compiler:2.44"
+
+    // Room components
+    implementation "androidx.room:room-ktx:2.5.0"
+    kapt "androidx.room:room-compiler:2.5.0"
+
+    // Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+
+    // Kotlinx-serialization
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1"
+
+    // Basic
+    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'androidx.fragment:fragment-ktx:1.5.5'
 }

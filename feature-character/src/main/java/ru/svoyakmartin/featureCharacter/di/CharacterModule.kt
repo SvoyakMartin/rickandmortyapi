@@ -38,4 +38,6 @@ interface CharacterBindsModule {
     @IntoMap
     @ViewModelKey(CharacterDetailsViewModel::class)
     fun bindCharacterDetailsViewModel(viewModel: CharacterDetailsViewModel): ViewModel
+
+
 }
