@@ -3,10 +3,16 @@ package ru.svoyakmartin.featureLocation.ui.viewModel
 import androidx.lifecycle.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
+import ru.svoyakmartin.coreNavigation.router.flow.FlowRouter
+import ru.svoyakmartin.featureCharacterApi.CharacterFeatureApi
 import ru.svoyakmartin.featureLocation.data.LocationRepositoryImpl
 import javax.inject.Inject
 
-class LocationDetailsViewModel @Inject constructor(private val repository: LocationRepositoryImpl) :
+class LocationDetailsViewModel @Inject constructor(
+    private val repository: LocationRepositoryImpl,
+    private val characterFeatureApi: CharacterFeatureApi,
+    private val flowRouter: FlowRouter
+) :
     ViewModel() {
     private val _isCharactersVisible = MutableStateFlow(false)
     val isCharactersVisible = _isCharactersVisible
@@ -16,13 +22,17 @@ class LocationDetailsViewModel @Inject constructor(private val repository: Locat
         _isCharactersVisible.value = !_isCharactersVisible.value
     }
 
-        fun getLocationById(id: Int) = repository.getLocationById(id)
+    fun getLocationById(id: Int) = repository.getLocationById(id)
         .flowOn(Dispatchers.IO)
         .conflate()
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
-//    fun getCharactersByLocationId(id: Int) = repository.getCharactersByLocationId(id)
-//        .flowOn(Dispatchers.IO)
-//        .conflate()
-//        .stateInStarted5000(viewModelScope, listOf())
+    suspend fun getCharacterMapByLocationId(id: Int) = repository.getCharacterMapByLocationId(id)
+        .flowOn(Dispatchers.IO)
+        .conflate()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), mapOf())
+
+    fun navigateToCharacter(characterId: Int) {
+        flowRouter.navigateTo(characterFeatureApi.getDetailFragment(characterId))
+    }
 }

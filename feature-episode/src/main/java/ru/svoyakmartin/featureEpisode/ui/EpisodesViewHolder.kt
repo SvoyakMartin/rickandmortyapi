@@ -10,10 +10,10 @@ class EpisodesViewHolder(private val binding: EpisodeItemBinding): RecyclerView.
         with(binding){
             episodeName.text = item.name
             episodeCode.text = item.episode
-            episodeData.text = item.air_date
+            episodeData.text = item.airDate
 
             itemView.setOnClickListener{
-                clickListener.onEpisodeClick(item)
+                clickListener.onEpisodeClick(item.id)
             }
         }
     }

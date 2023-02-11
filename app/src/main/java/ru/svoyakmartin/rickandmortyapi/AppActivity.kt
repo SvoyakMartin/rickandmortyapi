@@ -25,12 +25,6 @@ class AppActivity : AppCompatActivity(R.layout.activity_main), FeatureExternalDe
     lateinit var homeScreenFeatureApi: HomeScreenFeatureApi
 
     @Inject
-    lateinit var characterFeatureApi: CharacterFeatureApi
-
-    @Inject
-    lateinit var settingsFeatureApi: SettingsFeatureApi
-
-    @Inject
     lateinit var globalRouter: GlobalRouter
 
     override fun onResumeFragments() {

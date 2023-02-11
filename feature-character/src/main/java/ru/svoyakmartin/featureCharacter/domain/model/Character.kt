@@ -16,7 +16,5 @@ data class Character(
     val gender: Gender,
     val origin: Int?,
     val location: Int?,
-    val image: String,
-    val url: String,
-    val created: Long
+    val image: String
 ) : Serializable

@@ -15,7 +15,5 @@ data class CharacterDTO(
     var origin: AdditionalFieldDTO,
     var location: AdditionalFieldDTO,
     var image: String,
-    var episode: List<String>,
-    var url: String,
-    var created: String
+    var episode: List<String>
 )

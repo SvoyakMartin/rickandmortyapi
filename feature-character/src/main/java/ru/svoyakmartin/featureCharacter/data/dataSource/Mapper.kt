@@ -2,9 +2,6 @@ package ru.svoyakmartin.featureCharacter.data.dataSource
 
 import ru.svoyakmartin.featureCharacter.data.model.CharacterDTO
 import ru.svoyakmartin.featureCharacter.domain.model.Character
-import java.time.LocalDateTime
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 
 fun CharacterDTO.toCharacter(): Character {
     return Character(
@@ -17,17 +14,22 @@ fun CharacterDTO.toCharacter(): Character {
         if (origin.url.isEmpty()) null else getIdFromUrl(origin.url),
         if (location.url.isEmpty()) null else getIdFromUrl(location.url),
         image,
-        url,
-        getTimeFromString(created)
     )
 }
 
-fun getTimeFromString(timeStamp: String): Long {
-    return LocalDateTime.parse(timeStamp, DateTimeFormatter.ISO_DATE_TIME)
-        .toInstant(ZoneOffset.UTC)
-        .toEpochMilli()
+fun CharacterDTO.getEpisodesIds(): List<Int> {
+    return getIdsListFromUrlList(episode)
 }
 
 fun getIdFromUrl(url: String): Int {
     return url.substringAfterLast('/').toInt()
+}
+
+fun getIdsListFromUrlList(urlList: List<String>): List<Int> {
+    val ids = arrayListOf<Int>()
+    urlList.forEach {
+        ids.add(getIdFromUrl(it))
+    }
+
+    return ids
 }

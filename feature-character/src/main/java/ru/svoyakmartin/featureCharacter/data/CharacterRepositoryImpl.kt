@@ -1,11 +1,10 @@
 package ru.svoyakmartin.featureCharacter.data
 
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import ru.svoyakmartin.featureCharacter.data.dataSource.CharactersApi
+import ru.svoyakmartin.featureCharacter.data.dataSource.getEpisodesIds
 import ru.svoyakmartin.featureCharacter.data.dataSource.toCharacter
 import ru.svoyakmartin.featureCharacter.data.db.CharacterRoomDAO
-import ru.svoyakmartin.featureCharacter.data.model.CharacterDTO
 import ru.svoyakmartin.featureCharacter.domain.model.Character
 import ru.svoyakmartin.featureLocationApi.LocationFeatureApi
 import ru.svoyakmartin.featureSettingsApi.SettingsFeatureApi
@@ -20,23 +19,23 @@ class CharacterRepositoryImpl @Inject constructor(
     val allCharacters = characterRoomDAO.getAllCharacters()
     private var charactersLastPage =
         settings.readInt(SettingsFeatureApi.CHARACTERS_LAST_PAGE_KEY, 1)
-////    private lateinit var statistic: Map<String, Int>
-//
-////    suspend fun getStatistic() {
-////        apiService.getStatistic().body()?.let {
-////            statistic = it.toMap()
-////        }
-////    }
 
     suspend fun fetchNextCharactersPartFromWeb() {
         val response = apiService.getCharacters(charactersLastPage)
         response.body()?.apply {
             val charactersList = ArrayList<Character>()
+            val charactersAndEpisodesIdsMap = mutableMapOf<Int, List<Int>>()
 
             results.forEach { characterDTO ->
-                charactersList.add(characterDTO.toCharacter())
+                val character = characterDTO.toCharacter()
+                charactersList.add(character)
+                charactersAndEpisodesIdsMap[character.id] = characterDTO.getEpisodesIds()
             }
 
+            characterRoomDAO.insertCharactersAndDependencies(
+                charactersList,
+                charactersAndEpisodesIdsMap
+            )
             characterRoomDAO.insertCharacters(charactersList)
 
             if (info.pages > charactersLastPage) {
@@ -60,7 +59,7 @@ class CharacterRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun fetchCharacterById(id: Int) = flow<Character> {
+    private suspend fun fetchCharacterById(id: Int) = flow {
         val response = apiService.getCharacterById(id)
 
         response.body()?.apply {
@@ -73,21 +72,5 @@ class CharacterRepositoryImpl @Inject constructor(
 
     suspend fun getLocationMapById(locationId: Int) = flow {
         locationFeatureApi.getLocationMapById(locationId).collect { emit(it) }
-    }
-
-    suspend fun fetchCharactersByIds(ids: String) {
-//        val response = apiService.getCharactersById(ids)
-////        response.body()?.apply {
-////            val charactersList = ArrayList<Character>()
-////            val charactersAndEpisodesIdsMap = mutableMapOf<Int, List<Int>>()
-////
-////            forEach { characterDTO ->
-////                val character = characterDTO.toCharacter()
-////                charactersList.add(character)
-////                charactersAndEpisodesIdsMap[characterDTO.id] = characterDTO.getEpisodesIds()
-////            }
-////
-////            roomDAO.insertCharactersAndDependencies(charactersList, charactersAndEpisodesIdsMap)
-////        }
     }
 }

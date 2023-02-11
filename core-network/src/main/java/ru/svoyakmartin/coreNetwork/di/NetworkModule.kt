@@ -1,4 +1,4 @@
-package ru.svoyakmartin.rickandmortyapi.di.modules
+package ru.svoyakmartin.coreNetwork.di
 
 import dagger.Module
 import dagger.Provides
@@ -11,15 +11,9 @@ import ru.svoyakmartin.coreNetwork.provider.HttpLoggingInterceptorProvider
 import ru.svoyakmartin.coreNetwork.provider.JsonConverterFactoryProvider
 import ru.svoyakmartin.coreNetwork.provider.OkHttpClientProvider
 import ru.svoyakmartin.coreNetwork.provider.RetrofitProvider
-import ru.svoyakmartin.rickandmortyapi.data.remote.retrofit.ApiService
 
 @Module
 class NetworkModule {
-    @Provides
-    fun provideApiService(retrofit: Retrofit): ApiService {
-        return retrofit.create(ApiService::class.java)
-    }
-
     @Provides
     fun provideRetrofit(
         baseUrl: String,

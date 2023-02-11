@@ -27,6 +27,7 @@ dependencies {
     implementation project(":core-navigation")
     implementation project(":feature-info")
     implementation project(":feature-location-api")
+    implementation project(":feature-character-api")
     implementation project(":feature-settings-api")
 
     // Dagger

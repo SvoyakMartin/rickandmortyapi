@@ -32,11 +32,13 @@ interface CharacterBindsModule {
     @Binds
     @IntoMap
     @ViewModelKey(CharacterListViewModel::class)
+    @Suppress("UNUSED")
     fun bindCharacterListViewModel(viewModel: CharacterListViewModel): ViewModel
 
     @Binds
     @IntoMap
     @ViewModelKey(CharacterDetailsViewModel::class)
+    @Suppress("UNUSED")
     fun bindCharacterDetailsViewModel(viewModel: CharacterDetailsViewModel): ViewModel
 
 

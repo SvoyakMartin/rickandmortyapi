@@ -9,5 +9,6 @@ import ru.svoyakmartin.featureEpisodeApi.EpisodeFeatureApi
 interface EpisodeFeatureApiModule {
 
     @Binds
+    @Suppress("UNUSED")
     fun bindEpisodeFeatureApi(api: EpisodeFeatureApiImpl): EpisodeFeatureApi
 }
