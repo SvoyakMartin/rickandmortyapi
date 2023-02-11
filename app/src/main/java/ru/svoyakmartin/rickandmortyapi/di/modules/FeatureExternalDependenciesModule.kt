@@ -6,6 +6,7 @@ import dagger.multibindings.IntoMap
 import ru.svoyakmartin.coreDi.di.dependency.FeatureExternalDependencies
 import ru.svoyakmartin.coreDi.di.dependency.FeatureExternalDependenciesKey
 import ru.svoyakmartin.featureCharacter.di.CharacterExternalDependencies
+import ru.svoyakmartin.featureEpisode.di.EpisodeExternalDependencies
 import ru.svoyakmartin.featureHomeScreen.di.HomeScreenExternalDependencies
 import ru.svoyakmartin.featureLocation.di.LocationExternalDependencies
 import ru.svoyakmartin.featureSettings.di.SettingsExternalDependencies
@@ -28,6 +29,11 @@ interface FeatureExternalDependenciesModule {
     @IntoMap
     @FeatureExternalDependenciesKey(SettingsExternalDependencies::class)
     fun bindSettingsExternalDependencies(appComponent: AppComponent): FeatureExternalDependencies
+
+    @Binds
+    @IntoMap
+    @FeatureExternalDependenciesKey(EpisodeExternalDependencies::class)
+    fun bindEpisodeExternalDependencies(appComponent: AppComponent): FeatureExternalDependencies
 
     @Binds
     @IntoMap

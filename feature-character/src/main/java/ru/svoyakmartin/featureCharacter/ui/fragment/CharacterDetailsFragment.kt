@@ -50,6 +50,7 @@ class CharacterDetailsFragment : FlowFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val characterId = arguments?.getInt(CHARACTERS_FIELD)
+
         characterId?.let {
             viewLifecycleOwner.lifecycleScope.launch {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

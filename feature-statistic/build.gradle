@@ -1,0 +1,36 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id "org.jetbrains.kotlin.plugin.serialization" version "1.8.10"
+    id "kotlin-kapt"
+}
+
+android {
+    compileSdk 32
+
+    defaultConfig {
+        minSdk 26
+        targetSdk 32
+    }
+}
+
+dependencies {
+    // Project
+    implementation project(":core-di")
+//    implementation project(":core-flow")
+//    implementation project(":core-mvvm")
+//    implementation project(":feature-theme")
+//    implementation project(":core-navigation")
+    implementation project(":feature-statistic-api")
+
+    // Dagger
+    implementation "com.google.dagger:dagger:2.44"
+    kapt "com.google.dagger:dagger-compiler:2.44"
+
+    // Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+
+    // Kotlinx-serialization
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1"
+
+}

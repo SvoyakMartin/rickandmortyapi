@@ -10,8 +10,6 @@ data class Episode(
     @PrimaryKey
     val id: Int,
     val name: String,
-    val air_date: String,
-    val episode: String,
-    val url: String,
-    val created: Long
+    val airDate: String,
+    val episode: String
 ) : Serializable

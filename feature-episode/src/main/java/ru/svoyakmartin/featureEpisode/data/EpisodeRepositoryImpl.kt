@@ -1,64 +1,72 @@
 package ru.svoyakmartin.featureEpisode.data
 
+import kotlinx.coroutines.flow.flow
 import ru.svoyakmartin.coreDi.di.scope.AppScope
+import ru.svoyakmartin.featureCharacterApi.CharacterFeatureApi
+import ru.svoyakmartin.featureEpisode.data.dataSource.EpisodesApi
+import ru.svoyakmartin.featureEpisode.data.dataSource.getCharactersIds
+import ru.svoyakmartin.featureEpisode.data.dataSource.toEpisode
+import ru.svoyakmartin.featureEpisode.data.db.EpisodeRoomDAO
+import ru.svoyakmartin.featureEpisode.domain.model.Episode
+import ru.svoyakmartin.featureSettingsApi.SettingsFeatureApi
 import javax.inject.Inject
 
-@AppScope
 class EpisodeRepositoryImpl @Inject constructor(
-    private val episodeRoomDAO: ru.svoyakmartin.featureEpisode.data.db.EpisodeRoomDAO,
-//    private val settings: UserPreferencesRepositoryImpl,
-//    private val apiService: ru.svoyakmartin.featureEpisode.data.dataSource.ApiService
+    private val episodeRoomDAO: EpisodeRoomDAO,
+    private val settings: SettingsFeatureApi,
+    private val apiService: EpisodesApi,
+    private val characterFeatureApi: CharacterFeatureApi
 ) {
     val allEpisodes = episodeRoomDAO.getAllEpisodes()
-//    private var episodesLastPage = settings.readSavedEpisodesLastPage()
-//    private lateinit var statistic: Map<String, Int>
+    private var episodesLastPage = settings.readInt(SettingsFeatureApi.EPISODES_LAST_PAGE_KEY, 1)
 
-//    suspend fun getStatistic() {
-//        apiService.getStatistic().body()?.let {
-//            statistic = it.toMap()
-//        }
-//    }
+    suspend fun fetchNextEpisodesPartFromWeb() {
+        val response = apiService.getEpisodes(episodesLastPage)
+        response.body()?.apply {
+            val episodesList = ArrayList<Episode>()
+            val charactersAndEpisodesIdsMap = mutableMapOf<Int, List<Int>>()
 
-    suspend fun fetchNextCharactersPartFromWeb() {
-//        val response = apiService.getCharacters(charactersLastPage)
-//        response.body()?.apply {
-//            val charactersList = ArrayList<ru.svoyakmartin.featureCharacter.domain.model.Character>()
-//            val charactersAndEpisodesIdsMap = mutableMapOf<Int, List<Int>>()
-//
-//            results.forEach { characterDTO ->
-//                val character = characterDTO.toCharacter()
-//                charactersList.add(character)
-//                charactersAndEpisodesIdsMap[character.id] = characterDTO.getEpisodesIds()
-//            }
-//
-//            if (info.pages > charactersLastPage) {
-//                settings.saveCharactersLastPage(++charactersLastPage)
-//            }
-//
-//            roomDAO.insertCharactersAndDependencies(charactersList, charactersAndEpisodesIdsMap)
-//        }
+            results.forEach { episodesDTO ->
+                val episode = episodesDTO.toEpisode()
+                episodesList.add(episode)
+                charactersAndEpisodesIdsMap[episode.id] = episodesDTO.getCharactersIds()
+            }
+
+            episodeRoomDAO.insertEpisodes(episodesList)
+            characterFeatureApi.insertCharactersAndEpisodes(charactersAndEpisodesIdsMap)
+
+            if (info.pages > episodesLastPage) {
+                settings.saveInt(SettingsFeatureApi.EPISODES_LAST_PAGE_KEY, ++episodesLastPage)
+            }
+        }
     }
 
-//    suspend fun fetchNextEpisodesPartFromWeb() {
-//        val response = apiService.getEpisodes(episodesLastPage)
-//        response.body()?.apply {
-//            val episodesList = ArrayList<ru.svoyakmartin.featureEpisode.domain.model.Episode>()
-//            val charactersAndEpisodesIdsMap = mutableMapOf<Int, List<Int>>()
-//
-//            results.forEach { episodesDTO ->
-//                val episode = episodesDTO.toEpisode()
-//                episodesList.add(episode)
-//                charactersAndEpisodesIdsMap[episode.id] = episodesDTO.getCharactersIds()
-//            }
-//
-//            if (info.pages > episodesLastPage) {
-//                settings.saveEpisodesLastPage(++episodesLastPage)
-//            }
-//
-//            roomDAO.insertEpisodesAndDependencies(episodesList, charactersAndEpisodesIdsMap)
-//        }
-//    }
+    suspend fun getEpisodeById(id: Int) = flow {
+        episodeRoomDAO.getEpisodeById(id).collect { character ->
+            if (character != null) {
+                emit(character)
+            } else {
+                fetchEpisodeById(id).collect {
+                    emit(it)
+                }
+            }
+        }
+    }
 
+    private suspend fun fetchEpisodeById(id: Int) = flow {
+        val response = apiService.getEpisodeById(id)
+
+        response.body()?.apply {
+            val character = toEpisode()
+            episodeRoomDAO.insertEpisode(character)
+
+            emit(character)
+        }
+    }
+
+    suspend fun getCharacterMapByEpisodeId(episodeId: Int) = flow{
+            characterFeatureApi.getCharacterMapByEpisodeId(episodeId).collect { emit(it) }
+    }
 //    private suspend fun fetchEpisodesByIds(ids: String) {
 //        val response = apiService.getEpisodesByIds(ids)
 //        response.body()?.apply {
@@ -75,23 +83,6 @@ class EpisodeRepositoryImpl @Inject constructor(
 //        }
 //    }
 
-
-
-    private suspend fun fetchCharactersByIds(ids: String) {
-//        val response = apiService.getCharactersById(ids)
-//        response.body()?.apply {
-//            val charactersList = ArrayList<ru.svoyakmartin.featureCharacter.domain.model.Character>()
-//            val charactersAndEpisodesIdsMap = mutableMapOf<Int, List<Int>>()
-//
-//            forEach { characterDTO ->
-//                val character = characterDTO.toCharacter()
-//                charactersList.add(character)
-//                charactersAndEpisodesIdsMap[characterDTO.id] = characterDTO.getEpisodesIds()
-//            }
-//
-//            roomDAO.insertCharactersAndDependencies(charactersList, charactersAndEpisodesIdsMap)
-//        }
-    }
 
 //    fun getEpisodesByCharacterId(characterId: Int): Flow<List<ru.svoyakmartin.featureEpisode.domain.model.Episode>?> {
 //        return flow {
@@ -118,21 +109,6 @@ class EpisodeRepositoryImpl @Inject constructor(
 //
 //                    roomDAO.getCharactersByEpisodeId(episodeId).collect { episodesList ->
 //                        emit(episodesList)
-//                    }
-//                }
-//        }
-//    }
-
-//    fun getCharactersByLocationId(locationId: Int): Flow<List<ru.svoyakmartin.featureCharacter.domain.model.Character>?> {
-//        return flow {
-//            roomDAO.getMissingCharacterIdsByLocationId(locationId)
-//                .collect { characterIdsList ->
-//                    if (!characterIdsList.isNullOrEmpty()) {
-//                        fetchCharactersByIds(characterIdsList.joinToString())
-//                    }
-//
-//                    roomDAO.getCharactersByLocationId(locationId).collect { locationsList ->
-//                        emit(locationsList)
 //                    }
 //                }
 //        }

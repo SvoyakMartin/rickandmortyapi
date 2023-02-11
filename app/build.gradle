@@ -49,11 +49,13 @@ dependencies {
     implementation project(':feature-location')
     implementation project(':feature-episode-api')
     implementation project(':feature-episode')
+    implementation project(':feature-statistic-api')
+    implementation project(':feature-statistic')
 
 
     // Basic
     implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.appcompat:appcompat:1.6.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.fragment:fragment-ktx:1.5.5'

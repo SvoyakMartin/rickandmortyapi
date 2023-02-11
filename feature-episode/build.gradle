@@ -28,6 +28,7 @@ dependencies {
     implementation project(":feature-info")
     implementation project(":feature-episode-api")
     implementation project(":feature-settings-api")
+    implementation project(":feature-character-api")
 
     // Dagger
     implementation "com.google.dagger:dagger:2.44"
@@ -46,4 +47,5 @@ dependencies {
     // Basic
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.fragment:fragment-ktx:1.5.5'
+
 }

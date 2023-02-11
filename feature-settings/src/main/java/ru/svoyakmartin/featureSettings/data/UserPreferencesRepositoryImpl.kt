@@ -28,26 +28,6 @@ class UserPreferencesRepositoryImpl private constructor(context: Context) {
         saveNightMode(mode)
     }
 
-    fun saveEpisodesLastPage(page: Int) {
-        sharedPreferences.change {
-            putInt(EPISODES_LAST_PAGE_KEY, page)
-        }
-    }
-
-    fun saveLocationsLastPage(page: Int) {
-        sharedPreferences.change {
-            putInt(LOCATIONS_LAST_PAGE_KEY, page)
-        }
-    }
-
-    fun readSavedEpisodesLastPage(): Int {
-        return sharedPreferences.getInt(EPISODES_LAST_PAGE_KEY, 1)
-    }
-
-    fun readSavedLocationsLastPage(): Int {
-        return sharedPreferences.getInt(LOCATIONS_LAST_PAGE_KEY, 1)
-    }
-
     fun saveInt(key: String, value: Int){
         sharedPreferences.change {
             putInt(key, value)
@@ -60,8 +40,6 @@ class UserPreferencesRepositoryImpl private constructor(context: Context) {
 
     companion object {
         const val NIGHT_MODE_KEY = "nightMode"
-        const val EPISODES_LAST_PAGE_KEY = "charactersLastPage"
-        const val LOCATIONS_LAST_PAGE_KEY = "locationsLastPage"
 
         @Volatile
         private var INSTANCE: UserPreferencesRepositoryImpl? = null

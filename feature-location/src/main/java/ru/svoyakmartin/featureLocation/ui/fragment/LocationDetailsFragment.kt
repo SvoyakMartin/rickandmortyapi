@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -67,10 +68,10 @@ class LocationDetailsFragment : Fragment() {
             with(location) {
                 viewLifecycleOwner.lifecycleScope.launch {
                     viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-//                        launch {
-//                            viewModel.getCharactersByLocationId(id)
-//                                .collect { setCharactersView(it) }
-//                        }
+                        launch {
+                            viewModel.getCharacterMapByLocationId(id)
+                                .collect {setCharactersView(it) }
+                        }
 
                         launch {
                             viewModel.isCharactersVisible
@@ -86,35 +87,35 @@ class LocationDetailsFragment : Fragment() {
         }
     }
 
-//    private fun setCharactersView(charactersList: List<ru.svoyakmartin.featureCharacter.domain.model.Character>?) {
-//        val size = charactersList?.size ?: 0
-//
-//        with(binding) {
-//            locationCharacters.text = getString(R.string.location_characters_header_text, size)
-//
-//            if (size > 0) {
-//                showHideCharacters.apply {
-//                    visibility = View.VISIBLE
-//
-//                    setOnClickListener {
-//                        viewModel.changeCharactersVisible()
-//                    }
-//                }
-//
-//                charactersList?.forEach { character ->
-//                    val textView = TextView(context).apply {
-//                        text = character.name
-//
-//                        setOnClickListener {
-//                            goToCharacter(character)
-//                        }
-//                    }
-//
-//                    charactersContainer.addView(textView)
-//                }
-//            }
-//        }
-//    }
+    private fun setCharactersView(charactersMap: Map<String, Int>?) {
+        val size = charactersMap?.size ?: 0
+
+        with(binding) {
+            locationCharacters.text = getString(R.string.location_characters_header_text, size)
+
+            if (size > 0) {
+                showHideCharacters.apply {
+                    visibility = View.VISIBLE
+
+                    setOnClickListener {
+                        viewModel.changeCharactersVisible()
+                    }
+                }
+
+                charactersMap?.forEach { entry ->
+                    val textView = TextView(context).apply {
+                        text = entry.key
+
+                        setOnClickListener {
+                            viewModel.navigateToCharacter(entry.value)
+                        }
+                    }
+
+                    charactersContainer.addView(textView)
+                }
+            }
+        }
+    }
 
     private fun showHideCharacters(isCharactersVisible: Boolean) {
         with(binding) {

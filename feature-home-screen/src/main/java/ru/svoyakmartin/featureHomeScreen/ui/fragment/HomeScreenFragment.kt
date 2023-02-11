@@ -15,6 +15,7 @@ import ru.svoyakmartin.coreMvvm.viewModel
 import ru.svoyakmartin.coreNavigation.navigator.NavigatorHolder
 import ru.svoyakmartin.coreNavigation.router.flow.FlowRouter
 import ru.svoyakmartin.featureCharacterApi.CharacterFeatureApi
+import ru.svoyakmartin.featureEpisodeApi.EpisodeFeatureApi
 import ru.svoyakmartin.featureHomeScreen.R
 import ru.svoyakmartin.featureHomeScreen.databinding.FragmentHomeBinding
 import ru.svoyakmartin.featureHomeScreen.ui.viewModel.HomeScreenComponentViewModel
@@ -33,6 +34,9 @@ class HomeScreenFragment : Fragment() {
 //    }
 
     @Inject
+    lateinit var flowRouter: FlowRouter
+
+    @Inject
     lateinit var characterFeatureApi: CharacterFeatureApi
 
     private val characterFragment by lazy {
@@ -44,6 +48,13 @@ class HomeScreenFragment : Fragment() {
 
     private val locationFragment by lazy {
         locationFeatureApi.getFlowFragment()
+    }
+
+    @Inject
+    lateinit var episodeFeatureApi: EpisodeFeatureApi
+
+    private val episodeFragment by lazy {
+        episodeFeatureApi.getFlowFragment()
     }
 
     @Inject
@@ -82,7 +93,7 @@ class HomeScreenFragment : Fragment() {
         initViews()
 
         if (childFragmentManager.fragments.isEmpty()) {
-            setFragment(characterFragment)
+            setFragment(characterFragment, CharacterFeatureApi.BACKSTACK_KEY)
         } else {
             setFragmentFromBottomMenu(binding.startFragmentBottomNavigation.selectedItemId)
         }
@@ -106,19 +117,18 @@ class HomeScreenFragment : Fragment() {
 
     private fun setFragmentFromBottomMenu(menuItemId: Int?) {
         if (binding.startFragmentBottomNavigation.selectedItemId != menuItemId) {
-            val fragment = when (menuItemId) {
-                R.id.locations_item -> locationFragment
-//                R.id.episodes_item -> EpisodesFragment()
-                R.id.settings_item -> settingsFragment
-//                //R.id.characters_item ->
-                else -> characterFragment
-            }
 
-            setFragment(fragment)
+            when (menuItemId) {
+                R.id.locations_item -> setFragment(locationFragment, LocationFeatureApi.BACKSTACK_KEY)
+                R.id.episodes_item -> setFragment(episodeFragment, EpisodeFeatureApi.BACKSTACK_KEY)
+                R.id.settings_item -> setFragment(settingsFragment, SettingsFeatureApi.BACKSTACK_KEY)
+                //R.id.characters_item ->
+                else -> setFragment(characterFragment, CharacterFeatureApi.BACKSTACK_KEY)
+            }
         }
     }
 
-    private fun setFragment(fragment: Fragment) {
+    private fun setFragment(fragment: Fragment, backStack: String) {
         val fragmentTag = fragment.shortClassName
 
         with(childFragmentManager) {
@@ -130,6 +140,7 @@ class HomeScreenFragment : Fragment() {
 
                 if (existingFragment == null) {
                     add(R.id.start_fragment_container, fragment, fragmentTag)
+                    setPrimaryNavigationFragment(fragment)
                     existingFragment = fragment
                 }
 
