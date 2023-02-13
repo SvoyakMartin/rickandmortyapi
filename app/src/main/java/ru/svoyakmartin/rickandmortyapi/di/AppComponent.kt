@@ -4,7 +4,6 @@ import android.content.Context
 import dagger.BindsInstance
 import dagger.Component
 import ru.svoyakmartin.coreDi.di.scope.AppScope
-import ru.svoyakmartin.coreFlow.di.FlowModule
 import ru.svoyakmartin.coreNetwork.di.NetworkModule
 import ru.svoyakmartin.featureCharacter.di.CharacterExternalDependencies
 import ru.svoyakmartin.featureCharacterDependencies.CharacterDependenciesFeatureApiImpl_Factory
@@ -20,7 +19,6 @@ import ru.svoyakmartin.rickandmortyapi.di.modules.*
 @[AppScope Component(
     modules = [
         AppModule::class,
-        FlowModule::class,
         NetworkModule::class,
         NavigationModule::class,
         FeatureExternalDependenciesModule::class

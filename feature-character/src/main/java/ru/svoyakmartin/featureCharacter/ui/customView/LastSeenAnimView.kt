@@ -27,18 +27,6 @@ class LastSeenAnimView
     private val statusTextSize = context.toDp(20f)
     private val lastSeenTextSize = context.toDp(14f)
     private val locationTextSize = context.toDp(16f)
-    private val iconPaint: Paint by lazy {
-        getPaint(PaintStyle.ICON)
-    }
-    private val statusTextPaint: Paint by lazy {
-        getPaint(PaintStyle.STATUS)
-    }
-    private val headerTextPaint: Paint by lazy {
-        getPaint(PaintStyle.HEADER)
-    }
-    private val locationTextPaint: Paint by lazy {
-        getPaint(PaintStyle.LOCATION)
-    }
 
     private val reference = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890 "
     private var isLastSeenVisible = false
@@ -53,6 +41,18 @@ class LastSeenAnimView
     private var locationFindColor = 0
 
     private val random = Random(Date().time)
+
+    private var iconPaint = getPaint(PaintStyle.ICON)
+
+    private val statusTextPaint: Paint by lazy {
+        getPaint(PaintStyle.STATUS)
+    }
+    private val headerTextPaint: Paint by lazy {
+        getPaint(PaintStyle.HEADER)
+    }
+    private val locationTextPaint: Paint by lazy {
+        getPaint(PaintStyle.LOCATION)
+    }
 
     init {
         attrs?.let {
@@ -134,6 +134,7 @@ class LastSeenAnimView
             }
         }
     }
+
     @Suppress("unused")
     fun onClick() {
         if (!isLastSeenVisible) {
@@ -166,6 +167,8 @@ class LastSeenAnimView
     @Suppress("unused")
     fun setAliveStatus(status: AliveStatus) {
         aliveStatus = status
+        iconPaint = getPaint(PaintStyle.ICON)
+        requestLayout()
     }
 
     @Suppress("unused")

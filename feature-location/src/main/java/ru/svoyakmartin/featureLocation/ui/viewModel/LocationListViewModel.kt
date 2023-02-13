@@ -4,18 +4,12 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import ru.svoyakmartin.coreNavigation.router.flow.FlowRouter
 import ru.svoyakmartin.featureLocation.data.LocationRepositoryImpl
-import ru.svoyakmartin.featureLocation.ui.LocationClickListener
-import ru.svoyakmartin.featureLocation.ui.fragment.LocationDetailsFragment
 import javax.inject.Inject
 
 class LocationListViewModel @Inject constructor(
-    private val repository: LocationRepositoryImpl,
-    private val flowRouter: FlowRouter
-) :
-    ViewModel(),
-    LocationClickListener {
+    private val repository: LocationRepositoryImpl
+) : ViewModel() {
     val allLocations = repository.allLocations
         .flowOn(Dispatchers.IO)
         .conflate()
@@ -31,9 +25,5 @@ class LocationListViewModel @Inject constructor(
 
     fun fetchNextLocationsPartFromWeb() = viewModelScope.launch {
         repository.fetchNextLocationsPartFromWeb()
-    }
-
-    override fun onLocationClick(locationId: Int) {
-        flowRouter.navigateTo(LocationDetailsFragment.newInstance(locationId))
     }
 }

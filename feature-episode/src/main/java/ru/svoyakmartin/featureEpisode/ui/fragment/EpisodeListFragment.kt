@@ -14,25 +14,28 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dagger.Lazy
 import kotlinx.coroutines.launch
+import ru.svoyakmartin.coreDi.di.dependency.findFeatureExternalDependencies
 import ru.svoyakmartin.coreDi.di.viewModel.ViewModelFactory
 import ru.svoyakmartin.coreMvvm.viewModel
 import ru.svoyakmartin.featureEpisode.databinding.FragmentEpisodesBinding
 import ru.svoyakmartin.featureEpisode.ui.EpisodesAdapter
+import ru.svoyakmartin.featureEpisode.ui.viewModel.EpisodeFeatureComponentDependenciesProvider
 import ru.svoyakmartin.featureEpisode.ui.viewModel.EpisodeFeatureComponentViewModel
 import ru.svoyakmartin.featureEpisode.ui.viewModel.EpisodeListViewModel
 import javax.inject.Inject
 
-class EpisodeListFragment : Fragment(){
+class EpisodeListFragment : Fragment() {
     private lateinit var binding: FragmentEpisodesBinding
 
     @Inject
     lateinit var viewModelFactory: Lazy<ViewModelFactory>
     private val viewModel: EpisodeListViewModel by viewModels { viewModelFactory.get() }
-    private val adapter by lazy { EpisodesAdapter(viewModel)}
+    private val adapter = EpisodesAdapter()
 
     override fun onAttach(context: Context) {
+        EpisodeFeatureComponentDependenciesProvider.featureDependencies =
+            findFeatureExternalDependencies()
         viewModel<EpisodeFeatureComponentViewModel>().component.inject(this)
-
         super.onAttach(context)
     }
 
@@ -89,7 +92,7 @@ class EpisodeListFragment : Fragment(){
     }
 
     private fun loadNextPart() {
-        with(viewModel){
+        with(viewModel) {
             if (!isLoading.value) {
                 apply {
                     setIsLoading(true)

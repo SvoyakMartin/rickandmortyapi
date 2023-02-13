@@ -7,9 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
+import ru.svoyakmartin.coreDi.di.dependency.findFeatureExternalDependencies
 import ru.svoyakmartin.coreMvvm.viewModel
 import ru.svoyakmartin.featureSettings.data.UserPreferencesRepositoryImpl
 import ru.svoyakmartin.featureSettings.databinding.FragmentSettingsBinding
+import ru.svoyakmartin.featureSettings.ui.viewModel.SettingsComponentDependenciesProvider
 import ru.svoyakmartin.featureSettings.ui.viewModel.SettingsComponentViewModel
 import javax.inject.Inject
 
@@ -20,8 +22,9 @@ class SettingsFragment : Fragment() {
     lateinit var settings: UserPreferencesRepositoryImpl
 
     override fun onAttach(context: Context) {
-        super.onAttach(context)
+        SettingsComponentDependenciesProvider.dependencies = findFeatureExternalDependencies()
         viewModel<SettingsComponentViewModel>().component.inject(this)
+        super.onAttach(context)
     }
 
     override fun onCreateView(

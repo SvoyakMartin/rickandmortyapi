@@ -13,9 +13,6 @@ android {
 }
 
 dependencies {
-    // Project
-    implementation project(":core-flow")
-
     // Basic
     implementation 'androidx.fragment:fragment-ktx:1.5.5'
 }

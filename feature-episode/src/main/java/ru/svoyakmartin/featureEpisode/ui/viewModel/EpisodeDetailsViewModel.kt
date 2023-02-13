@@ -3,14 +3,12 @@ package ru.svoyakmartin.featureEpisode.ui.viewModel
 import androidx.lifecycle.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
-import ru.svoyakmartin.coreNavigation.router.flow.FlowRouter
 import ru.svoyakmartin.featureCharacterApi.CharacterFeatureApi
 import ru.svoyakmartin.featureEpisode.data.EpisodeRepositoryImpl
 import javax.inject.Inject
 
 class EpisodeDetailsViewModel @Inject constructor(
     private val repository: EpisodeRepositoryImpl,
-    private val flowRouter: FlowRouter,
     private val characterFeatureApi: CharacterFeatureApi
 ) :
     ViewModel() {
@@ -31,8 +29,4 @@ class EpisodeDetailsViewModel @Inject constructor(
         .flowOn(Dispatchers.IO)
         .conflate()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), listOf())
-
-    fun navigateToCharacter(characterId: Int) {
-        flowRouter.navigateTo(characterFeatureApi.getDetailFragment(characterId))
-    }
 }

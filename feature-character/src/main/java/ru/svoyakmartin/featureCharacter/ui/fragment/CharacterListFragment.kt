@@ -14,10 +14,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dagger.Lazy
 import kotlinx.coroutines.launch
+import ru.svoyakmartin.coreDi.di.dependency.findFeatureExternalDependencies
 import ru.svoyakmartin.coreDi.di.viewModel.ViewModelFactory
 import ru.svoyakmartin.coreMvvm.viewModel
 import ru.svoyakmartin.featureCharacter.databinding.FragmentCharactersBinding
 import ru.svoyakmartin.featureCharacter.ui.CharactersAdapter
+import ru.svoyakmartin.featureCharacter.ui.viewModel.CharacterFeatureComponentDependenciesProvider
 import ru.svoyakmartin.featureCharacter.ui.viewModel.CharacterFeatureComponentViewModel
 import ru.svoyakmartin.featureCharacter.ui.viewModel.CharacterListViewModel
 import javax.inject.Inject
@@ -28,9 +30,11 @@ class CharacterListFragment : Fragment() {
     lateinit var viewModelFactory: Lazy<ViewModelFactory>
     private val viewModel: CharacterListViewModel by viewModels { viewModelFactory.get() }
     private lateinit var binding: FragmentCharactersBinding
-    private val adapter by lazy { CharactersAdapter(viewModel) }
+    private val adapter = CharactersAdapter()
 
     override fun onAttach(context: Context) {
+        CharacterFeatureComponentDependenciesProvider.featureDependencies =
+            findFeatureExternalDependencies()
         viewModel<CharacterFeatureComponentViewModel>().component.inject(this)
 
         super.onAttach(context)

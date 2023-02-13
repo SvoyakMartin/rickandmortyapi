@@ -20,9 +20,7 @@ android {
 dependencies {
     // Project
     implementation project(":core-di")
-    implementation project(":core-flow")
     implementation project(":core-mvvm")
-    implementation project(":core-navigation")
     implementation project(":feature-settings-api")
 
     // Basic

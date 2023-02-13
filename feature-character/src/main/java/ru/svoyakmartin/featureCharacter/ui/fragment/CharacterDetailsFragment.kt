@@ -1,21 +1,24 @@
 package ru.svoyakmartin.featureCharacter.ui.fragment
 
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import dagger.Lazy
 import kotlinx.coroutines.launch
+import ru.svoyakmartin.coreDi.di.dependency.findFeatureExternalDependencies
 import ru.svoyakmartin.coreDi.di.viewModel.ViewModelFactory
-import ru.svoyakmartin.coreFlow.ui.FlowFragment
 import ru.svoyakmartin.coreMvvm.viewModel
 import ru.svoyakmartin.featureCharacter.CHARACTERS_FIELD
 import ru.svoyakmartin.featureCharacter.R
@@ -23,18 +26,20 @@ import ru.svoyakmartin.featureCharacter.databinding.FragmentCharacterDetailsBind
 import ru.svoyakmartin.featureCharacter.domain.model.Character
 import ru.svoyakmartin.featureCharacter.ui.customView.LastSeenAnimView
 import ru.svoyakmartin.featureCharacter.ui.viewModel.CharacterDetailsViewModel
+import ru.svoyakmartin.featureCharacter.ui.viewModel.CharacterFeatureComponentDependenciesProvider
 import ru.svoyakmartin.featureCharacter.ui.viewModel.CharacterFeatureComponentViewModel
 import ru.svoyakmartin.featureCore.domain.model.EntityMap
 import ru.svoyakmartin.featureTheme.R as themeR
 import javax.inject.Inject
 
-class CharacterDetailsFragment : FlowFragment() {
+class CharacterDetailsFragment : Fragment() {
     @Inject
     lateinit var viewModelFactory: Lazy<ViewModelFactory>
     private val viewModel: CharacterDetailsViewModel by viewModels { viewModelFactory.get() }
     private lateinit var binding: FragmentCharacterDetailsBinding
 
     override fun onAttach(context: Context) {
+        CharacterFeatureComponentDependenciesProvider.featureDependencies = findFeatureExternalDependencies()
         viewModel<CharacterFeatureComponentViewModel>().component.inject(this)
         super.onAttach(context)
     }
@@ -126,7 +131,8 @@ class CharacterDetailsFragment : FlowFragment() {
         binding.lastSeen.apply {
             setOnClickListener {
                 if (isFinded()) {
-                    viewModel.navigateToLocation(locationMap.id)
+                    val uri = Uri.parse("RickAndMortyApi://location/${locationMap.id}")
+                    it.findNavController().navigate(uri)
                 } else {
                     onClick()
                 }
@@ -140,7 +146,8 @@ class CharacterDetailsFragment : FlowFragment() {
         binding.characterOriginLocation.apply {
             locationMap?.let {
                 setOnClickListener {
-                    viewModel.navigateToLocation(it.id)
+                    val uri = Uri.parse("RickAndMortyApi://location/${locationMap.id}")
+                    it.findNavController().navigate(uri)
                 }
             }
 
@@ -171,7 +178,8 @@ class CharacterDetailsFragment : FlowFragment() {
                         text = entityMap.name
 
                         setOnClickListener {
-                            viewModel.navigateToEpisode(entityMap.id)
+                            val uri = Uri.parse("RickAndMortyApi://episode/${entityMap.id}")
+                            it.findNavController().navigate(uri)
                         }
                     }
 

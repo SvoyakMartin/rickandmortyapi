@@ -9,9 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.svoyakmartin.featureLocation.databinding.LocationItemBinding
 import ru.svoyakmartin.featureLocation.domain.model.Location
 
-class LocationsAdapter(
-    private val clickListener: LocationClickListener
-) : RecyclerView.Adapter<LocationsViewHolder>() {
+class LocationsAdapter : RecyclerView.Adapter<LocationsViewHolder>() {
     private val diffCallback = object : DiffUtil.ItemCallback<Location>() {
         /* Called to check whether two objects represent the same item.
         For example, if your items have unique ids, this method should check their id equality. */
@@ -36,7 +34,7 @@ class LocationsAdapter(
 
     override fun onBindViewHolder(holder: LocationsViewHolder, position: Int) {
         val item = differ.currentList[position]
-        holder.bind(item, clickListener)
+        holder.bind(item)
     }
 
     override fun getItemCount(): Int = differ.currentList.size
@@ -44,8 +42,4 @@ class LocationsAdapter(
     fun submitList(newItems: List<Location>?) {
         differ.submitList(newItems)
     }
-}
-
-interface LocationClickListener {
-    fun onLocationClick(locationId: Int)
 }

@@ -1,7 +1,6 @@
 package ru.svoyakmartin.featureHomeScreen.di
 
 import ru.svoyakmartin.coreDi.di.dependency.FeatureExternalDependencies
-import ru.svoyakmartin.coreNavigation.router.global.GlobalRouter
 import ru.svoyakmartin.featureCharacterApi.CharacterFeatureApi
 import ru.svoyakmartin.featureEpisodeApi.EpisodeFeatureApi
 import ru.svoyakmartin.featureLocationApi.LocationFeatureApi
@@ -12,5 +11,5 @@ interface HomeScreenExternalDependencies: FeatureExternalDependencies {
     val locationFeatureApi: LocationFeatureApi
     val episodeFeatureApi: EpisodeFeatureApi
     val settingsFeatureApi: SettingsFeatureApi
-    val globalRouter: GlobalRouter
+    val homeScreenNavSource: HomeScreenNavSource
 }

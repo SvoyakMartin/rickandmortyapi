@@ -9,9 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.svoyakmartin.featureCharacter.databinding.CharacterItemBinding
 import ru.svoyakmartin.featureCharacter.domain.model.Character
 
-class CharactersAdapter(
-    private val clickListener: CharacterClickListener
-) : RecyclerView.Adapter<CharacterItemViewHolder>() {
+class CharactersAdapter : RecyclerView.Adapter<CharacterItemViewHolder>() {
     private val diffCallback = object : DiffUtil.ItemCallback<Character>() {
         /* Called to check whether two objects represent the same item.
         For example, if your items have unique ids, this method should check their id equality. */
@@ -36,7 +34,7 @@ class CharactersAdapter(
 
     override fun onBindViewHolder(holder: CharacterItemViewHolder, position: Int) {
         val item = differ.currentList[position]
-        holder.bind(item, clickListener)
+        holder.bind(item)
     }
 
     override fun getItemCount(): Int = differ.currentList.size
@@ -44,8 +42,4 @@ class CharactersAdapter(
     fun submitList(newItems: List<Character>?) {
         differ.submitList(newItems)
     }
-}
-
-interface CharacterClickListener {
-    fun onCharacterClick(characterId: Int)
 }

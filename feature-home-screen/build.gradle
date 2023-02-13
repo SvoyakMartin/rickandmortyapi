@@ -20,10 +20,8 @@ android {
 dependencies {
     // Project
     implementation project(":core")
-    implementation project(":core-di")
-    implementation project(":core-flow")
     implementation project(":core-mvvm")
-    implementation project(":core-navigation")
+    implementation project(":core-di")
     implementation project(":feature-home-screen-api")
     implementation project(":feature-character-api")
     implementation project(":feature-settings-api")
@@ -37,4 +35,8 @@ dependencies {
     // Basic
     implementation 'androidx.fragment:fragment-ktx:1.5.5'
     implementation 'com.google.android.material:material:1.8.0'
+
+    // Navigation
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
+    implementation "androidx.navigation:navigation-ui-ktx:2.5.3"
 }

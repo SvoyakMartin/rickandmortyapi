@@ -3,15 +3,13 @@ package ru.svoyakmartin.featureLocation.ui.viewModel
 import androidx.lifecycle.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
-import ru.svoyakmartin.coreNavigation.router.flow.FlowRouter
 import ru.svoyakmartin.featureCharacterApi.CharacterFeatureApi
 import ru.svoyakmartin.featureLocation.data.LocationRepositoryImpl
 import javax.inject.Inject
 
 class LocationDetailsViewModel @Inject constructor(
     private val repository: LocationRepositoryImpl,
-    private val characterFeatureApi: CharacterFeatureApi,
-    private val flowRouter: FlowRouter
+    private val characterFeatureApi: CharacterFeatureApi
 ) :
     ViewModel() {
     private val _isCharactersVisible = MutableStateFlow(false)
@@ -31,8 +29,4 @@ class LocationDetailsViewModel @Inject constructor(
         .flowOn(Dispatchers.IO)
         .conflate()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), listOf())
-
-    fun navigateToCharacter(characterId: Int) {
-        flowRouter.navigateTo(characterFeatureApi.getDetailFragment(characterId))
-    }
 }

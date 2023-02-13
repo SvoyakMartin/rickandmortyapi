@@ -1,6 +1,7 @@
 package ru.svoyakmartin.featureLocation.ui.fragment
 
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,8 +13,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.findNavController
 import dagger.Lazy
 import kotlinx.coroutines.launch
+import ru.svoyakmartin.coreDi.di.dependency.findFeatureExternalDependencies
 import ru.svoyakmartin.coreDi.di.viewModel.ViewModelFactory
 import ru.svoyakmartin.coreMvvm.viewModel
 import ru.svoyakmartin.featureCore.domain.model.EntityMap
@@ -22,6 +25,7 @@ import ru.svoyakmartin.featureLocation.R
 import ru.svoyakmartin.featureLocation.databinding.FragmentLocationDetailsBinding
 import ru.svoyakmartin.featureLocation.domain.model.Location
 import ru.svoyakmartin.featureLocation.ui.viewModel.LocationDetailsViewModel
+import ru.svoyakmartin.featureLocation.ui.viewModel.LocationFeatureComponentDependenciesProvider
 import ru.svoyakmartin.featureLocation.ui.viewModel.LocationFeatureComponentViewModel
 import ru.svoyakmartin.featureTheme.R as themeR
 import javax.inject.Inject
@@ -33,6 +37,7 @@ class LocationDetailsFragment : Fragment() {
     private lateinit var binding: FragmentLocationDetailsBinding
 
     override fun onAttach(context: Context) {
+        LocationFeatureComponentDependenciesProvider.featureDependencies = findFeatureExternalDependencies()
         viewModel<LocationFeatureComponentViewModel>().component.inject(this)
         super.onAttach(context)
     }
@@ -108,7 +113,8 @@ class LocationDetailsFragment : Fragment() {
                         text = entityMap.name
 
                         setOnClickListener {
-                            viewModel.navigateToCharacter(entityMap.id)
+                            val uri = Uri.parse("RickAndMortyApi://character/${entityMap.id}")
+                            it.findNavController().navigate(uri)
                         }
                     }
 

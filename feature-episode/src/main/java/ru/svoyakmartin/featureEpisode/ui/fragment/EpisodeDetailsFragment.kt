@@ -1,6 +1,7 @@
 package ru.svoyakmartin.featureEpisode.ui.fragment
 
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,8 +13,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.findNavController
 import dagger.Lazy
 import kotlinx.coroutines.launch
+import ru.svoyakmartin.coreDi.di.dependency.findFeatureExternalDependencies
 import ru.svoyakmartin.featureTheme.R as themeR
 import ru.svoyakmartin.coreDi.di.viewModel.ViewModelFactory
 import ru.svoyakmartin.coreMvvm.viewModel
@@ -24,6 +27,7 @@ import ru.svoyakmartin.featureEpisode.domain.model.Episode
 import ru.svoyakmartin.featureEpisode.ui.viewModel.EpisodeDetailsViewModel
 import ru.svoyakmartin.featureEpisode.ui.viewModel.EpisodeFeatureComponentViewModel
 import ru.svoyakmartin.featureCore.domain.model.EntityMap
+import ru.svoyakmartin.featureEpisode.ui.viewModel.EpisodeFeatureComponentDependenciesProvider
 import javax.inject.Inject
 
 class EpisodeDetailsFragment : Fragment() {
@@ -33,6 +37,7 @@ class EpisodeDetailsFragment : Fragment() {
     private lateinit var binding: FragmentEpisodeDetailsBinding
 
     override fun onAttach(context: Context) {
+        EpisodeFeatureComponentDependenciesProvider.featureDependencies = findFeatureExternalDependencies()
         viewModel<EpisodeFeatureComponentViewModel>().component.inject(this)
         super.onAttach(context)
     }
@@ -107,8 +112,8 @@ class EpisodeDetailsFragment : Fragment() {
                     val textView = TextView(context).apply {
                         text = entityMap.name
 
-                        setOnClickListener {
-                            viewModel.navigateToCharacter(entityMap.id)
+                        setOnClickListener {val uri = Uri.parse("RickAndMortyApi://character/${entityMap.id}")
+                            it.findNavController().navigate(uri)
                         }
                     }
 

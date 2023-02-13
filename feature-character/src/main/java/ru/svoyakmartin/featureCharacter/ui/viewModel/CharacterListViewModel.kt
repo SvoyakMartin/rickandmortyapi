@@ -4,17 +4,12 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import ru.svoyakmartin.coreNavigation.router.flow.FlowRouter
 import ru.svoyakmartin.featureCharacter.data.CharacterRepositoryImpl
-import ru.svoyakmartin.featureCharacter.ui.CharacterClickListener
-import ru.svoyakmartin.featureCharacter.ui.fragment.CharacterDetailsFragment
 import javax.inject.Inject
 
 class CharacterListViewModel @Inject constructor(
     private val repository: CharacterRepositoryImpl,
-    private val flowRouter: FlowRouter
-) :
-    ViewModel(), CharacterClickListener {
+) : ViewModel() {
     val allCharacters = repository.allCharacters
         .flowOn(Dispatchers.IO)
         .conflate()
@@ -30,9 +25,5 @@ class CharacterListViewModel @Inject constructor(
 
     fun fetchNextCharactersPartFromWeb() = viewModelScope.launch {
         repository.fetchNextCharactersPartFromWeb()
-    }
-
-    override fun onCharacterClick(characterId: Int) {
-        flowRouter.navigateTo(CharacterDetailsFragment.newInstance(characterId))
     }
 }

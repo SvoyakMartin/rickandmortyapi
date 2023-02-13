@@ -2,12 +2,10 @@ package ru.svoyakmartin.featureHomeScreen.di
 
 import dagger.Component
 import ru.svoyakmartin.coreDi.di.scope.FeatureScope
-import ru.svoyakmartin.coreFlow.di.FlowModule
-import ru.svoyakmartin.featureHomeScreen.ui.fragment.HomeScreenFeatureFlowFragment
 import ru.svoyakmartin.featureHomeScreen.ui.fragment.HomeScreenFragment
 
 @[FeatureScope Component(
-    modules = [HomeScreenFeatureApiModule::class, FlowModule::class],
+    modules = [HomeScreenFeatureApiModule::class],
     dependencies = [HomeScreenExternalDependencies::class]
 )]
 interface HomeScreenComponent {
@@ -17,5 +15,4 @@ interface HomeScreenComponent {
     }
 
     fun inject(fragment: HomeScreenFragment)
-    fun inject(fragment: HomeScreenFeatureFlowFragment)
 }

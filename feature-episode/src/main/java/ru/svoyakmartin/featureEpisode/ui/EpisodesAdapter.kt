@@ -9,9 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.svoyakmartin.featureEpisode.databinding.EpisodeItemBinding
 import ru.svoyakmartin.featureEpisode.domain.model.Episode
 
-class EpisodesAdapter(
-    private val clickListener: EpisodeClickListener
-) : RecyclerView.Adapter<EpisodesViewHolder>() {
+class EpisodesAdapter : RecyclerView.Adapter<EpisodesViewHolder>() {
     private val diffCallback = object : DiffUtil.ItemCallback<Episode>() {
         /* Called to check whether two objects represent the same item.
         For example, if your items have unique ids, this method should check their id equality. */
@@ -36,7 +34,7 @@ class EpisodesAdapter(
 
     override fun onBindViewHolder(holder: EpisodesViewHolder, position: Int) {
         val item = differ.currentList[position]
-        holder.bind(item, clickListener)
+        holder.bind(item)
     }
 
     override fun getItemCount(): Int = differ.currentList.size
@@ -44,8 +42,4 @@ class EpisodesAdapter(
     fun submitList(newItems: List<Episode>?) {
         differ.submitList(newItems)
     }
-}
-
-interface EpisodeClickListener {
-    fun onEpisodeClick(episodeId: Int)
 }

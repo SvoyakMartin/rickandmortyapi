@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/episodes_item"
+    app:startDestination="@id/episodeListFragment">
+    <fragment
+        android:id="@+id/episodeListFragment"
+        android:name="ru.svoyakmartin.featureEpisode.ui.fragment.EpisodeListFragment"
+        tools:layout="@layout/fragment_episodes"
+        android:label="fragment_episodes">
+        <action
+            android:id="@+id/action_episodeListFragment_to_episodeDetailsFragment"
+            app:destination="@id/episodeDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/episodeDetailsFragment"
+        android:name="ru.svoyakmartin.featureEpisode.ui.fragment.EpisodeDetailsFragment"
+        android:label="fragment_episode_details"
+        tools:layout="@layout/fragment_episode_details">
+        <argument
+            android:name="episode"
+            app:argType="integer" />
+        <deepLink
+            android:id="@+id/deepLink"
+            app:uri="RickAndMortyApi://episode/{episode}" />
+    </fragment>
+
+</navigation>

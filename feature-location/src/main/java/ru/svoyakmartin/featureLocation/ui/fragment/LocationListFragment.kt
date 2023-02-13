@@ -14,10 +14,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dagger.Lazy
 import kotlinx.coroutines.launch
+import ru.svoyakmartin.coreDi.di.dependency.findFeatureExternalDependencies
 import ru.svoyakmartin.coreDi.di.viewModel.ViewModelFactory
 import ru.svoyakmartin.coreMvvm.viewModel
 import ru.svoyakmartin.featureLocation.databinding.FragmentLocationsBinding
 import ru.svoyakmartin.featureLocation.ui.LocationsAdapter
+import ru.svoyakmartin.featureLocation.ui.viewModel.LocationFeatureComponentDependenciesProvider
 import ru.svoyakmartin.featureLocation.ui.viewModel.LocationFeatureComponentViewModel
 import ru.svoyakmartin.featureLocation.ui.viewModel.LocationListViewModel
 import javax.inject.Inject
@@ -27,9 +29,10 @@ class LocationListFragment : Fragment() {
     @Inject
     lateinit var viewModelFactory: Lazy<ViewModelFactory>
     private val viewModel: LocationListViewModel by viewModels { viewModelFactory.get() }
-    private val adapter by lazy {LocationsAdapter(viewModel)}
+    private val adapter = LocationsAdapter()
 
     override fun onAttach(context: Context) {
+        LocationFeatureComponentDependenciesProvider.featureDependencies = findFeatureExternalDependencies()
         viewModel<LocationFeatureComponentViewModel>().component.inject(this)
 
         super.onAttach(context)
