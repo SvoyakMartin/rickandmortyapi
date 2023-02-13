@@ -6,11 +6,9 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import ru.svoyakmartin.featureCharacter.DB_NAME
 import ru.svoyakmartin.featureCharacter.domain.model.Character
-import ru.svoyakmartin.featureCharacter.domain.model.CharactersAndEpisodes
-import ru.svoyakmartin.featureCharacter.domain.model.CharactersAndLocations
 
 @Database(
-    entities = [Character::class, CharactersAndEpisodes::class, CharactersAndLocations::class],
+    entities = [Character::class],
     version = 1,
     exportSchema = false
 )

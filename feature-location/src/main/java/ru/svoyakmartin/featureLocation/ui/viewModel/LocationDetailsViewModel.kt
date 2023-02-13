@@ -30,7 +30,7 @@ class LocationDetailsViewModel @Inject constructor(
     suspend fun getCharacterMapByLocationId(id: Int) = repository.getCharacterMapByLocationId(id)
         .flowOn(Dispatchers.IO)
         .conflate()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), mapOf())
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), listOf())
 
     fun navigateToCharacter(characterId: Int) {
         flowRouter.navigateTo(characterFeatureApi.getDetailFragment(characterId))

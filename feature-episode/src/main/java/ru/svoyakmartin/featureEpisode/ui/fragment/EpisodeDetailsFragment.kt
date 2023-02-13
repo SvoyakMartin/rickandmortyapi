@@ -23,6 +23,7 @@ import ru.svoyakmartin.featureEpisode.databinding.FragmentEpisodeDetailsBinding
 import ru.svoyakmartin.featureEpisode.domain.model.Episode
 import ru.svoyakmartin.featureEpisode.ui.viewModel.EpisodeDetailsViewModel
 import ru.svoyakmartin.featureEpisode.ui.viewModel.EpisodeFeatureComponentViewModel
+import ru.svoyakmartin.featureCore.domain.model.EntityMap
 import javax.inject.Inject
 
 class EpisodeDetailsFragment : Fragment() {
@@ -87,8 +88,8 @@ class EpisodeDetailsFragment : Fragment() {
         }
     }
 
-    private fun setCharactersView(charactersMap: Map<String, Int>?) {
-        val size = charactersMap?.size ?: 0
+    private fun setCharactersView(charactersMap: List<EntityMap>) {
+        val size = charactersMap.size
 
         with(binding) {
             episodeCharacters.text = getString(R.string.episode_characters_header_text, size)
@@ -102,12 +103,12 @@ class EpisodeDetailsFragment : Fragment() {
                     }
                 }
 
-                charactersMap?.forEach { entry ->
+                charactersMap.forEach { entityMap ->
                     val textView = TextView(context).apply {
-                        text = entry.key
+                        text = entityMap.name
 
                         setOnClickListener {
-                            viewModel.navigateToCharacter(entry.value)
+                            viewModel.navigateToCharacter(entityMap.id)
                         }
                     }
 

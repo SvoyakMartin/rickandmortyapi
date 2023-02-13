@@ -1,7 +1,7 @@
-package ru.svoyakmartin.featureCharacter.domain.model
+package ru.svoyakmartin.featureCharacterDependencies.domain.model
 
 import androidx.room.Entity
-import ru.svoyakmartin.featureCharacter.CHARACTERS_LOCATIONS_TABLE_NAME
+import ru.svoyakmartin.featureCharacterDependencies.CHARACTERS_LOCATIONS_TABLE_NAME
 import java.io.Serializable
 
 @Entity(tableName = CHARACTERS_LOCATIONS_TABLE_NAME, primaryKeys = ["characterId", "locationId"])

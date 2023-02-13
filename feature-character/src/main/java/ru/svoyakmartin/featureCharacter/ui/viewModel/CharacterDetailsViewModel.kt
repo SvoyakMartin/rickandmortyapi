@@ -5,12 +5,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import ru.svoyakmartin.coreNavigation.router.flow.FlowRouter
 import ru.svoyakmartin.featureCharacter.data.CharacterRepositoryImpl
+import ru.svoyakmartin.featureEpisodeApi.EpisodeFeatureApi
 import ru.svoyakmartin.featureLocationApi.LocationFeatureApi
 import javax.inject.Inject
 
 class CharacterDetailsViewModel @Inject constructor(
     private val repository: CharacterRepositoryImpl,
     private val locationFeatureApi: LocationFeatureApi,
+    private val episodeFeatureApi: EpisodeFeatureApi,
     private val flowRouter: FlowRouter
 ) :
     ViewModel() {
@@ -31,10 +33,17 @@ class CharacterDetailsViewModel @Inject constructor(
         flowRouter.navigateTo(locationFeatureApi.getDetailFragment(locationId))
     }
 
-    suspend fun getLocationMapById(locationId: Int) = repository.getLocationMapById(locationId)
+    fun navigateToEpisode(episodeId: Int) {
+        flowRouter.navigateTo(episodeFeatureApi.getDetailFragment(episodeId))
+    }
 
-//    fun getEpisodesByCharacterId(id: Int) = repository.getEpisodesByCharacterId(id)
-//        .flowOn(Dispatchers.IO)
-//        .conflate()
-//        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), listOf())
+    suspend fun getLocationsMapByIds(locationsIdsList: List<Int>) = repository.getLocationsMapByIds(locationsIdsList)
+        .flowOn(Dispatchers.IO)
+        .conflate()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), listOf())
+
+    suspend fun getEpisodesMapByCharacterId(characterId: Int) = repository.getEpisodesMapByCharacterId(characterId)
+        .flowOn(Dispatchers.IO)
+        .conflate()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), listOf())
 }

@@ -6,14 +6,27 @@ import ru.svoyakmartin.featureCharacter.data.dataSource.getEpisodesIds
 import ru.svoyakmartin.featureCharacter.data.dataSource.toCharacter
 import ru.svoyakmartin.featureCharacter.data.db.CharacterRoomDAO
 import ru.svoyakmartin.featureCharacter.domain.model.Character
-import ru.svoyakmartin.featureCharacter.domain.model.CharactersAndEpisodes
-import ru.svoyakmartin.featureCharacter.domain.model.CharactersAndLocations
+import ru.svoyakmartin.featureCharacterDependenciesApi.CharacterDependenciesFeatureApi
 import javax.inject.Inject
 
 class ExportRepositoryImpl @Inject constructor(
     private val characterRoomDAO: CharacterRoomDAO,
-    private val apiService: CharactersApi
+    private val apiService: CharactersApi,
+    private val characterDependenciesFeatureApi: CharacterDependenciesFeatureApi
 ) {
+
+    fun getCharacterMapByIds(characterIdsList: List<Int>) = flow {
+        characterRoomDAO.getExistingCharacterIds(characterIdsList)
+            .collect { existingCharacterIdsList ->
+                val difference = characterIdsList.minus(existingCharacterIdsList)
+
+                if (difference.isNotEmpty()) {
+                    fetchCharactersByIds(difference.joinToString())
+                }
+
+                characterRoomDAO.getCharactersNameByIds(characterIdsList).collect { emit(it) }
+            }
+    }
 
     private suspend fun fetchCharactersByIds(ids: String) {
         val response = apiService.getCharactersByIds(ids)
@@ -28,68 +41,8 @@ class ExportRepositoryImpl @Inject constructor(
                 charactersAndEpisodesIdsMap[characterDTO.id] = characterDTO.getEpisodesIds()
             }
 
-            characterRoomDAO.insertCharactersAndDependencies(
-                charactersList,
-                charactersAndEpisodesIdsMap
-            )
+            characterRoomDAO.insertCharacters(charactersList)
+            characterDependenciesFeatureApi.insertCharactersAndEpisodes(charactersAndEpisodesIdsMap)
         }
-    }
-
-    fun getCharacterMapByLocationId(locationId: Int) = flow {
-        characterRoomDAO.getMissingCharacterIdsByLocationId(locationId)
-            .collect { characterIdsList ->
-                if (!characterIdsList.isNullOrEmpty()) {
-                    fetchCharactersByIds(characterIdsList.joinToString())
-                }
-
-                characterRoomDAO.getCharactersByLocationId(locationId).collect {listCharacterDependencies ->
-                    val characterNameMap = mutableMapOf<String, Int>()
-                    listCharacterDependencies?.forEach {
-                        characterNameMap[it.name] = it.id
-                    }
-                    emit(characterNameMap)
-                }
-            }
-    }
-
-    fun getCharacterMapByEpisodeId(episodeId: Int) = flow {
-        characterRoomDAO.getMissingCharacterIdsByEpisodeId(episodeId)
-            .collect { characterIdsList ->
-                if (!characterIdsList.isNullOrEmpty()) {
-                    fetchCharactersByIds(characterIdsList.joinToString())
-                }
-
-                characterRoomDAO.getCharactersByEpisodeId(episodeId).collect {listCharacterDependencies ->
-                    val characterNameMap = mutableMapOf<String, Int>()
-                    listCharacterDependencies?.forEach {
-                        characterNameMap[it.name] = it.id
-                    }
-                    emit(characterNameMap)
-                }
-            }
-    }
-
-    suspend fun insertCharactersAndLocations(charactersAndLocationsIdsMap: Map<Int, List<Int>>){
-        val charactersAndLocationsList = arrayListOf<CharactersAndLocations>()
-
-        charactersAndLocationsIdsMap.forEach { (locationID, charactersIds) ->
-            charactersIds.forEach { characterID ->
-                charactersAndLocationsList.add(CharactersAndLocations(characterID, locationID))
-            }
-        }
-
-        characterRoomDAO.insertCharactersAndLocations(charactersAndLocationsList)
-    }
-
-    suspend fun insertCharactersAndEpisodes(charactersAndEpisodesIdsMap: Map<Int, List<Int>>){
-        val charactersAndEpisodesList = arrayListOf<CharactersAndEpisodes>()
-
-        charactersAndEpisodesIdsMap.forEach { (episodeID, charactersIds) ->
-            charactersIds.forEach { characterID ->
-                charactersAndEpisodesList.add(CharactersAndEpisodes(characterID, episodeID))
-            }
-        }
-
-        characterRoomDAO.insertCharactersAndEpisodes(charactersAndEpisodesList)
     }
 }

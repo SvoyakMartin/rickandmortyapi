@@ -10,6 +10,9 @@ import ru.svoyakmartin.featureCharacter.data.dataSource.CharactersApi
 import ru.svoyakmartin.featureCharacter.data.db.CharacterRoomDAO
 import ru.svoyakmartin.featureCharacter.data.db.CharacterRoomDB
 import ru.svoyakmartin.featureCharacter.di.CharacterFeatureApiModule
+import ru.svoyakmartin.featureCharacterDependencies.data.db.CharacterDependenciesRoomDAO
+import ru.svoyakmartin.featureCharacterDependencies.data.db.CharacterDependenciesRoomDB
+import ru.svoyakmartin.featureCharacterDependencies.di.CharacterDependenciesFeatureApiModule
 import ru.svoyakmartin.featureEpisode.data.dataSource.EpisodesApi
 import ru.svoyakmartin.featureEpisode.data.db.EpisodeRoomDAO
 import ru.svoyakmartin.featureEpisode.data.db.EpisodeRoomDB
@@ -26,12 +29,17 @@ import ru.svoyakmartin.featureStatistic.data.dataSource.StatisticApi
     includes = [
         HomeScreenFeatureApiModule::class,
         CharacterFeatureApiModule::class,
+        CharacterDependenciesFeatureApiModule::class,
         SettingsFeatureApiModule::class,
         LocationFeatureApiModule::class,
         EpisodeFeatureApiModule::class
     ]
 )
 class AppModule {
+    @[AppScope Provides]
+    fun provideCharacterDependenciesRoomDAO(context: Context): CharacterDependenciesRoomDAO =
+        CharacterDependenciesRoomDB.getDatabase(context).getCharacterDependenciesDao()
+
     @[AppScope Provides]
     fun provideCharacterRoomDAO(context: Context): CharacterRoomDAO =
         CharacterRoomDB.getDatabase(context).getCharacterDao()

@@ -30,7 +30,7 @@ class EpisodeDetailsViewModel @Inject constructor(
     suspend fun getCharacterMapByEpisodeId(id: Int) = repository.getCharacterMapByEpisodeId(id)
         .flowOn(Dispatchers.IO)
         .conflate()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), mapOf())
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), listOf())
 
     fun navigateToCharacter(characterId: Int) {
         flowRouter.navigateTo(characterFeatureApi.getDetailFragment(characterId))

@@ -56,7 +56,7 @@
         android:visibility="gone"
         app:layout_constraintStart_toEndOf="@id/episode_characters"
         app:layout_constraintTop_toTopOf="@id/episode_characters"
-        android:text="@string/episodes_show"
+        android:text="@string/characters_show"
         tools:visibility="visible" />
 
     <ScrollView

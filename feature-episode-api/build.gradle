@@ -14,5 +14,8 @@ android {
 }
 
 dependencies {
+    // Project
+    implementation project(':feature-core')
+
     implementation "androidx.fragment:fragment-ktx:1.5.5"
 }

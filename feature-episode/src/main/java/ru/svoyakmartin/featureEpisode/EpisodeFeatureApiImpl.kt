@@ -1,20 +1,18 @@
 package ru.svoyakmartin.featureEpisode
 
-import androidx.fragment.app.Fragment
-import ru.svoyakmartin.featureEpisode.data.EpisodeRepositoryImpl
+import ru.svoyakmartin.featureEpisode.data.ExportRepositoryImpl
 import ru.svoyakmartin.featureEpisode.ui.fragment.EpisodeDetailsFragment
 import ru.svoyakmartin.featureEpisode.ui.fragment.EpisodeFeatureFlowFragment
 import ru.svoyakmartin.featureEpisodeApi.EpisodeFeatureApi
 import javax.inject.Inject
 
-class EpisodeFeatureApiImpl @Inject constructor(private val repository: EpisodeRepositoryImpl) :
+class EpisodeFeatureApiImpl @Inject constructor(private val repository: ExportRepositoryImpl) :
     EpisodeFeatureApi {
-    override fun getFlowFragment(): Fragment = EpisodeFeatureFlowFragment()
+    override fun getFlowFragment() = EpisodeFeatureFlowFragment()
 
-    override fun getDetailFragment(episodeId: Int): Fragment =
+    override fun getDetailFragment(episodeId: Int) =
         EpisodeDetailsFragment.newInstance(episodeId)
 
-//    override fun getLocationMapById(locationId: Int): Flow<Map<String, Int>> =
-//    repository.getLocationMapById(locationId)
-
+    override fun getEpisodeMapByIds(episodeIdsList: List<Int>) =
+        repository.getEpisodeMapByIds(episodeIdsList)
 }

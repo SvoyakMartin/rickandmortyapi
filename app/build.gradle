@@ -38,7 +38,7 @@ dependencies {
     implementation project(":core-network")
     implementation project(":core-navigation")
     implementation project(":feature-theme")
-    implementation project(":feature-info")
+    implementation project(':feature-core')
     implementation project(':feature-character')
     implementation project(':feature-character-api')
     implementation project(':feature-home-screen-api')
@@ -51,6 +51,8 @@ dependencies {
     implementation project(':feature-episode')
     implementation project(':feature-statistic-api')
     implementation project(':feature-statistic')
+    implementation project(":feature-character-dependencies-api")
+    implementation project(":feature-character-dependencies")
 
 
     // Basic

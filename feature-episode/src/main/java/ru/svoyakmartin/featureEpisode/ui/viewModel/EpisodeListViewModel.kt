@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.svoyakmartin.coreNavigation.router.flow.FlowRouter
 import ru.svoyakmartin.featureEpisode.data.EpisodeRepositoryImpl
-import ru.svoyakmartin.featureEpisode.domain.model.Episode
 import ru.svoyakmartin.featureEpisode.ui.EpisodeClickListener
 import ru.svoyakmartin.featureEpisode.ui.fragment.EpisodeDetailsFragment
 import javax.inject.Inject

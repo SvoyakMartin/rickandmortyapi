@@ -8,11 +8,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import ru.svoyakmartin.core.shortClassName
 import ru.svoyakmartin.coreMvvm.viewModel
-import ru.svoyakmartin.coreNavigation.navigator.NavigatorHolder
 import ru.svoyakmartin.coreNavigation.router.flow.FlowRouter
 import ru.svoyakmartin.featureCharacterApi.CharacterFeatureApi
 import ru.svoyakmartin.featureEpisodeApi.EpisodeFeatureApi

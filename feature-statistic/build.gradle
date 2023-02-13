@@ -17,10 +17,6 @@ android {
 dependencies {
     // Project
     implementation project(":core-di")
-//    implementation project(":core-flow")
-//    implementation project(":core-mvvm")
-//    implementation project(":feature-theme")
-//    implementation project(":core-navigation")
     implementation project(":feature-statistic-api")
 
     // Dagger
@@ -32,5 +28,8 @@ dependencies {
 
     // Kotlinx-serialization
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1"
+
+    // Basic
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 
 }

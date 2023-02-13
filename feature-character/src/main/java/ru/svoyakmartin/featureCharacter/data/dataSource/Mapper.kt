@@ -2,6 +2,8 @@ package ru.svoyakmartin.featureCharacter.data.dataSource
 
 import ru.svoyakmartin.featureCharacter.data.model.CharacterDTO
 import ru.svoyakmartin.featureCharacter.domain.model.Character
+import ru.svoyakmartin.featureCore.util.getIdFromUrl
+import ru.svoyakmartin.featureCore.util.getIdsListFromUrlList
 
 fun CharacterDTO.toCharacter(): Character {
     return Character(
@@ -19,17 +21,4 @@ fun CharacterDTO.toCharacter(): Character {
 
 fun CharacterDTO.getEpisodesIds(): List<Int> {
     return getIdsListFromUrlList(episode)
-}
-
-fun getIdFromUrl(url: String): Int {
-    return url.substringAfterLast('/').toInt()
-}
-
-fun getIdsListFromUrlList(urlList: List<String>): List<Int> {
-    val ids = arrayListOf<Int>()
-    urlList.forEach {
-        ids.add(getIdFromUrl(it))
-    }
-
-    return ids
 }

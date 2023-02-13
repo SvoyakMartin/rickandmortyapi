@@ -1,11 +1,13 @@
 package ru.svoyakmartin.featureCharacter.data
 
 import kotlinx.coroutines.flow.flow
+import ru.svoyakmartin.featureCharacterDependenciesApi.CharacterDependenciesFeatureApi
 import ru.svoyakmartin.featureCharacter.data.dataSource.CharactersApi
 import ru.svoyakmartin.featureCharacter.data.dataSource.getEpisodesIds
 import ru.svoyakmartin.featureCharacter.data.dataSource.toCharacter
 import ru.svoyakmartin.featureCharacter.data.db.CharacterRoomDAO
 import ru.svoyakmartin.featureCharacter.domain.model.Character
+import ru.svoyakmartin.featureEpisodeApi.EpisodeFeatureApi
 import ru.svoyakmartin.featureLocationApi.LocationFeatureApi
 import ru.svoyakmartin.featureSettingsApi.SettingsFeatureApi
 import javax.inject.Inject
@@ -14,7 +16,9 @@ class CharacterRepositoryImpl @Inject constructor(
     private val characterRoomDAO: CharacterRoomDAO,
     private val settings: SettingsFeatureApi,
     private val apiService: CharactersApi,
-    private val locationFeatureApi: LocationFeatureApi
+    private val locationFeatureApi: LocationFeatureApi,
+    private val episodeFeatureApi: EpisodeFeatureApi,
+    private val dependenciesFeatureApi: CharacterDependenciesFeatureApi
 ) {
     val allCharacters = characterRoomDAO.getAllCharacters()
     private var charactersLastPage =
@@ -32,10 +36,7 @@ class CharacterRepositoryImpl @Inject constructor(
                 charactersAndEpisodesIdsMap[character.id] = characterDTO.getEpisodesIds()
             }
 
-            characterRoomDAO.insertCharactersAndDependencies(
-                charactersList,
-                charactersAndEpisodesIdsMap
-            )
+            dependenciesFeatureApi.insertCharactersAndEpisodes(charactersAndEpisodesIdsMap)
             characterRoomDAO.insertCharacters(charactersList)
 
             if (info.pages > charactersLastPage) {
@@ -52,9 +53,7 @@ class CharacterRepositoryImpl @Inject constructor(
             if (character != null) {
                 emit(character)
             } else {
-                fetchCharacterById(id).collect {
-                    emit(it)
-                }
+                fetchCharacterById(id).collect { emit(it) }
             }
         }
     }
@@ -70,7 +69,13 @@ class CharacterRepositoryImpl @Inject constructor(
         }
     }
 
-    suspend fun getLocationMapById(locationId: Int) = flow {
-        locationFeatureApi.getLocationMapById(locationId).collect { emit(it) }
+    suspend fun getLocationsMapByIds(locationsIdsList: List<Int>) = flow {
+        locationFeatureApi.getLocationMapByIds(locationsIdsList).collect { emit(it) }
+    }
+
+    suspend fun getEpisodesMapByCharacterId(characterId: Int) = flow {
+        dependenciesFeatureApi.getEpisodesIdsByCharacterId(characterId).collect { episodeIdsList ->
+            episodeFeatureApi.getEpisodeMapByIds(episodeIdsList).collect { emit(it) }
+        }
     }
 }

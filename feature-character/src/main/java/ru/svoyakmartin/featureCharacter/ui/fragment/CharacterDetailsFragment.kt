@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -23,6 +24,7 @@ import ru.svoyakmartin.featureCharacter.domain.model.Character
 import ru.svoyakmartin.featureCharacter.ui.customView.LastSeenAnimView
 import ru.svoyakmartin.featureCharacter.ui.viewModel.CharacterDetailsViewModel
 import ru.svoyakmartin.featureCharacter.ui.viewModel.CharacterFeatureComponentViewModel
+import ru.svoyakmartin.featureCore.domain.model.EntityMap
 import ru.svoyakmartin.featureTheme.R as themeR
 import javax.inject.Inject
 
@@ -69,24 +71,25 @@ class CharacterDetailsFragment : FlowFragment() {
             with(character) {
                 viewLifecycleOwner.lifecycleScope.launch {
                     viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-//                        launch {
-//                            viewModel.getEpisodesByCharacterId(id)
-//                                .collect { setEpisodesView(it) }
-//                        }
-//
-                        location?.let {
-                            launch {
-                                viewModel.getLocationMapById(it)
-                                    .collect { setLastSeen(it) }
-                            }
+                        launch {
+                            viewModel.getEpisodesMapByCharacterId(id)
+                                .collect { setEpisodesView(it) }
                         }
+
+                        val locationsIdsList = arrayListOf<Int>()
+
+                        location?.let { locationsIdsList.add(it) }
 
                         if (origin == null) {
                             setOrigin(origin)
                         } else {
+                            locationsIdsList.add(origin)
+                        }
+
+                        if (locationsIdsList.isNotEmpty()) {
                             launch {
-                                viewModel.getLocationMapById(origin)
-                                    .collect {setOrigin(it) }
+                                viewModel.getLocationsMapByIds(locationsIdsList)
+                                    .collect { setLocations(location, origin, it) }
                             }
                         }
 
@@ -110,76 +113,73 @@ class CharacterDetailsFragment : FlowFragment() {
         }
     }
 
-    private fun setLastSeen(locationMap: Map<String, Int>?) {
-        locationMap?.let {
-            binding.lastSeen.apply {
-                it.entries.forEach { entry ->
-                    setOnClickListener {
-                        if (isFinded()) {
-                            viewModel.navigateToLocation(entry.value)
-                        } else {
-                            onClick()
-                        }
-                    }
-
-                    setLocation(entry.key)
-                }
-
+    private fun setLocations(lastSeenId: Int?, originId: Int?, locationsMapList: List<EntityMap>) {
+        locationsMapList.forEach {
+            when (it.id) {
+                lastSeenId -> setLastSeen(it)
+                originId -> setOrigin(it)
             }
         }
     }
 
-    private fun setOrigin(locationMap: Map<String, Int>?) {
-        binding.characterOriginLocation.apply {
-            var locationName:String? = null
-            locationMap?.let {
-                it.entries.forEach {entry ->
-                    locationName = entry.key
+    private fun setLastSeen(locationMap: EntityMap) {
+        binding.lastSeen.apply {
+            setOnClickListener {
+                if (isFinded()) {
+                    viewModel.navigateToLocation(locationMap.id)
+                } else {
+                    onClick()
+                }
+            }
 
-                    setOnClickListener {
-                        viewModel.navigateToLocation(entry.value)
-                    }
+            setLocation(locationMap.name)
+        }
+    }
+
+    private fun setOrigin(locationMap: EntityMap?) {
+        binding.characterOriginLocation.apply {
+            locationMap?.let {
+                setOnClickListener {
+                    viewModel.navigateToLocation(it.id)
                 }
             }
 
             text = getString(
                 R.string.origin_location_text,
-                locationName?: getString(R.string.origin_location_unknown)
+                locationMap?.name ?: getString(R.string.origin_location_unknown)
             )
         }
     }
 
-//    private fun setEpisodesView(episodesList: List<Episode>?) {
-//        val size = episodesList?.size ?: 0
-//
-//        with(binding) {
-//            characterEpisodes.text = getString(R.string.episodes_header_text, size)
-//
-//            if (size > 0) {
-//                showHideEpisodes.apply {
-//                    visibility = View.VISIBLE
-//
-//                    setOnClickListener {
-//                        viewModel.changeEpisodesVisible()
-//                    }
-//                }
-//
-//                episodesList?.forEach { episode ->
-//                    val textView = TextView(context).apply {
-//                        val episodeName = "${episode.episode} - ${episode.name}"
-//
-//                        text = episodeName
-//
-//                        setOnClickListener {
-//                            goToEpisode(episode)
-//                        }
-//                    }
-//
-//                    episodesContainer.addView(textView)
-//                }
-//            }
-//        }
-//    }
+    private fun setEpisodesView(episodesMapList: List<EntityMap>) {
+        val size = episodesMapList.size
+
+        with(binding) {
+            characterEpisodes.text = getString(R.string.episodes_header_text, size)
+
+            if (size > 0) {
+                showHideEpisodes.apply {
+                    visibility = View.VISIBLE
+
+                    setOnClickListener {
+                        viewModel.changeEpisodesVisible()
+                    }
+                }
+
+                episodesMapList.forEach { entityMap ->
+                    val textView = TextView(context).apply {
+                        text = entityMap.name
+
+                        setOnClickListener {
+                            viewModel.navigateToEpisode(entityMap.id)
+                        }
+                    }
+
+                    episodesContainer.addView(textView)
+                }
+            }
+        }
+    }
 
     private fun showHideEpisodes(isEpisodesVisible: Boolean) {
         with(binding) {

@@ -16,6 +16,7 @@ import dagger.Lazy
 import kotlinx.coroutines.launch
 import ru.svoyakmartin.coreDi.di.viewModel.ViewModelFactory
 import ru.svoyakmartin.coreMvvm.viewModel
+import ru.svoyakmartin.featureCore.domain.model.EntityMap
 import ru.svoyakmartin.featureLocation.LOCATIONS_FIELD
 import ru.svoyakmartin.featureLocation.R
 import ru.svoyakmartin.featureLocation.databinding.FragmentLocationDetailsBinding
@@ -87,8 +88,8 @@ class LocationDetailsFragment : Fragment() {
         }
     }
 
-    private fun setCharactersView(charactersMap: Map<String, Int>?) {
-        val size = charactersMap?.size ?: 0
+    private fun setCharactersView(charactersMap: List<EntityMap>) {
+        val size = charactersMap.size
 
         with(binding) {
             locationCharacters.text = getString(R.string.location_characters_header_text, size)
@@ -102,12 +103,12 @@ class LocationDetailsFragment : Fragment() {
                     }
                 }
 
-                charactersMap?.forEach { entry ->
+                charactersMap.forEach { entityMap ->
                     val textView = TextView(context).apply {
-                        text = entry.key
+                        text = entityMap.name
 
                         setOnClickListener {
-                            viewModel.navigateToCharacter(entry.value)
+                            viewModel.navigateToCharacter(entityMap.id)
                         }
                     }
 

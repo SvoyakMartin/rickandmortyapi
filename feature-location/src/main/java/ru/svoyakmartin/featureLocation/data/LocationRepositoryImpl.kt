@@ -2,6 +2,7 @@ package ru.svoyakmartin.featureLocation.data
 
 import kotlinx.coroutines.flow.flow
 import ru.svoyakmartin.featureCharacterApi.CharacterFeatureApi
+import ru.svoyakmartin.featureCharacterDependenciesApi.CharacterDependenciesFeatureApi
 import ru.svoyakmartin.featureLocation.data.dataSource.LocationsApi
 import ru.svoyakmartin.featureLocation.data.dataSource.getCharactersIds
 import ru.svoyakmartin.featureLocation.data.dataSource.toLocation
@@ -13,6 +14,7 @@ import javax.inject.Inject
 class LocationRepositoryImpl @Inject constructor(
     private val locationRoomDAO: LocationRoomDAO,
     private val settings: SettingsFeatureApi,
+    private val characterDependenciesFeatureApi: CharacterDependenciesFeatureApi,
     private val characterFeatureApi: CharacterFeatureApi,
     private val apiService: LocationsApi
 ) {
@@ -23,16 +25,16 @@ class LocationRepositoryImpl @Inject constructor(
         val response = apiService.getLocations(locationsLastPage)
         response.body()?.apply {
             val locationsList = ArrayList<Location>()
-            val charactersAndLocationsIdsMap = mutableMapOf<Int, List<Int>>()
+            val locationsAndCharactersIdsMap = mutableMapOf<Int, List<Int>>()
 
             results.forEach { locationsDTO ->
                 val location = locationsDTO.toLocation()
                 locationsList.add(location)
-                charactersAndLocationsIdsMap[location.id] = locationsDTO.getCharactersIds()
+                locationsAndCharactersIdsMap[location.id] = locationsDTO.getCharactersIds()
             }
 
             locationRoomDAO.insertLocations(locationsList)
-            characterFeatureApi.insertCharactersAndLocations(charactersAndLocationsIdsMap)
+            characterDependenciesFeatureApi.insertLocationsAndCharacters(locationsAndCharactersIdsMap)
 
             if (info.pages > locationsLastPage) {
                 settings.saveInt(SettingsFeatureApi.LOCATIONS_LAST_PAGE_KEY, ++locationsLastPage)
@@ -66,6 +68,8 @@ class LocationRepositoryImpl @Inject constructor(
     }
 
     suspend fun getCharacterMapByLocationId(locationId: Int) = flow {
-        characterFeatureApi.getCharacterMapByLocationId(locationId).collect { emit(it) }
+        characterDependenciesFeatureApi.getCharactersIdsByLocationId(locationId).collect{
+            characterFeatureApi.getCharacterMapByIds(it).collect{emit(it)}
+        }
     }
 }

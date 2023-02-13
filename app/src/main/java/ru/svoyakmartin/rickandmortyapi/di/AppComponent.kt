@@ -7,6 +7,8 @@ import ru.svoyakmartin.coreDi.di.scope.AppScope
 import ru.svoyakmartin.coreFlow.di.FlowModule
 import ru.svoyakmartin.coreNetwork.di.NetworkModule
 import ru.svoyakmartin.featureCharacter.di.CharacterExternalDependencies
+import ru.svoyakmartin.featureCharacterDependencies.CharacterDependenciesFeatureApiImpl_Factory
+import ru.svoyakmartin.featureCharacterDependencies.di.CharacterDependenciesExternalDependencies
 import ru.svoyakmartin.featureEpisode.di.EpisodeExternalDependencies
 import ru.svoyakmartin.featureHomeScreen.di.HomeScreenExternalDependencies
 import ru.svoyakmartin.featureLocation.di.LocationExternalDependencies
@@ -27,6 +29,7 @@ import ru.svoyakmartin.rickandmortyapi.di.modules.*
 interface AppComponent :
     HomeScreenExternalDependencies,
     CharacterExternalDependencies,
+    CharacterDependenciesExternalDependencies,
     SettingsExternalDependencies,
     LocationExternalDependencies,
     EpisodeExternalDependencies {

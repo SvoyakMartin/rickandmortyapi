@@ -1,81 +1,49 @@
 package ru.svoyakmartin.featureEpisode.data
 
+import kotlinx.coroutines.flow.flow
 import ru.svoyakmartin.coreDi.di.scope.AppScope
+import ru.svoyakmartin.featureCharacterDependenciesApi.CharacterDependenciesFeatureApi
 import ru.svoyakmartin.featureEpisode.data.dataSource.EpisodesApi
+import ru.svoyakmartin.featureEpisode.data.dataSource.getCharactersIds
+import ru.svoyakmartin.featureEpisode.data.dataSource.toEpisode
 import ru.svoyakmartin.featureEpisode.data.db.EpisodeRoomDAO
+import ru.svoyakmartin.featureEpisode.domain.model.Episode
 import javax.inject.Inject
 
 @AppScope
 class ExportRepositoryImpl @Inject constructor(
     private val episodeRoomDAO: EpisodeRoomDAO,
-    private val apiService: EpisodesApi
+    private val apiService: EpisodesApi,
+    private val characterDependenciesFeatureApi: CharacterDependenciesFeatureApi
 ) {
 
-//    suspend fun fetchNextEpisodesPartFromWeb() {
-//        val response = apiService.getEpisodes(episodesLastPage)
-//        response.body()?.apply {
-//            val episodesList = ArrayList<Episode>()
-//            val charactersAndEpisodesIdsMap = mutableMapOf<Int, List<Int>>()
-//
-//            results.forEach { episodesDTO ->
-//                val episode = episodesDTO.toEpisode()
-//                episodesList.add(episode)
-//                charactersAndEpisodesIdsMap[episode.id] = episodesDTO.getCharactersIds()
-//            }
-//
-//            if (info.pages > episodesLastPage) {
-//                settings.saveEpisodesLastPage(++episodesLastPage)
-//            }
-//
-//            roomDAO.insertEpisodesAndDependencies(episodesList, charactersAndEpisodesIdsMap)
-//        }
-//    }
+    fun getEpisodeMapByIds(episodeIdsList: List<Int>) = flow {
+        episodeRoomDAO.getExistingEpisodeIds(episodeIdsList)
+            .collect { existingEpisodeIdsList ->
+                val difference = episodeIdsList.minus(existingEpisodeIdsList)
 
-//    private suspend fun fetchEpisodesByIds(ids: String) {
-//        val response = apiService.getEpisodesByIds(ids)
-//        response.body()?.apply {
-//            val episodesList = ArrayList<Episode>()
-//            val charactersAndEpisodesIdsMap = mutableMapOf<Int, List<Int>>()
-//
-//            forEach { episodeDTO ->
-//                val episode = episodeDTO.toEpisode()
-//                episodesList.add(episode)
-//                charactersAndEpisodesIdsMap[episodeDTO.id] = episodeDTO.getCharactersIds()
-//            }
-//
-//            roomDAO.insertEpisodesAndDependencies(episodesList, charactersAndEpisodesIdsMap)
-//        }
-//    }
+                if (difference.isNotEmpty()) {
+                    fetchEpisodesByIds(difference.joinToString())
+                }
 
+                episodeRoomDAO.getEpisodesNameByIds(episodeIdsList).collect {emit(it) }
+            }
+    }
 
-//    fun getEpisodesByCharacterId(characterId: Int): Flow<List<Episode>?> {
-//        return flow {
-//            roomDAO.getMissingEpisodeIdsByCharacterId(characterId)
-//                .collect { episodeIdsList ->
-//                    if (!episodeIdsList.isNullOrEmpty()) {
-//                        fetchEpisodesByIds(episodeIdsList.joinToString())
-//                    }
-//
-//                    roomDAO.getEpisodesByCharacterId(characterId).collect { episodesList ->
-//                        emit(episodesList)
-//                    }
-//                }
-//        }
-//    }
+    private suspend fun fetchEpisodesByIds(ids: String) {
+        val response = apiService.getEpisodesByIds(ids)
+        response.body()?.apply {
+            val episodesList = ArrayList<Episode>()
+            val episodesAndCharactersIdsMap = mutableMapOf<Int, List<Int>>()
 
-//    fun getCharactersByEpisodeId(episodeId: Int): Flow<List<Character>?> {
-//        return flow {
-//            roomDAO.getMissingCharacterIdsByEpisodeId(episodeId)
-//                .collect { characterIdsList ->
-//                    if (!characterIdsList.isNullOrEmpty()) {
-//                        fetchCharactersByIds(characterIdsList.joinToString())
-//                    }
-//
-//                    roomDAO.getCharactersByEpisodeId(episodeId).collect { episodesList ->
-//                        emit(episodesList)
-//                    }
-//                }
-//        }
-//    }
+            forEach { episodeDTO ->
+                val episode = episodeDTO.toEpisode()
+                episodesList.add(episode)
+                episodesAndCharactersIdsMap[episodeDTO.id] = episodeDTO.getCharactersIds()
+            }
 
+            episodeRoomDAO.insertEpisodes(episodesList)
+            characterDependenciesFeatureApi.insertEpisodesAndCharacters(episodesAndCharactersIdsMap)
+        }
+    }
 }

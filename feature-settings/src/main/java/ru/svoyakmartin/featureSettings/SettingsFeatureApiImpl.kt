@@ -11,6 +11,5 @@ class SettingsFeatureApiImpl @Inject constructor(private val repository: UserPre
     SettingsFeatureApi {
     override fun getFlowFragment(): Fragment = SettingsFeatureFlowFragment()
     override fun saveInt(key: String, value: Int) = repository.saveInt(key, value)
-    override fun readInt(key: String, defaultValue: Int): Int =
-        repository.readInt(key, defaultValue)
+    override fun readInt(key: String, defaultValue: Int) = repository.readInt(key, defaultValue)
 }

@@ -1,4 +1,4 @@
-package ru.svoyakmartin.featureIinfo
+package ru.svoyakmartin.featureCore.data.model
 
 import kotlinx.serialization.Serializable
 

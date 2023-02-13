@@ -25,10 +25,12 @@ dependencies {
     implementation project(":core-mvvm")
     implementation project(":feature-theme")
     implementation project(":core-navigation")
-    implementation project(":feature-info")
+    implementation project(':feature-core')
     implementation project(":feature-character-api")
     implementation project(":feature-settings-api")
     implementation project(":feature-location-api")
+    implementation project(":feature-episode-api")
+    implementation project(":feature-character-dependencies-api")
 
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'

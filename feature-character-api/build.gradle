@@ -14,7 +14,7 @@ android {
 
 dependencies {
     // Project
-    implementation project(":core-navigation")
+    implementation project(':feature-core')
 
     // Basic
     implementation "androidx.fragment:fragment-ktx:1.5.5"
