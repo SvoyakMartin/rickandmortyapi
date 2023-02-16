@@ -13,9 +13,9 @@ class ExportRepositoryImpl @Inject constructor(
     private val locationRoomDAO: LocationRoomDAO,
     private val apiService: LocationsApi,
     private val characterDependenciesFeatureApi: CharacterDependenciesFeatureApi
-) {
+) : ExportRepository {
 
-    fun getLocationMapByIds(locationIdsList: List<Int>) = flow {
+    override fun getLocationMapByIds(locationIdsList: List<Int>) = flow {
         locationRoomDAO.getExistingLocationIds(locationIdsList)
             .collect { existingLocationIdsList ->
                 val difference = locationIdsList.minus(existingLocationIdsList)
@@ -41,7 +41,9 @@ class ExportRepositoryImpl @Inject constructor(
             }
 
             locationRoomDAO.insertLocations(locationsList)
-            characterDependenciesFeatureApi.insertLocationsAndCharacters(locationsAndCharactersIdsMap)
+            characterDependenciesFeatureApi.insertLocationsAndCharacters(
+                locationsAndCharactersIdsMap
+            )
         }
     }
 }

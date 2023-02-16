@@ -2,7 +2,6 @@ package ru.svoyakmartin.featureLocation.data.db
 
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.filters.SmallTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -15,7 +14,6 @@ import ru.svoyakmartin.featureLocation.domain.model.Location
 import java.io.IOException
 
 @ExperimentalCoroutinesApi
-@SmallTest
 class LocationRoomDBTest {
     private lateinit var dao: LocationRoomDAO
     private lateinit var db: LocationRoomDB

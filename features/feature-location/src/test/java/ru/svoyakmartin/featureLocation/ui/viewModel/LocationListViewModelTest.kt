@@ -5,7 +5,7 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
-import org.mockito.Mockito
+import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import retrofit2.Response
 import ru.svoyakmartin.featureCore.data.model.InfoDTO
@@ -46,7 +46,7 @@ internal class LocationListViewModelTest {
         val expected = 200
         var response = Response.success(200, LocationsDTO(InfoDTO(1,1,"",""), listOf()))
 
-        Mockito.`when`(apiService.getLocations(1)).thenReturn(response)
+        `when`(apiService.getLocations(1)).thenReturn(response)
         response = apiService.getLocations(1)
 
         // When
