@@ -6,7 +6,6 @@ import dagger.Component
 import ru.svoyakmartin.coreDi.di.scope.AppScope
 import ru.svoyakmartin.coreNetwork.di.NetworkModule
 import ru.svoyakmartin.featureCharacter.di.CharacterExternalDependencies
-import ru.svoyakmartin.featureCharacterDependencies.CharacterDependenciesFeatureApiImpl_Factory
 import ru.svoyakmartin.featureCharacterDependencies.di.CharacterDependenciesExternalDependencies
 import ru.svoyakmartin.featureEpisode.di.EpisodeExternalDependencies
 import ru.svoyakmartin.featureHomeScreen.di.HomeScreenExternalDependencies
