@@ -1,0 +1,35 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+}
+
+android {
+    compileSdk 32
+
+    defaultConfig {
+        minSdk 26
+        targetSdk 32
+    }
+
+    buildFeatures{
+        viewBinding true
+    }
+}
+
+dependencies {
+    // Project
+    implementation project(":core:core-di")
+    implementation project(":core:core-mvvm")
+    implementation project(":features:feature-settings-api")
+
+    // Basic
+    implementation 'androidx.fragment:fragment-ktx:1.5.5'
+//    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.appcompat:appcompat:1.6.0'
+
+    // Dagger
+    implementation "com.google.dagger:dagger:2.44"
+    kapt "com.google.dagger:dagger-compiler:2.44"
+}
