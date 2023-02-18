@@ -8,7 +8,7 @@ import ru.svoyakmartin.featureStatistic.data.dataSource.StatisticApi
 
 
 @Module
-class StatisticProvidesModule {
+object StatisticProvidesModule {
     @Provides
     fun provideLocationApi(retrofit: Retrofit): StatisticApi = retrofit.create()
 }

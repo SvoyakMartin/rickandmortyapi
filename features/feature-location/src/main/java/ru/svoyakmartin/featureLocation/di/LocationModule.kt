@@ -16,7 +16,7 @@ import ru.svoyakmartin.featureLocation.ui.viewModel.LocationDetailsViewModel
 import ru.svoyakmartin.featureLocation.ui.viewModel.LocationListViewModel
 
 @Module
-class LocationProvidesModule {
+object LocationProvidesModule {
     @Provides
     fun provideLocationApi(retrofit: Retrofit): LocationsApi = retrofit.create()
 

@@ -16,7 +16,7 @@ import ru.svoyakmartin.featureEpisode.ui.viewModel.EpisodeDetailsViewModel
 import ru.svoyakmartin.featureEpisode.ui.viewModel.EpisodeListViewModel
 
 @Module
-class EpisodeProvidesModule {
+object EpisodeProvidesModule {
     @Provides
     fun provideLocationApi(retrofit: Retrofit): EpisodesApi = retrofit.create()
 

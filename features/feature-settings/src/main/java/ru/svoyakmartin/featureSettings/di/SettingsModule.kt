@@ -6,7 +6,7 @@ import dagger.Provides
 import ru.svoyakmartin.featureSettings.data.UserPreferencesRepositoryImpl
 
 @Module
-class SettingsModule {
+object SettingsModule {
     @Provides
     fun provideUserPreferencesRepository(context: Context): UserPreferencesRepositoryImpl {
         return UserPreferencesRepositoryImpl.getInstance(context)

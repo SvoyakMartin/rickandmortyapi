@@ -16,7 +16,7 @@ import ru.svoyakmartin.featureCharacter.ui.viewModel.CharacterDetailsViewModel
 import ru.svoyakmartin.featureCharacter.ui.viewModel.CharacterListViewModel
 
 @Module
-class CharacterProvidesModule {
+object CharacterProvidesModule {
     @Provides
     fun provideCharacterApi(retrofit: Retrofit): CharactersApi = retrofit.create()
 

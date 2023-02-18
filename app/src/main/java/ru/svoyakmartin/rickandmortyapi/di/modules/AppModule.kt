@@ -35,7 +35,7 @@ import ru.svoyakmartin.featureStatistic.data.dataSource.StatisticApi
         EpisodeFeatureApiModule::class
     ]
 )
-class AppModule {
+object AppModule {
     @[AppScope Provides]
     fun provideCharacterDependenciesRoomDAO(context: Context): CharacterDependenciesRoomDAO =
         CharacterDependenciesRoomDB.getDatabase(context).getCharacterDependenciesDao()

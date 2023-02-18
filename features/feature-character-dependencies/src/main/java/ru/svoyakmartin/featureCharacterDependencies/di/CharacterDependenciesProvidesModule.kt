@@ -7,7 +7,7 @@ import ru.svoyakmartin.featureCharacterDependencies.data.db.CharacterDependencie
 import ru.svoyakmartin.featureCharacterDependencies.data.db.CharacterDependenciesRoomDB
 
 @Module
-class CharacterDependenciesProvidesModule {
+object CharacterDependenciesProvidesModule {
     @Provides
     fun provideCharacterDependenciesRoomDAO(context: Context): CharacterDependenciesRoomDAO {
         return CharacterDependenciesRoomDB.getDatabase(context).getCharacterDependenciesDao()

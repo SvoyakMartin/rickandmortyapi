@@ -11,7 +11,7 @@ import ru.svoyakmartin.featureLocation.R as locationR
 import ru.svoyakmartin.featureSettings.R as settingsR
 
 @Module
-class NavigationModule {
+object NavigationModule {
 
     @Provides
     fun provideHomeScreenNavSource(): HomeScreenNavSource {

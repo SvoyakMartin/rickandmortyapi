@@ -13,7 +13,7 @@ import ru.svoyakmartin.coreNetwork.provider.OkHttpClientProvider
 import ru.svoyakmartin.coreNetwork.provider.RetrofitProvider
 
 @Module
-class NetworkModule {
+object NetworkModule {
     @Provides
     fun provideRetrofit(
         baseUrl: String,
