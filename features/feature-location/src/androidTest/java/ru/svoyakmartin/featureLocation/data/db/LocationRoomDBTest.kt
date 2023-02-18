@@ -8,7 +8,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import org.junit.*
+import org.junit.Before
+import org.junit.After
+import org.junit.Test
+import org.junit.Assert
 import ru.svoyakmartin.featureCore.domain.model.EntityMap
 import ru.svoyakmartin.featureLocation.domain.model.Location
 import java.io.IOException

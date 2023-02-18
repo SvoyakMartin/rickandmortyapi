@@ -1,6 +1,9 @@
 package ru.svoyakmartin.featureCharacterDependencies.data.db
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.OnConflictStrategy
 import kotlinx.coroutines.flow.Flow
 import ru.svoyakmartin.featureCharacterDependencies.CHARACTERS_EPISODES_TABLE_NAME
 import ru.svoyakmartin.featureCharacterDependencies.CHARACTERS_LOCATIONS_TABLE_NAME

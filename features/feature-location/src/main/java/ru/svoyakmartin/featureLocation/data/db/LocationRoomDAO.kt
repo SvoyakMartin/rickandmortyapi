@@ -1,6 +1,9 @@
 package ru.svoyakmartin.featureLocation.data.db
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Query
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import kotlinx.coroutines.flow.Flow
 import ru.svoyakmartin.featureCore.domain.model.EntityMap
 import ru.svoyakmartin.featureLocation.LOCATIONS_TABLE_NAME

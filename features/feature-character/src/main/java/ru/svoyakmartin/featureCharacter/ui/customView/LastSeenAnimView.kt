@@ -11,7 +11,7 @@ import android.view.View
 import androidx.core.os.ParcelCompat
 import ru.svoyakmartin.featureCharacter.R
 import ru.svoyakmartin.featureTheme.R as themeR
-import java.util.*
+import java.util.Date
 import kotlin.math.max
 import kotlin.random.Random
 

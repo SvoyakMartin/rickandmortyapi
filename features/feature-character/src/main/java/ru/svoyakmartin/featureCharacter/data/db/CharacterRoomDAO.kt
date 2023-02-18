@@ -1,6 +1,9 @@
 package ru.svoyakmartin.featureCharacter.data.db
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Query
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import kotlinx.coroutines.flow.Flow
 import ru.svoyakmartin.featureCharacter.CHARACTERS_TABLE_NAME
 import ru.svoyakmartin.featureCharacter.domain.model.Character

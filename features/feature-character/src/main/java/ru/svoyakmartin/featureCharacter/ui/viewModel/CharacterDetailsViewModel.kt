@@ -1,8 +1,13 @@
 package ru.svoyakmartin.featureCharacter.ui.viewModel
 
-import androidx.lifecycle.*
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.conflate
 import ru.svoyakmartin.featureCharacter.data.CharacterRepositoryImpl
 import javax.inject.Inject
 

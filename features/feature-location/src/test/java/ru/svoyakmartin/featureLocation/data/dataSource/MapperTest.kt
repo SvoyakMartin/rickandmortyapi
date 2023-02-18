@@ -1,6 +1,6 @@
 package ru.svoyakmartin.featureLocation.data.dataSource
 
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import ru.svoyakmartin.featureLocation.data.model.LocationDTO
 import ru.svoyakmartin.featureLocation.domain.model.Location

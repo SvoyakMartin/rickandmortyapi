@@ -1,7 +1,7 @@
 package ru.svoyakmartin.featureLocation.data.dataSource
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import kotlinx.coroutines.test.runTest
 import retrofit2.create
