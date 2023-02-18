@@ -9,8 +9,9 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        appComponent = DaggerAppComponent.factory()
-            .create(this)
+        appComponent = DaggerAppComponent.builder()
+            .bindContext(this)
+            .build()
             .apply {
                 userPreferencesRepository.apply { setNightMode(readSavedNightMode()) }
             }

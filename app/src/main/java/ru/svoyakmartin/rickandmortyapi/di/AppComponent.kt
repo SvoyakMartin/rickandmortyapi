@@ -31,9 +31,11 @@ interface AppComponent :
     LocationExternalDependencies,
     EpisodeExternalDependencies {
 
-    @Component.Factory
-    interface Factory {
-        fun create(@BindsInstance context: Context): AppComponent
+    @Component.Builder
+    abstract class Builder {
+        @BindsInstance
+        abstract fun bindContext(context: Context): Builder
+        abstract fun build(): AppComponent
     }
 
     val userPreferencesRepository: UserPreferencesRepositoryImpl
