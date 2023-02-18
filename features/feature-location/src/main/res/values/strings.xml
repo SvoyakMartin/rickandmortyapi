@@ -1,0 +1,6 @@
+<resources>
+    <!--    LOCATION DETAILS FRAGMENT-->
+    <string name="location_characters_header_text">Location residents: %1$d</string>
+    <string name="characters_show">↓ show ↓</string>
+    <string name="characters_hide">↑ hide ↑</string>
+</resources>

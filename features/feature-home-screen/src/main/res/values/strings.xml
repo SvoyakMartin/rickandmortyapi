@@ -1,0 +1,7 @@
+<resources>
+    <string name="settings_text">Settings</string>
+    <string name="characters_text">Characters</string>
+    <string name="locations_text">Locations</string>
+    <string name="episodes_text">Episodes</string>
+    <string name="back_pressed_toast_text">"to exit press again"</string>
+</resources>

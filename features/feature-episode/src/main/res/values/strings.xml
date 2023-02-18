@@ -1,0 +1,6 @@
+<resources>
+    <!--    EPISODE DETAILS FRAGMENT-->
+    <string name="episode_characters_header_text">Episode characters: %1$d</string>
+    <string name="characters_show">↓ show ↓</string>
+    <string name="characters_hide">↑ hide ↑</string>
+</resources>

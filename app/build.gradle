@@ -31,13 +31,39 @@ android {
 }
 
 dependencies {
+    // Project
+    implementation project(":core:core-ui")
+    implementation project(":core:core-di")
+    implementation project(":core:core-mvvm")
+    implementation project(":core:core-network")
+    implementation project(":features:feature-theme")
+    implementation project(':features:feature-core')
+    implementation project(':features:feature-character')
+    implementation project(':features:feature-character-api')
+    implementation project(':features:feature-home-screen-api')
+    implementation project(':features:feature-home-screen')
+    implementation project(':features:feature-settings-api')
+    implementation project(':features:feature-settings')
+    implementation project(':features:feature-location-api')
+    implementation project(':features:feature-location')
+    implementation project(':features:feature-episode-api')
+    implementation project(':features:feature-episode')
+    implementation project(':features:feature-statistic-api')
+    implementation project(':features:feature-statistic')
+    implementation project(":features:feature-character-dependencies-api")
+    implementation project(":features:feature-character-dependencies")
+
 
     // Basic
     implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.appcompat:appcompat:1.6.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.fragment:fragment-ktx:1.5.5'
+
+    // Navigation
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
+    implementation "androidx.navigation:navigation-ui-ktx:2.5.3"
 
     // Tests
     testImplementation 'junit:junit:4.13.2'
@@ -50,11 +76,7 @@ dependencies {
 
     // Lifecycle components
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
-//    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.5.1"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.5.1"
-
-    // Kotlinx-serialization
-    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1"
 
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'

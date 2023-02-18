@@ -1,0 +1,42 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+}
+
+android {
+    compileSdk 32
+
+    defaultConfig {
+        minSdk 26
+        targetSdk 32
+    }
+
+    buildFeatures{
+        viewBinding true
+    }
+}
+
+dependencies {
+    // Project
+    implementation project(":core:core")
+    implementation project(":core:core-di")
+    implementation project(":core:core-mvvm")
+    implementation project(":features:feature-home-screen-api")
+    implementation project(":features:feature-character-api")
+    implementation project(":features:feature-settings-api")
+    implementation project(":features:feature-location-api")
+    implementation project(":features:feature-episode-api")
+
+    // Dagger
+    implementation "com.google.dagger:dagger:2.44"
+    kapt "com.google.dagger:dagger-compiler:2.44"
+
+    // Basic
+    implementation 'androidx.fragment:fragment-ktx:1.5.5'
+    implementation 'com.google.android.material:material:1.8.0'
+
+    // Navigation
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
+    implementation "androidx.navigation:navigation-ui-ktx:2.5.3"
+}

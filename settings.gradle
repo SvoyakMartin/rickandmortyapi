@@ -14,3 +14,26 @@ dependencyResolutionManagement {
 }
 rootProject.name = "RickAndMortyApi"
 include ':app'
+
+include ':core:core'
+include ':core:core-ui'
+include ':core:core-di'
+include ':core:core-mvvm'
+include ':core:core-network'
+
+include ':features:feature-theme'
+include ':features:feature-settings-api'
+include ':features:feature-settings'
+include ':features:feature-core'
+include ':features:feature-home-screen-api'
+include ':features:feature-home-screen'
+include ':features:feature-character-api'
+include ':features:feature-character'
+include ':features:feature-character-dependencies-api'
+include ':features:feature-character-dependencies'
+include ':features:feature-location-api'
+include ':features:feature-location'
+include ':features:feature-episode-api'
+include ':features:feature-episode'
+include ':features:feature-statistic-api'
+include ':features:feature-statistic'
