@@ -18,25 +18,30 @@ interface FeatureExternalDependenciesModule {
     @Binds
     @IntoMap
     @FeatureExternalDependenciesKey(CharacterExternalDependencies::class)
+    @Suppress("unused")
     fun bindCharacterExternalDependencies(appComponent: AppComponent): FeatureExternalDependencies
 
     @Binds
     @IntoMap
     @FeatureExternalDependenciesKey(HomeScreenExternalDependencies::class)
+    @Suppress("unused")
     fun bindHomeScreenExternalDependencies(appComponent: AppComponent): FeatureExternalDependencies
 
     @Binds
     @IntoMap
     @FeatureExternalDependenciesKey(SettingsExternalDependencies::class)
+    @Suppress("unused")
     fun bindSettingsExternalDependencies(appComponent: AppComponent): FeatureExternalDependencies
 
     @Binds
     @IntoMap
     @FeatureExternalDependenciesKey(EpisodeExternalDependencies::class)
+    @Suppress("unused")
     fun bindEpisodeExternalDependencies(appComponent: AppComponent): FeatureExternalDependencies
 
     @Binds
     @IntoMap
     @FeatureExternalDependenciesKey(LocationExternalDependencies::class)
+    @Suppress("unused")
     fun bindLocationExternalDependencies(appComponent: AppComponent): FeatureExternalDependencies
 }

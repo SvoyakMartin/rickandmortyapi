@@ -19,7 +19,6 @@ android {
 
 dependencies {
     // Project
-    implementation project(":core:core")
     implementation project(":core:core-di")
     implementation project(":core:core-mvvm")
     implementation project(":features:feature-home-screen-api")
