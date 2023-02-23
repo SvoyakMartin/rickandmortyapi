@@ -3,6 +3,7 @@ package ru.svoyakmartin.coreNetwork.provider
 import okhttp3.OkHttpClient
 import retrofit2.Converter
 import retrofit2.Retrofit
+import ru.svoyakmartin.coreNetwork.provider.response.ApiResponseCallAdapterFactory
 
 object RetrofitProvider {
     fun get(
@@ -12,7 +13,7 @@ object RetrofitProvider {
     ): Retrofit = Retrofit.Builder()
         .baseUrl(baseUrl)
         .addConverterFactory(converterFactory)
-        // TODO: add call
+        .addCallAdapterFactory(ApiResponseCallAdapterFactory())
         .client(okHttpClient)
         .build()
 }

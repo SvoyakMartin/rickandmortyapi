@@ -1,12 +1,15 @@
 package ru.svoyakmartin.featureCharacter.data
 
 import kotlinx.coroutines.flow.flow
+import ru.svoyakmartin.coreNetwork.provider.response.ApiResponse
 import ru.svoyakmartin.featureCharacterDependenciesApi.CharacterDependenciesFeatureApi
 import ru.svoyakmartin.featureCharacter.data.dataSource.CharactersApi
 import ru.svoyakmartin.featureCharacter.data.dataSource.getEpisodesIds
 import ru.svoyakmartin.featureCharacter.data.dataSource.toCharacter
 import ru.svoyakmartin.featureCharacter.data.db.CharacterRoomDAO
 import ru.svoyakmartin.featureCharacter.domain.model.Character
+import ru.svoyakmartin.featureCharacter.domain.model.Gender
+import ru.svoyakmartin.featureCharacter.domain.model.Status
 import ru.svoyakmartin.featureEpisodeApi.EpisodeFeatureApi
 import ru.svoyakmartin.featureLocationApi.LocationFeatureApi
 import ru.svoyakmartin.featureSettingsApi.SettingsFeatureApi
@@ -23,6 +26,7 @@ class CharacterRepositoryImpl @Inject constructor(
     val allCharacters = characterRoomDAO.getAllCharacters()
     private var charactersLastPage =
         settings.readInt(SettingsFeatureApi.CHARACTERS_LAST_PAGE_KEY, 1)
+//    val character = Character(0, "", Status.ALIVE, "", "", Gender.MALE, 0, 0, "")
 
     suspend fun fetchNextCharactersPartFromWeb() {
         val response = apiService.getCharacters(charactersLastPage)
@@ -53,7 +57,9 @@ class CharacterRepositoryImpl @Inject constructor(
             if (character != null) {
                 emit(character)
             } else {
-                fetchCharacterById(id).collect { emit(it) }
+                fetchCharacterById(id).collect {
+                    emit(it)
+                }
             }
         }
     }
@@ -61,11 +67,13 @@ class CharacterRepositoryImpl @Inject constructor(
     private suspend fun fetchCharacterById(id: Int) = flow {
         val response = apiService.getCharacterById(id)
 
-        response.body()?.apply {
-            val character = toCharacter()
-            characterRoomDAO.insertCharacter(character)
+        if (response is ApiResponse.Success) {
+            response.data.apply {
+                val character = toCharacter()
+                characterRoomDAO.insertCharacter(character)
 
-            emit(character)
+                emit(character)
+            }
         }
     }
 
