@@ -28,7 +28,8 @@ class LastSeenAnimView
     private val lastSeenTextSize = context.toDp(14f)
     private val locationTextSize = context.toDp(16f)
 
-    private val reference = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890 "
+    private val minCharCode = 48// '0'
+    private val maxCharCode = 122// 'z'
     private var isLastSeenVisible = false
     private var generatedText = ""
     private var currentIteration = 0
@@ -312,7 +313,7 @@ class LastSeenAnimView
             }
         }
 
-        val randomChar = reference[random.nextInt(reference.length - 1)]
+        val randomChar = (random.nextInt(minCharCode, maxCharCode)).toChar()
 
         if (currentIteration == searchIterations) {
             currentIteration = 0
