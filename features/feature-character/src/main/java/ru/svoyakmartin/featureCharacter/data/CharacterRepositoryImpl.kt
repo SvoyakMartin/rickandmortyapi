@@ -8,11 +8,10 @@ import ru.svoyakmartin.featureCharacter.data.dataSource.getEpisodesIds
 import ru.svoyakmartin.featureCharacter.data.dataSource.toCharacter
 import ru.svoyakmartin.featureCharacter.data.db.CharacterRoomDAO
 import ru.svoyakmartin.featureCharacter.domain.model.Character
-import ru.svoyakmartin.featureCharacter.domain.model.Gender
-import ru.svoyakmartin.featureCharacter.domain.model.Status
 import ru.svoyakmartin.featureEpisodeApi.EpisodeFeatureApi
 import ru.svoyakmartin.featureLocationApi.LocationFeatureApi
 import ru.svoyakmartin.featureSettingsApi.SettingsFeatureApi
+import ru.svoyakmartin.featureStatisticApi.StatisticFeatureApi
 import javax.inject.Inject
 
 class CharacterRepositoryImpl @Inject constructor(
@@ -21,12 +20,13 @@ class CharacterRepositoryImpl @Inject constructor(
     private val apiService: CharactersApi,
     private val locationFeatureApi: LocationFeatureApi,
     private val episodeFeatureApi: EpisodeFeatureApi,
-    private val dependenciesFeatureApi: CharacterDependenciesFeatureApi
+    private val dependenciesFeatureApi: CharacterDependenciesFeatureApi,
+    statisticFeatureApi: StatisticFeatureApi
 ) {
     val allCharacters = characterRoomDAO.getAllCharacters()
+    val charactersCount = statisticFeatureApi.getCharactersCount()
     private var charactersLastPage =
         settings.readInt(SettingsFeatureApi.CHARACTERS_LAST_PAGE_KEY, 1)
-//    val character = Character(0, "", Status.ALIVE, "", "", Gender.MALE, 0, 0, "")
 
     suspend fun fetchNextCharactersPartFromWeb() {
         val response = apiService.getCharacters(charactersLastPage)

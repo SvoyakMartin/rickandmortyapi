@@ -24,7 +24,6 @@ import ru.svoyakmartin.featureCharacter.ui.viewModel.CharacterFeatureComponentVi
 import ru.svoyakmartin.featureCharacter.ui.viewModel.CharacterListViewModel
 import javax.inject.Inject
 
-
 class CharacterListFragment : Fragment() {
     @Inject
     lateinit var viewModelFactory: Lazy<ViewModelFactory>
@@ -41,9 +40,7 @@ class CharacterListFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = FragmentCharactersBinding.inflate(inflater, container, false)
 
@@ -56,11 +53,40 @@ class CharacterListFragment : Fragment() {
     }
 
     private fun initViews() {
+        initRecyclerView()
+        initRepeatOnLifecycle()
+    }
+
+    private fun initRecyclerView() {
         with(binding) {
-            viewLifecycleOwner.lifecycleScope.launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    launch {
-                        viewModel.allCharacters.collect {
+            charactersRecyclerView.adapter = adapter
+
+            val scrollListener = object : RecyclerView.OnScrollListener() {
+
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    val adapterItemCount = adapter.itemCount
+
+                    if (adapterItemCount < viewModel.charactersCount) {
+                        val lastVisibleItemPosition =
+                            (charactersRecyclerView.layoutManager as LinearLayoutManager)
+                                .findLastVisibleItemPosition()
+
+                        if (lastVisibleItemPosition == adapter.itemCount - 1) {
+                            loadNextPart()
+                        }
+                    }
+                }
+            }
+            charactersRecyclerView.addOnScrollListener(scrollListener)
+        }
+    }
+
+    private fun initRepeatOnLifecycle() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.allCharacters
+                        .collect {
                             if (it.isNullOrEmpty()) {
                                 loadNextPart()
                             } else {
@@ -68,24 +94,12 @@ class CharacterListFragment : Fragment() {
                                 viewModel.setIsLoading(false)
                             }
                         }
-                    }
+                }
 
-                    launch {
-                        viewModel.isLoading.collect { showHideLoadingView(it) }
-                    }
+                launch {
+                    viewModel.isLoading.collect { showHideLoadingView(it) }
                 }
             }
-
-            charactersRecyclerView.adapter = adapter
-            charactersRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if ((charactersRecyclerView.layoutManager as LinearLayoutManager)
-                            .findLastVisibleItemPosition() == adapter.itemCount - 1
-                    ) {
-                        loadNextPart()
-                    }
-                }
-            })
         }
     }
 

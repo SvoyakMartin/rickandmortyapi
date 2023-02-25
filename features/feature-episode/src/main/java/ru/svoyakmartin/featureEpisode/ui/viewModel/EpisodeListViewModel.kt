@@ -15,6 +15,16 @@ import javax.inject.Inject
 class EpisodeListViewModel @Inject constructor(
     private val repository: EpisodeRepositoryImpl
 ) : ViewModel() {
+    var episodesCount = 0
+
+    init {
+        viewModelScope.launch {
+            repository.episodesCount.collect{
+                episodesCount = it
+            }
+        }
+    }
+
     val allEpisodes = repository.allEpisodes
         .flowOn(Dispatchers.IO)
         .conflate()

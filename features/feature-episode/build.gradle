@@ -29,6 +29,7 @@ dependencies {
     implementation project(":features:feature-settings-api")
     implementation project(":features:feature-character-api")
     implementation project(":features:feature-character-dependencies-api")
+    implementation project(":features:feature-statistic-api")
 
     // Navigation
     implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'

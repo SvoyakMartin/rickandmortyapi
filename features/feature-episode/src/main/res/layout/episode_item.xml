@@ -8,6 +8,13 @@
     android:background="?attr/backColor"
     android:padding="8dp">
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
     <TextView
         android:id="@+id/episode_name"
         android:layout_width="0dp"
@@ -20,9 +27,11 @@
 
     <TextView
         android:id="@+id/episode_code"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:textAppearance="?attr/textAppearanceBody1"
+        app:layout_constraintEnd_toStartOf="@id/guidline"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/episode_name"
         tools:text="S01E01" />
@@ -31,8 +40,10 @@
         android:id="@+id/episode_data"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:gravity="right"
         android:textAppearance="?attr/textAppearanceBody1"
         app:layout_constraintEnd_toEndOf="@id/episode_name"
+        app:layout_constraintStart_toStartOf="@+id/guidline"
         app:layout_constraintTop_toTopOf="@+id/episode_code"
         tools:text="02.12.2013" />
 

@@ -25,11 +25,10 @@ import ru.svoyakmartin.featureEpisode.ui.viewModel.EpisodeListViewModel
 import javax.inject.Inject
 
 class EpisodeListFragment : Fragment() {
-    private lateinit var binding: FragmentEpisodesBinding
-
     @Inject
     lateinit var viewModelFactory: Lazy<ViewModelFactory>
     private val viewModel: EpisodeListViewModel by viewModels { viewModelFactory.get() }
+    private lateinit var binding: FragmentEpisodesBinding
     private val adapter = EpisodesAdapter()
 
     override fun onAttach(context: Context) {
@@ -40,8 +39,7 @@ class EpisodeListFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = FragmentEpisodesBinding.inflate(inflater, container, false)
 
@@ -54,36 +52,52 @@ class EpisodeListFragment : Fragment() {
     }
 
     private fun initViews() {
-        with(binding) {
-            viewLifecycleOwner.lifecycleScope.launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    launch {
-                        viewModel.allEpisodes.collect {
-                            if (it.isNullOrEmpty()) {
-                                loadNextPart()
-                            } else {
-                                adapter.submitList(it)
-                                viewModel.setIsLoading(false)
-                            }
-                        }
-                    }
+        initRecyclerView()
+        initRepeatOnLifecycle()
+    }
 
-                    launch {
-                        viewModel.isLoading.collect { showHideLoadingView(it) }
+    private fun initRecyclerView() {
+        with(binding) {
+            episodesRecyclerView.adapter = adapter
+
+            val scrollListener = object : RecyclerView.OnScrollListener() {
+
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    val adapterItemCount = adapter.itemCount
+
+                    if (adapterItemCount < viewModel.episodesCount) {
+                        val lastVisibleItemPosition =
+                            (episodesRecyclerView.layoutManager as LinearLayoutManager)
+                                .findLastVisibleItemPosition()
+                        if (lastVisibleItemPosition == adapter.itemCount - 1
+                        ) {
+                            loadNextPart()
+                        }
                     }
                 }
             }
+            episodesRecyclerView.addOnScrollListener(scrollListener)
+        }
+    }
 
-            episodesRecyclerView.adapter = adapter
-            episodesRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if ((episodesRecyclerView.layoutManager as LinearLayoutManager)
-                            .findLastVisibleItemPosition() == adapter.itemCount - 1
-                    ) {
-                        loadNextPart()
+    private fun initRepeatOnLifecycle() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.allEpisodes.collect {
+                        if (it.isNullOrEmpty()) {
+                            loadNextPart()
+                        } else {
+                            adapter.submitList(it)
+                            viewModel.setIsLoading(false)
+                        }
                     }
                 }
-            })
+
+                launch {
+                    viewModel.isLoading.collect { showHideLoadingView(it) }
+                }
+            }
         }
     }
 

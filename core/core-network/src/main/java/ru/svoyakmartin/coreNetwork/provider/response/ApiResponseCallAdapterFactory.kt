@@ -18,7 +18,7 @@ class ApiResponseCallAdapterFactory : CallAdapter.Factory() {
 
         val innerType = getParameterUpperBound(0, returnType)
 
-        if (getRawType(returnType) != ApiResponse::class.java) return null
+        if (getRawType(innerType) != ApiResponse::class.java) return null
 
         check(innerType is ParameterizedType) { "Not parametrized ApiResponse return type" }
         val responseType = getParameterUpperBound(0, innerType)

@@ -15,6 +15,16 @@ import javax.inject.Inject
 class CharacterListViewModel @Inject constructor(
     private val repository: CharacterRepositoryImpl,
 ) : ViewModel() {
+    var charactersCount = 0
+
+    init {
+        viewModelScope.launch {
+            repository.charactersCount.collect{
+                charactersCount = it
+            }
+        }
+    }
+
     val allCharacters = repository.allCharacters
         .flowOn(Dispatchers.IO)
         .conflate()

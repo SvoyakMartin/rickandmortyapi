@@ -25,14 +25,15 @@ import ru.svoyakmartin.featureLocation.ui.viewModel.LocationListViewModel
 import javax.inject.Inject
 
 class LocationListFragment : Fragment() {
-    private lateinit var binding: FragmentLocationsBinding
     @Inject
     lateinit var viewModelFactory: Lazy<ViewModelFactory>
     private val viewModel: LocationListViewModel by viewModels { viewModelFactory.get() }
+    private lateinit var binding: FragmentLocationsBinding
     private val adapter = LocationsAdapter()
 
     override fun onAttach(context: Context) {
-        LocationFeatureComponentDependenciesProvider.featureDependencies = findFeatureExternalDependencies()
+        LocationFeatureComponentDependenciesProvider.featureDependencies =
+            findFeatureExternalDependencies()
         viewModel<LocationFeatureComponentViewModel>().component.inject(this)
 
         super.onAttach(context)
@@ -54,41 +55,57 @@ class LocationListFragment : Fragment() {
     }
 
     private fun initViews() {
-        with(binding) {
-            viewLifecycleOwner.lifecycleScope.launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    launch {
-                        viewModel.allLocations.collect {locationList ->
-                            if (locationList.isNullOrEmpty()) {
-                                loadNextPart()
-                            } else {
-                                adapter.submitList(locationList)
-                                viewModel.setIsLoading(false)
-                            }
-                        }
-                    }
+        initRecyclerView()
+        initRepeatOnLifecycle()
+    }
 
-                    launch {
-                        viewModel.isLoading.collect { showHideLoadingView(it) }
+    private fun initRecyclerView() {
+        with(binding) {
+            locationsRecyclerView.adapter = adapter
+
+            val scrollListener = object : RecyclerView.OnScrollListener() {
+
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    val adapterItemCount = adapter.itemCount
+
+                    if (adapterItemCount < viewModel.locationsCount) {
+                        val lastVisibleItemPosition =
+                            (locationsRecyclerView.layoutManager as LinearLayoutManager)
+                                .findLastVisibleItemPosition()
+                        if (lastVisibleItemPosition == adapter.itemCount - 1
+                        ) {
+                            loadNextPart()
+                        }
                     }
                 }
             }
+            locationsRecyclerView.addOnScrollListener(scrollListener)
+        }
+    }
 
-            locationsRecyclerView.adapter = adapter
-            locationsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if ((locationsRecyclerView.layoutManager as LinearLayoutManager)
-                            .findLastVisibleItemPosition() == adapter.itemCount - 1
-                    ) {
-                        loadNextPart()
+    private fun initRepeatOnLifecycle() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.allLocations.collect { locationList ->
+                        if (locationList.isNullOrEmpty()) {
+                            loadNextPart()
+                        } else {
+                            adapter.submitList(locationList)
+                            viewModel.setIsLoading(false)
+                        }
                     }
                 }
-            })
+
+                launch {
+                    viewModel.isLoading.collect { showHideLoadingView(it) }
+                }
+            }
         }
     }
 
     private fun loadNextPart() {
-        with(viewModel){
+        with(viewModel) {
             if (!isLoading.value) {
                 apply {
                     setIsLoading(true)

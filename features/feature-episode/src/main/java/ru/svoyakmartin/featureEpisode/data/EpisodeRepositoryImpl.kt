@@ -9,6 +9,7 @@ import ru.svoyakmartin.featureEpisode.data.dataSource.toEpisode
 import ru.svoyakmartin.featureEpisode.data.db.EpisodeRoomDAO
 import ru.svoyakmartin.featureEpisode.domain.model.Episode
 import ru.svoyakmartin.featureSettingsApi.SettingsFeatureApi
+import ru.svoyakmartin.featureStatisticApi.StatisticFeatureApi
 import javax.inject.Inject
 
 class EpisodeRepositoryImpl @Inject constructor(
@@ -16,9 +17,11 @@ class EpisodeRepositoryImpl @Inject constructor(
     private val settings: SettingsFeatureApi,
     private val apiService: EpisodesApi,
     private val characterDependenciesFeatureApi: CharacterDependenciesFeatureApi,
-    private val characterFeatureApi: CharacterFeatureApi
+    private val characterFeatureApi: CharacterFeatureApi,
+    statisticFeatureApi: StatisticFeatureApi
 ) {
     val allEpisodes = episodeRoomDAO.getAllEpisodes()
+    val episodesCount = statisticFeatureApi.getEpisodesCount()
     private var episodesLastPage = settings.readInt(SettingsFeatureApi.EPISODES_LAST_PAGE_KEY, 1)
 
     suspend fun fetchNextEpisodesPartFromWeb() {

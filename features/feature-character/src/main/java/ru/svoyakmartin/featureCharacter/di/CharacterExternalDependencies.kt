@@ -7,6 +7,7 @@ import ru.svoyakmartin.featureCharacterDependenciesApi.CharacterDependenciesFeat
 import ru.svoyakmartin.featureEpisodeApi.EpisodeFeatureApi
 import ru.svoyakmartin.featureLocationApi.LocationFeatureApi
 import ru.svoyakmartin.featureSettingsApi.SettingsFeatureApi
+import ru.svoyakmartin.featureStatisticApi.StatisticFeatureApi
 
 interface CharacterExternalDependencies : FeatureExternalDependencies {
     val retrofit: Retrofit
@@ -15,4 +16,5 @@ interface CharacterExternalDependencies : FeatureExternalDependencies {
     val locationFeatureApi: LocationFeatureApi
     val episodeFeatureApi: EpisodeFeatureApi
     val characterDependenciesFeatureApi: CharacterDependenciesFeatureApi
+    val statisticFeatureApi: StatisticFeatureApi
 }

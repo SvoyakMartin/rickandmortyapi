@@ -6,6 +6,7 @@ import ru.svoyakmartin.coreDi.di.dependency.FeatureExternalDependencies
 import ru.svoyakmartin.featureCharacterApi.CharacterFeatureApi
 import ru.svoyakmartin.featureCharacterDependenciesApi.CharacterDependenciesFeatureApi
 import ru.svoyakmartin.featureSettingsApi.SettingsFeatureApi
+import ru.svoyakmartin.featureStatisticApi.StatisticFeatureApi
 
 interface EpisodeExternalDependencies : FeatureExternalDependencies {
     val retrofit: Retrofit
@@ -13,4 +14,5 @@ interface EpisodeExternalDependencies : FeatureExternalDependencies {
     val settingsFeatureApi: SettingsFeatureApi
     val characterDependenciesFeatureApi: CharacterDependenciesFeatureApi
     val characterFeatureApi: CharacterFeatureApi
+    val statisticFeatureApi: StatisticFeatureApi
 }

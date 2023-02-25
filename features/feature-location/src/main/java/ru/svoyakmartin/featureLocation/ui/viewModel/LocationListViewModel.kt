@@ -15,6 +15,16 @@ import javax.inject.Inject
 class LocationListViewModel @Inject constructor(
     private val repository: LocationRepositoryImpl
 ) : ViewModel() {
+    var locationsCount = 0
+
+    init {
+        viewModelScope.launch {
+            repository.locationsCount.collect{
+                locationsCount = it
+            }
+        }
+    }
+
     val allLocations = repository.allLocations
         .flowOn(Dispatchers.IO)
         .conflate()

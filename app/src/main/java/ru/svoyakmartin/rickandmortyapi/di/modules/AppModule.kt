@@ -24,6 +24,7 @@ import ru.svoyakmartin.featureLocation.data.db.LocationRoomDB
 import ru.svoyakmartin.featureLocation.di.LocationFeatureApiModule
 import ru.svoyakmartin.featureSettings.di.SettingsFeatureApiModule
 import ru.svoyakmartin.featureStatistic.data.dataSource.StatisticApi
+import ru.svoyakmartin.featureStatistic.di.StatisticFeatureApiModule
 
 @Module(
     includes = [
@@ -32,7 +33,8 @@ import ru.svoyakmartin.featureStatistic.data.dataSource.StatisticApi
         CharacterDependenciesFeatureApiModule::class,
         SettingsFeatureApiModule::class,
         LocationFeatureApiModule::class,
-        EpisodeFeatureApiModule::class
+        EpisodeFeatureApiModule::class,
+        StatisticFeatureApiModule::class
     ]
 )
 object AppModule {
