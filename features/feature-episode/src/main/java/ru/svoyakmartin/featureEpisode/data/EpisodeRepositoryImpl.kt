@@ -1,6 +1,7 @@
 package ru.svoyakmartin.featureEpisode.data
 
 import kotlinx.coroutines.flow.flow
+import ru.svoyakmartin.coreNetwork.provider.response.ApiResponse
 import ru.svoyakmartin.featureCharacterApi.CharacterFeatureApi
 import ru.svoyakmartin.featureCharacterDependenciesApi.CharacterDependenciesFeatureApi
 import ru.svoyakmartin.featureEpisode.data.dataSource.EpisodesApi
@@ -24,31 +25,40 @@ class EpisodeRepositoryImpl @Inject constructor(
     val episodesCount = statisticFeatureApi.getEpisodesCount()
     private var episodesLastPage = settings.readInt(SettingsFeatureApi.EPISODES_LAST_PAGE_KEY, 1)
 
-    suspend fun fetchNextEpisodesPartFromWeb() {
+    suspend fun fetchNextEpisodesPartFromWeb() = flow {
         val response = apiService.getEpisodes(episodesLastPage)
-        response.body()?.apply {
+
+        if (response is ApiResponse.Success) {
             val episodesList = ArrayList<Episode>()
-            val episodesAndCharactersIdsMap = mutableMapOf<Int, List<Int>>()
+            val episodesAndCharactersIdsMap = mutableMapOf<Int, Set<Int>>()
 
-            results.forEach { episodesDTO ->
-                val episode = episodesDTO.toEpisode()
-                episodesList.add(episode)
-                episodesAndCharactersIdsMap[episode.id] = episodesDTO.getCharactersIds()
+            response.data.apply {
+                results.forEach { episodesDTO ->
+                    val episode = episodesDTO.toEpisode()
+                    episodesList.add(episode)
+                    episodesAndCharactersIdsMap[episode.id] = episodesDTO.getCharactersIds()
+                }
+
+                episodeRoomDAO.insertEpisodes(episodesList)
+                characterDependenciesFeatureApi.insertEpisodesAndCharacters(
+                    episodesAndCharactersIdsMap
+                )
+
+                if (info.pages > episodesLastPage) {
+                    settings.saveInt(SettingsFeatureApi.EPISODES_LAST_PAGE_KEY, ++episodesLastPage)
+                }
             }
 
-            episodeRoomDAO.insertEpisodes(episodesList)
-            characterDependenciesFeatureApi.insertEpisodesAndCharacters(episodesAndCharactersIdsMap)
-
-            if (info.pages > episodesLastPage) {
-                settings.saveInt(SettingsFeatureApi.EPISODES_LAST_PAGE_KEY, ++episodesLastPage)
-            }
+            emit(true)
+        } else {
+            emit(response)
         }
     }
 
     suspend fun getEpisodeById(id: Int) = flow {
-        episodeRoomDAO.getEpisodeById(id).collect { character ->
-            if (character != null) {
-                emit(character)
+        episodeRoomDAO.getEpisodeById(id).collect { episode ->
+            if (episode != null) {
+                emit(episode)
             } else {
                 fetchEpisodeById(id).collect {
                     emit(it)
@@ -60,12 +70,11 @@ class EpisodeRepositoryImpl @Inject constructor(
     private suspend fun fetchEpisodeById(id: Int) = flow {
         val response = apiService.getEpisodeById(id)
 
-        response.body()?.apply {
-            val character = toEpisode()
-            episodeRoomDAO.insertEpisode(character)
-
-            emit(character)
+        if (response is ApiResponse.Success) {
+            episodeRoomDAO.insertEpisode(response.data.toEpisode())
         }
+
+        emit(response)
     }
 
     suspend fun getCharacterMapByEpisodeId(episodeId: Int) = flow {

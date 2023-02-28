@@ -13,10 +13,10 @@ import ru.svoyakmartin.featureCharacterDependencies.domain.model.CharactersAndLo
 @Dao
 interface CharacterDependenciesRoomDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertCharactersAndEpisodes(charactersAndEpisodesList: List<CharactersAndEpisodes>)
+    suspend fun insertCharactersAndEpisodes(charactersAndEpisodesList: Set<CharactersAndEpisodes>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertCharactersAndLocations(charactersAndLocationsList: List<CharactersAndLocations>)
+    suspend fun insertCharactersAndLocations(charactersAndLocationsList: Set<CharactersAndLocations>)
 
     @Query(
         "SELECT characterId \n" +

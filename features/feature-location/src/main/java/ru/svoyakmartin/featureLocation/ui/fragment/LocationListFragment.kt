@@ -10,13 +10,13 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dagger.Lazy
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import ru.svoyakmartin.coreDi.di.dependency.findFeatureExternalDependencies
 import ru.svoyakmartin.coreDi.di.viewModel.ViewModelFactory
-import ru.svoyakmartin.coreMvvm.viewModel
+import ru.svoyakmartin.coreUI.*
 import ru.svoyakmartin.featureLocation.databinding.FragmentLocationsBinding
 import ru.svoyakmartin.featureLocation.ui.LocationsAdapter
 import ru.svoyakmartin.featureLocation.ui.viewModel.LocationFeatureComponentDependenciesProvider
@@ -55,67 +55,35 @@ class LocationListFragment : Fragment() {
     }
 
     private fun initViews() {
+        initError(viewModel)
         initRecyclerView()
         initRepeatOnLifecycle()
     }
 
     private fun initRecyclerView() {
-        with(binding) {
-            locationsRecyclerView.adapter = adapter
-
-            val scrollListener = object : RecyclerView.OnScrollListener() {
-
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    val adapterItemCount = adapter.itemCount
-
-                    if (adapterItemCount < viewModel.locationsCount) {
-                        val lastVisibleItemPosition =
-                            (locationsRecyclerView.layoutManager as LinearLayoutManager)
-                                .findLastVisibleItemPosition()
-                        if (lastVisibleItemPosition == adapter.itemCount - 1
-                        ) {
-                            loadNextPart()
-                        }
-                    }
+        with(binding){
+            locationsRecyclerView.init(adapter) {
+                if (locationsRecyclerView.isVisibleLastItemWithMaximum(viewModel.locationsCount)) {
+                    viewModel.fetchNextLocationsPartFromWeb()
                 }
             }
-            locationsRecyclerView.addOnScrollListener(scrollListener)
         }
     }
 
     private fun initRepeatOnLifecycle() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    viewModel.allLocations.collect { locationList ->
-                        if (locationList.isNullOrEmpty()) {
-                            loadNextPart()
-                        } else {
-                            adapter.submitList(locationList)
-                            viewModel.setIsLoading(false)
-                        }
+        launch {
+            viewModel.allLocations
+                .collect { locationList ->
+                    if (locationList.isEmpty()) {
+                        viewModel.fetchNextLocationsPartFromWeb()
+                    } else {
+                        adapter.submitList(locationList)
                     }
                 }
-
-                launch {
-                    viewModel.isLoading.collect { showHideLoadingView(it) }
-                }
-            }
         }
-    }
 
-    private fun loadNextPart() {
-        with(viewModel) {
-            if (!isLoading.value) {
-                apply {
-                    setIsLoading(true)
-                    fetchNextLocationsPartFromWeb()
-                }
-            }
+        launch {
+            viewModel.isLoading.collect { binding.loadingProgressBar.setVisibility(it) }
         }
-    }
-
-    private fun showHideLoadingView(visibility: Boolean) {
-        binding.loadingProgressBar.visibility = if (visibility) View.VISIBLE else View.GONE
     }
 }

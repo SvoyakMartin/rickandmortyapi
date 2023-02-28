@@ -1,6 +1,7 @@
 package ru.svoyakmartin.featureLocation.data
 
 import kotlinx.coroutines.flow.flow
+import ru.svoyakmartin.coreNetwork.provider.response.ApiResponse
 import ru.svoyakmartin.featureCharacterDependenciesApi.CharacterDependenciesFeatureApi
 import ru.svoyakmartin.featureLocation.data.dataSource.LocationsApi
 import ru.svoyakmartin.featureLocation.data.dataSource.getCharactersIds
@@ -13,37 +14,43 @@ class ExportRepositoryImpl @Inject constructor(
     private val locationRoomDAO: LocationRoomDAO,
     private val apiService: LocationsApi,
     private val characterDependenciesFeatureApi: CharacterDependenciesFeatureApi
-) : ExportRepository {
+) {
 
-    override fun getLocationMapByIds(locationIdsList: List<Int>) = flow {
+    fun getLocationMapByIds(locationIdsList: Set<Int>) = flow {
         locationRoomDAO.getExistingLocationIds(locationIdsList)
             .collect { existingLocationIdsList ->
-                val difference = locationIdsList.minus(existingLocationIdsList)
+                val difference = locationIdsList.minus(existingLocationIdsList.toSet())
 
                 if (difference.isNotEmpty()) {
-                    fetchLocationsByIds(difference.joinToString())
+                    fetchLocationsByIds(difference.joinToString()).collect { response ->
+                        emit(response)
+                    }
                 }
 
                 locationRoomDAO.getLocationsNameByIds(locationIdsList).collect { emit(it) }
             }
     }
 
-    private suspend fun fetchLocationsByIds(ids: String) {
-        val response = apiService.getLocationsByIds(ids)
-        response.body()?.apply {
-            val locationsList = ArrayList<Location>()
-            val locationsAndCharactersIdsMap = mutableMapOf<Int, List<Int>>()
+    private suspend fun fetchLocationsByIds(ids: String) = flow {
+        when (val response = apiService.getLocationsByIds(ids)) {
+            is ApiResponse.Success -> {
+                val locationsList = ArrayList<Location>()
+                val locationsAndCharactersIdsMap = mutableMapOf<Int, Set<Int>>()
 
-            forEach { locationDTO ->
-                val location = locationDTO.toLocation()
-                locationsList.add(location)
-                locationsAndCharactersIdsMap[location.id] = locationDTO.getCharactersIds()
+                response.data.forEach { locationDTO ->
+                    val location = locationDTO.toLocation()
+                    locationsList.add(location)
+                    locationsAndCharactersIdsMap[location.id] = locationDTO.getCharactersIds()
+                }
+
+                locationRoomDAO.insertLocations(locationsList)
+                characterDependenciesFeatureApi.insertLocationsAndCharacters(
+                    locationsAndCharactersIdsMap
+                )
             }
-
-            locationRoomDAO.insertLocations(locationsList)
-            characterDependenciesFeatureApi.insertLocationsAndCharacters(
-                locationsAndCharactersIdsMap
-            )
+            else -> {
+                emit(response)
+            }
         }
     }
 }

@@ -16,12 +16,12 @@ class CharacterDependenciesFeatureApiImpl @Inject constructor(private val reposi
     override fun getEpisodesIdsByCharacterId(characterId: Int) =
         repository.getEpisodesIdsByCharacterId(characterId)
 
-    override suspend fun insertLocationsAndCharacters(locationsAndCharactersIdsMap: Map<Int, List<Int>>) =
+    override suspend fun insertLocationsAndCharacters(locationsAndCharactersIdsMap: Map<Int, Set<Int>>) =
         repository.insertLocationsAndCharacters(locationsAndCharactersIdsMap)
 
-    override suspend fun insertEpisodesAndCharacters(episodesAndCharactersIdsMap: Map<Int, List<Int>>) =
+    override suspend fun insertEpisodesAndCharacters(episodesAndCharactersIdsMap: Map<Int, Set<Int>>) =
         repository.insertEpisodesAndCharacters(episodesAndCharactersIdsMap)
 
-    override suspend fun insertCharactersAndEpisodes(charactersAndEpisodesIdsMap: Map<Int, List<Int>>) =
+    override suspend fun insertCharactersAndEpisodes(charactersAndEpisodesIdsMap: Map<Int, Set<Int>>) =
         repository.insertCharactersAndEpisodes(charactersAndEpisodesIdsMap)
 }

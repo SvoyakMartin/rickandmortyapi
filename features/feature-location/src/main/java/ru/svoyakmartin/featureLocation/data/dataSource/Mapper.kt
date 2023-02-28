@@ -11,6 +11,6 @@ fun LocationDTO.toLocation() = Location(
     dimension
 )
 
-fun LocationDTO.getCharactersIds(): List<Int> {
+fun LocationDTO.getCharactersIds(): Set<Int> {
     return getIdsListFromUrlList(residents)
 }

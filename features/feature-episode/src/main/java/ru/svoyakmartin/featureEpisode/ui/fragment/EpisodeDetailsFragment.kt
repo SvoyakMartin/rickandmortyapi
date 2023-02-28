@@ -1,7 +1,6 @@
 package ru.svoyakmartin.featureEpisode.ui.fragment
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,16 +9,14 @@ import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.findNavController
 import dagger.Lazy
-import kotlinx.coroutines.launch
 import ru.svoyakmartin.coreDi.di.dependency.findFeatureExternalDependencies
 import ru.svoyakmartin.featureTheme.R as themeR
 import ru.svoyakmartin.coreDi.di.viewModel.ViewModelFactory
-import ru.svoyakmartin.coreMvvm.viewModel
+import ru.svoyakmartin.coreUI.initError
+import ru.svoyakmartin.coreUI.launch
+import ru.svoyakmartin.coreUI.setVisibility
+import ru.svoyakmartin.coreUI.viewModel
 import ru.svoyakmartin.featureEpisode.EPISODES_FIELD
 import ru.svoyakmartin.featureEpisode.R
 import ru.svoyakmartin.featureEpisode.databinding.FragmentEpisodeDetailsBinding
@@ -37,7 +34,8 @@ class EpisodeDetailsFragment : Fragment() {
     private lateinit var binding: FragmentEpisodeDetailsBinding
 
     override fun onAttach(context: Context) {
-        EpisodeFeatureComponentDependenciesProvider.featureDependencies = findFeatureExternalDependencies()
+        EpisodeFeatureComponentDependenciesProvider.featureDependencies =
+            findFeatureExternalDependencies()
         viewModel<EpisodeFeatureComponentViewModel>().component.inject(this)
         super.onAttach(context)
     }
@@ -54,42 +52,45 @@ class EpisodeDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initViews()
+    }
+
+    private fun initViews() {
+        initError(viewModel)
+        initEpisode()
+    }
+
+    private fun initEpisode() {
         val episodeId = arguments?.getInt(EPISODES_FIELD)
 
         episodeId?.let {
-            viewLifecycleOwner.lifecycleScope.launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    launch {
-                        viewModel.getEpisodeById(episodeId).collect { episode ->
-                            episode?.let { initViews(it) }
-                        }
-                    }
-                }
+            launch {
+                viewModel.episode.collect { setEpisode(it) }
+            }
+            launch {
+                viewModel.getEpisodeById(episodeId)
             }
         }
     }
 
-    private fun initViews(episode: Episode){
-        binding.apply {
-            with(episode) {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        launch {
-                            viewModel.getCharacterMapByEpisodeId(id)
-                                .collect {setCharactersView(it) }
-                        }
-
-                        launch {
-                            viewModel.isCharactersVisible
-                                .collect { showHideCharacters(it) }
-                        }
-                    }
-                }
-
+    private fun setEpisode(episode: Episode) {
+        with(episode) {
+            binding.apply {
                 episodeName.text = name
-                episodeCode.text = this.episode
+                episodeCode.text = this@with.episode
                 episodeData.text = airDate
+
+                initCharacters(id)
             }
+        }
+    }
+
+    private fun initCharacters(episodeId: Int) {
+        launch {
+            viewModel.getCharacterMapByEpisodeId(episodeId).collect { setCharactersView(it) }
+        }
+        launch {
+            viewModel.isCharactersVisible.collect { showHideCharacters(it) }
         }
     }
 
@@ -101,8 +102,7 @@ class EpisodeDetailsFragment : Fragment() {
 
             if (size > 0) {
                 showHideCharacters.apply {
-                    visibility = View.VISIBLE
-
+                    setVisibility(true)
                     setOnClickListener {
                         viewModel.changeCharactersVisible()
                     }
@@ -112,8 +112,8 @@ class EpisodeDetailsFragment : Fragment() {
                     val textView = TextView(context).apply {
                         text = entityMap.name
 
-                        setOnClickListener {val uri = Uri.parse("RickAndMortyApi://character/${entityMap.id}")
-                            it.findNavController().navigate(uri)
+                        setOnClickListener {
+                            viewModel.navigateToCharacter(it, entityMap.id)
                         }
                     }
 

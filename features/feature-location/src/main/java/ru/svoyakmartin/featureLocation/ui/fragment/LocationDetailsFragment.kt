@@ -1,7 +1,6 @@
 package ru.svoyakmartin.featureLocation.ui.fragment
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,15 +9,13 @@ import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.findNavController
 import dagger.Lazy
-import kotlinx.coroutines.launch
 import ru.svoyakmartin.coreDi.di.dependency.findFeatureExternalDependencies
 import ru.svoyakmartin.coreDi.di.viewModel.ViewModelFactory
-import ru.svoyakmartin.coreMvvm.viewModel
+import ru.svoyakmartin.coreUI.initError
+import ru.svoyakmartin.coreUI.launch
+import ru.svoyakmartin.coreUI.setVisibility
+import ru.svoyakmartin.coreUI.viewModel
 import ru.svoyakmartin.featureCore.domain.model.EntityMap
 import ru.svoyakmartin.featureLocation.LOCATIONS_FIELD
 import ru.svoyakmartin.featureLocation.R
@@ -37,7 +34,8 @@ class LocationDetailsFragment : Fragment() {
     private lateinit var binding: FragmentLocationDetailsBinding
 
     override fun onAttach(context: Context) {
-        LocationFeatureComponentDependenciesProvider.featureDependencies = findFeatureExternalDependencies()
+        LocationFeatureComponentDependenciesProvider.featureDependencies =
+            findFeatureExternalDependencies()
         viewModel<LocationFeatureComponentViewModel>().component.inject(this)
         super.onAttach(context)
     }
@@ -54,42 +52,45 @@ class LocationDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initViews()
+    }
+
+    private fun initViews() {
+        initError(viewModel)
+        initLocation()
+    }
+
+    private fun initLocation() {
         val locationId = arguments?.getInt(LOCATIONS_FIELD)
 
         locationId?.let {
-            viewLifecycleOwner.lifecycleScope.launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    launch {
-                        viewModel.getLocationById(locationId).collect { location ->
-                            location?.let { initViews(it) }
-                        }
-                    }
-                }
+            launch {
+                viewModel.location.collect { setLocation(it) }
+            }
+            launch {
+                viewModel.getLocationById(locationId)
             }
         }
     }
 
-    private fun initViews(location: Location) {
-        binding.apply {
-            with(location) {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        launch {
-                            viewModel.getCharacterMapByLocationId(id)
-                                .collect {setCharactersView(it) }
-                        }
-
-                        launch {
-                            viewModel.isCharactersVisible
-                                .collect { showHideCharacters(it) }
-                        }
-                    }
-                }
-
+    private fun setLocation(location: Location) {
+        with(location) {
+            binding.apply {
                 locationName.text = name
                 locationType.text = type
                 locationDimension.text = dimension
             }
+
+            initCharacters(id)
+        }
+    }
+
+    private fun initCharacters(locationId: Int) {
+        launch {
+            viewModel.getCharacterMapByLocationId(locationId).collect { setCharactersView(it) }
+        }
+        launch {
+            viewModel.isCharactersVisible.collect { showHideCharacters(it) }
         }
     }
 
@@ -101,8 +102,7 @@ class LocationDetailsFragment : Fragment() {
 
             if (size > 0) {
                 showHideCharacters.apply {
-                    visibility = View.VISIBLE
-
+                    setVisibility(true)
                     setOnClickListener {
                         viewModel.changeCharactersVisible()
                     }
@@ -113,8 +113,7 @@ class LocationDetailsFragment : Fragment() {
                         text = entityMap.name
 
                         setOnClickListener {
-                            val uri = Uri.parse("RickAndMortyApi://character/${entityMap.id}")
-                            it.findNavController().navigate(uri)
+                            viewModel.navigateToCharacter(it, entityMap.id)
                         }
                     }
 

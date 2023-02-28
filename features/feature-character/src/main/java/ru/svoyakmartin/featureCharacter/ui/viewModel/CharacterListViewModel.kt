@@ -1,44 +1,57 @@
 package ru.svoyakmartin.featureCharacter.ui.viewModel
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.conflate
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.svoyakmartin.featureCharacter.data.CharacterRepositoryImpl
+import ru.svoyakmartin.coreUI.viewModel.BaseLoadingErrorViewModel
+import ru.svoyakmartin.featureCharacter.domain.model.Character
 import javax.inject.Inject
 
 class CharacterListViewModel @Inject constructor(
     private val repository: CharacterRepositoryImpl,
-) : ViewModel() {
+) : BaseLoadingErrorViewModel() {
     var charactersCount = 0
+        private set
+
+    private val _allCharacters = MutableStateFlow<List<Character>?>(null)
+    val allCharacters = _allCharacters.stateFlowWithDelay().filterNotNull()
+    private fun setAllCharacters(newCharacters: List<Character>) {
+        _allCharacters.value = newCharacters
+    }
 
     init {
-        viewModelScope.launch {
-            repository.charactersCount.collect{
-                charactersCount = it
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.charactersCount.collect { response ->
+                getDataOrSetError(response)
+                    .collect {
+                        if (it is Int) charactersCount = it
+                    }
             }
+
+            repository.allCharacters
+                .flowOn(Dispatchers.IO)
+                .conflate()
+                .collect {
+                    setAllCharacters(it)
+                }
         }
     }
 
-    val allCharacters = repository.allCharacters
-        .flowOn(Dispatchers.IO)
-        .conflate()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), listOf())
+    fun fetchNextCharactersPartFromWeb() {
+        if (isLoading.value) return
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading = _isLoading
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+        setIsLoading(true)
 
-    fun setIsLoading(value: Boolean) {
-        _isLoading.value = value
-    }
-
-    fun fetchNextCharactersPartFromWeb() = viewModelScope.launch {
-        repository.fetchNextCharactersPartFromWeb()
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.fetchNextCharactersPartFromWeb()
+                .conflate()
+                .collect { response ->
+                    getDataOrSetError(response).collect {
+                        if (it == true) setIsLoading(false)
+                    }
+                }
+        }
     }
 }

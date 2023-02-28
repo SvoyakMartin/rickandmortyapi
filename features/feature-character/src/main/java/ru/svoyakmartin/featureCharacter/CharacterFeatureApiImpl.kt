@@ -14,6 +14,6 @@ class CharacterFeatureApiImpl @Inject constructor(private val repository: Export
     override fun getDetailFragment(characterId: Int) =
         CharacterDetailsFragment.newInstance(characterId)
 
-    override fun getCharacterMapByIds(characterIdsList: List<Int>) =
+    override fun getCharacterMapByIds(characterIdsList: Set<Int>) =
         repository.getCharacterMapByIds(characterIdsList)
 }

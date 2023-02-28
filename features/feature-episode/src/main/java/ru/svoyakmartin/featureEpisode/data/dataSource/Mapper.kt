@@ -13,6 +13,6 @@ fun EpisodeDTO.toEpisode(): Episode {
     )
 }
 
-fun EpisodeDTO.getCharactersIds(): List<Int> {
+fun EpisodeDTO.getCharactersIds(): Set<Int> {
    return getIdsListFromUrlList(characters)
 }

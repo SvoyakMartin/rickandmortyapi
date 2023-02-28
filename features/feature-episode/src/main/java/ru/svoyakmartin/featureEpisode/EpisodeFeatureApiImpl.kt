@@ -13,6 +13,6 @@ class EpisodeFeatureApiImpl @Inject constructor(private val repository: ExportRe
     override fun getDetailFragment(episodeId: Int) =
         EpisodeDetailsFragment.newInstance(episodeId)
 
-    override fun getEpisodeMapByIds(episodeIdsList: List<Int>) =
+    override fun getEpisodeMapByIds(episodeIdsList: Set<Int>) =
         repository.getEpisodeMapByIds(episodeIdsList)
 }

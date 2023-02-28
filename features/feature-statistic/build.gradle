@@ -17,6 +17,7 @@ android {
 dependencies {
     // Project
     implementation project(":core:core-di")
+    implementation project(path: ':core:core-network')
     implementation project(":features:feature-statistic-api")
 
     // Dagger

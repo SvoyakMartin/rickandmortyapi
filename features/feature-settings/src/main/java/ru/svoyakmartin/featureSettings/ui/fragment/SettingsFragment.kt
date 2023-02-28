@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import ru.svoyakmartin.coreDi.di.dependency.findFeatureExternalDependencies
-import ru.svoyakmartin.coreMvvm.viewModel
+import ru.svoyakmartin.coreUI.viewModel
 import ru.svoyakmartin.featureSettings.data.UserPreferencesRepositoryImpl
 import ru.svoyakmartin.featureSettings.databinding.FragmentSettingsBinding
 import ru.svoyakmartin.featureSettings.ui.viewModel.SettingsComponentDependenciesProvider

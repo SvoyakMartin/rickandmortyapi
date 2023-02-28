@@ -16,7 +16,7 @@ rootProject.name = "RickAndMortyApi"
 include ':app'
 
 include ':core:core-di'
-include ':core:core-mvvm'
+include ':core:core-ui'
 include ':core:core-network'
 
 include ':features:feature-theme'

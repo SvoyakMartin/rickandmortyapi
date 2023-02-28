@@ -1,8 +1,6 @@
 package ru.svoyakmartin.featureCharacter.data
 
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import ru.svoyakmartin.coreNetwork.provider.response.ApiResponse
 import ru.svoyakmartin.featureCharacter.data.dataSource.CharactersApi
 import ru.svoyakmartin.featureCharacter.data.dataSource.getEpisodesIds
@@ -18,49 +16,41 @@ class ExportRepositoryImpl @Inject constructor(
     private val characterDependenciesFeatureApi: CharacterDependenciesFeatureApi
 ) {
 
-    fun getCharacterMapByIds(characterIdsList: List<Int>) = flow {
+    fun getCharacterMapByIds(characterIdsList: Set<Int>) = flow {
         characterRoomDAO.getExistingCharacterIds(characterIdsList)
             .collect { existingCharacterIdsList ->
-                val difference = characterIdsList.minus(existingCharacterIdsList)
+                val difference = characterIdsList.minus(existingCharacterIdsList.toSet())
 
                 if (difference.isNotEmpty()) {
-                    fetchCharactersByIds(difference.joinToString())
+                    fetchCharactersByIds(difference.joinToString()).collect { response ->
+                        emit(response)
+                    }
                 }
 
                 characterRoomDAO.getCharactersNameByIds(characterIdsList).collect { emit(it) }
             }
-    }.flowOn(Dispatchers.IO)
+    }
 
-    private suspend fun fetchCharactersByIds(ids: String) {
-        val response = apiService.getCharactersByIds(ids)
-//        if (response is ApiResponse.Success) {
-//            response.data.apply {
-//            val charactersList = ArrayList<Character>()
-//            val charactersAndEpisodesIdsMap = mutableMapOf<Int, List<Int>>()
-//
-//            forEach { characterDTO ->
-//                val character = characterDTO.toCharacter()
-//                charactersList.add(character)
-//                charactersAndEpisodesIdsMap[characterDTO.id] = characterDTO.getEpisodesIds()
-//            }
-//
-//            characterRoomDAO.insertCharacters(charactersList)
-//            characterDependenciesFeatureApi.insertCharactersAndEpisodes(charactersAndEpisodesIdsMap)
-//            }
-//        }
+    private suspend fun fetchCharactersByIds(ids: String) = flow {
+        when (val response = apiService.getCharactersByIds(ids)) {
+            is ApiResponse.Success -> {
+                val charactersList = ArrayList<Character>()
+                val charactersAndEpisodesIdsMap = mutableMapOf<Int, Set<Int>>()
 
-        response.body()?.apply {
-            val charactersList = ArrayList<Character>()
-            val charactersAndEpisodesIdsMap = mutableMapOf<Int, List<Int>>()
+                response.data.forEach { characterDTO ->
+                    val character = characterDTO.toCharacter()
+                    charactersList.add(character)
+                    charactersAndEpisodesIdsMap[characterDTO.id] = characterDTO.getEpisodesIds()
+                }
 
-            forEach { characterDTO ->
-                val character = characterDTO.toCharacter()
-                charactersList.add(character)
-                charactersAndEpisodesIdsMap[characterDTO.id] = characterDTO.getEpisodesIds()
+                characterRoomDAO.insertCharacters(charactersList)
+                characterDependenciesFeatureApi.insertCharactersAndEpisodes(
+                    charactersAndEpisodesIdsMap
+                )
             }
-
-            characterRoomDAO.insertCharacters(charactersList)
-            characterDependenciesFeatureApi.insertCharactersAndEpisodes(charactersAndEpisodesIdsMap)
+            else -> {
+                emit(response)
+            }
         }
     }
 }

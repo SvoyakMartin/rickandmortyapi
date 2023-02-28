@@ -22,7 +22,7 @@ android {
 dependencies {
     // Project
     implementation project(":core:core-di")
-    implementation project(":core:core-mvvm")
+    implementation project(':core:core-ui')
     implementation project(":features:feature-theme")
     implementation project(':features:feature-core')
     implementation project(":features:feature-episode-api")
@@ -37,6 +37,7 @@ dependencies {
 
     // Dagger
     implementation "com.google.dagger:dagger:2.44"
+    implementation project(path: ':core:core-network')
     kapt "com.google.dagger:dagger-compiler:2.44"
 
     // Room components

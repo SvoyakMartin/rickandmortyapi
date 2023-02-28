@@ -10,11 +10,11 @@ import ru.svoyakmartin.featureCharacter.data.model.CharactersDTO
 
 interface CharactersApi {
     @GET("character")
-    suspend fun getCharacters(@Query("page") page: Int): Response<CharactersDTO>
+    suspend fun getCharacters(@Query("page") page: Int): ApiResponse<CharactersDTO>
 
     @GET("character/{id}")
     suspend fun getCharacterById(@Path("id") id: Int): ApiResponse<CharacterDTO>
 
     @GET("character/[{id}]")
-    suspend fun getCharactersByIds(@Path("id") ids: String): Response<List<CharacterDTO>>
+    suspend fun getCharactersByIds(@Path("id") ids: String): ApiResponse<List<CharacterDTO>>
 }

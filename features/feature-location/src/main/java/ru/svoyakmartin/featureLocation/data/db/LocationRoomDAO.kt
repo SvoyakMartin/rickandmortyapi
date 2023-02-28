@@ -13,7 +13,7 @@ import ru.svoyakmartin.featureLocation.domain.model.Location
 @Dao
 interface LocationRoomDAO {
     @Query("SELECT * FROM $LOCATIONS_TABLE_NAME")
-    fun getAllLocations(): Flow<List<Location>?>
+    fun getAllLocations(): Flow<List<Location>>
 
     @Query("SELECT * FROM $LOCATIONS_TABLE_NAME WHERE id = :locationId")
     fun getLocationById(locationId: Int): Flow<Location?>
@@ -29,13 +29,13 @@ interface LocationRoomDAO {
                 "FROM $LOCATIONS_TABLE_NAME \n" +
                 "WHERE id in (:locationIdsList)"
     )
-    fun getExistingLocationIds(locationIdsList: List<Int>): Flow<List<Int>>
+    fun getExistingLocationIds(locationIdsList: Set<Int>): Flow<List<Int>>
 
     @Query(
         "SELECT id, name \n" +
                 "FROM $LOCATIONS_TABLE_NAME \n" +
                 "WHERE id in (:locationIdsList)"
     )
-    fun getLocationsNameByIds(locationIdsList: List<Int>): Flow<List<EntityMap>>
+    fun getLocationsNameByIds(locationIdsList: Set<Int>): Flow<List<EntityMap>>
 
 }

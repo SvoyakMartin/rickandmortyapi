@@ -10,7 +10,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import ru.svoyakmartin.coreDi.di.dependency.findFeatureExternalDependencies
-import ru.svoyakmartin.coreMvvm.viewModel
+import ru.svoyakmartin.coreUI.viewModel
 import ru.svoyakmartin.featureHomeScreen.R
 import ru.svoyakmartin.featureHomeScreen.databinding.FragmentHomeBinding
 import ru.svoyakmartin.featureHomeScreen.di.HomeScreenNavSource

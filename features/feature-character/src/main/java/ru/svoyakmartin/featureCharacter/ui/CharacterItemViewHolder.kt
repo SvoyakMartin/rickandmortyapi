@@ -27,6 +27,8 @@ class CharacterItemViewHolder(private val binding: CharacterItemBinding) :
                     )
                 )
             }
+
+            //TODO try catch
         }
     }
 }

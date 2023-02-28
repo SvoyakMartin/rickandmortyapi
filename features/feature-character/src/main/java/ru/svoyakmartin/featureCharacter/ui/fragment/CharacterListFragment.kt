@@ -7,16 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import dagger.Lazy
-import kotlinx.coroutines.launch
 import ru.svoyakmartin.coreDi.di.dependency.findFeatureExternalDependencies
 import ru.svoyakmartin.coreDi.di.viewModel.ViewModelFactory
-import ru.svoyakmartin.coreMvvm.viewModel
+import ru.svoyakmartin.coreUI.*
 import ru.svoyakmartin.featureCharacter.databinding.FragmentCharactersBinding
 import ru.svoyakmartin.featureCharacter.ui.CharactersAdapter
 import ru.svoyakmartin.featureCharacter.ui.viewModel.CharacterFeatureComponentDependenciesProvider
@@ -49,72 +43,40 @@ class CharacterListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         initViews()
     }
 
     private fun initViews() {
+        initError(viewModel)
         initRecyclerView()
         initRepeatOnLifecycle()
     }
 
     private fun initRecyclerView() {
-        with(binding) {
-            charactersRecyclerView.adapter = adapter
-
-            val scrollListener = object : RecyclerView.OnScrollListener() {
-
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    val adapterItemCount = adapter.itemCount
-
-                    if (adapterItemCount < viewModel.charactersCount) {
-                        val lastVisibleItemPosition =
-                            (charactersRecyclerView.layoutManager as LinearLayoutManager)
-                                .findLastVisibleItemPosition()
-
-                        if (lastVisibleItemPosition == adapter.itemCount - 1) {
-                            loadNextPart()
-                        }
-                    }
+        with(binding){
+            charactersRecyclerView.init(adapter) {
+                if (charactersRecyclerView.isVisibleLastItemWithMaximum(viewModel.charactersCount)) {
+                    viewModel.fetchNextCharactersPartFromWeb()
                 }
             }
-            charactersRecyclerView.addOnScrollListener(scrollListener)
         }
     }
 
     private fun initRepeatOnLifecycle() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    viewModel.allCharacters
-                        .collect {
-                            if (it.isNullOrEmpty()) {
-                                loadNextPart()
-                            } else {
-                                adapter.submitList(it)
-                                viewModel.setIsLoading(false)
-                            }
-                        }
+        launch {
+            viewModel.allCharacters
+                .collect { characterList ->
+                    if (characterList.isEmpty()) {
+                        viewModel.fetchNextCharactersPartFromWeb()
+                    } else {
+                        adapter.submitList(characterList)
+                    }
                 }
-
-                launch {
-                    viewModel.isLoading.collect { showHideLoadingView(it) }
-                }
-            }
         }
-    }
 
-    private fun showHideLoadingView(visibility: Boolean) {
-        binding.loadingProgressBar.visibility = if (visibility) View.VISIBLE else View.GONE
-    }
-
-    private fun loadNextPart() {
-        with(viewModel) {
-            if (!isLoading.value) {
-                apply {
-                    setIsLoading(true)
-                    fetchNextCharactersPartFromWeb()
-                }
-            }
+        launch {
+            viewModel.isLoading.collect { binding.loadingProgressBar.setVisibility(it) }
         }
     }
 }

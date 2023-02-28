@@ -1,6 +1,7 @@
 package ru.svoyakmartin.featureLocation.data
 
 import kotlinx.coroutines.flow.flow
+import ru.svoyakmartin.coreNetwork.provider.response.ApiResponse
 import ru.svoyakmartin.featureCharacterApi.CharacterFeatureApi
 import ru.svoyakmartin.featureCharacterDependenciesApi.CharacterDependenciesFeatureApi
 import ru.svoyakmartin.featureLocation.data.dataSource.LocationsApi
@@ -24,55 +25,65 @@ class LocationRepositoryImpl @Inject constructor(
     val locationsCount = statisticFeatureApi.getLocationsCount()
     private var locationsLastPage = settings.readInt(SettingsFeatureApi.LOCATIONS_LAST_PAGE_KEY, 1)
 
-    suspend fun fetchNextLocationsPartFromWeb() {
+    suspend fun fetchNextLocationsPartFromWeb() = flow {
         val response = apiService.getLocations(locationsLastPage)
-        response.body()?.apply {
+
+        if (response is ApiResponse.Success) {
             val locationsList = ArrayList<Location>()
-            val locationsAndCharactersIdsMap = mutableMapOf<Int, List<Int>>()
+            val locationsAndCharactersIdsMap = mutableMapOf<Int, Set<Int>>()
 
-            results.forEach { locationsDTO ->
-                val location = locationsDTO.toLocation()
-                locationsList.add(location)
-                locationsAndCharactersIdsMap[location.id] = locationsDTO.getCharactersIds()
+            response.data.apply {
+                results.forEach { locationsDTO ->
+                    val location = locationsDTO.toLocation()
+                    locationsList.add(location)
+                    locationsAndCharactersIdsMap[location.id] = locationsDTO.getCharactersIds()
+                }
+
+                locationRoomDAO.insertLocations(locationsList)
+                characterDependenciesFeatureApi.insertLocationsAndCharacters(
+                    locationsAndCharactersIdsMap
+                )
+
+                if (info.pages > locationsLastPage) {
+                    settings.saveInt(
+                        SettingsFeatureApi.LOCATIONS_LAST_PAGE_KEY,
+                        ++locationsLastPage
+                    )
+                }
             }
 
-            locationRoomDAO.insertLocations(locationsList)
-            characterDependenciesFeatureApi.insertLocationsAndCharacters(locationsAndCharactersIdsMap)
-
-            if (info.pages > locationsLastPage) {
-                settings.saveInt(SettingsFeatureApi.LOCATIONS_LAST_PAGE_KEY, ++locationsLastPage)
-            }
+            emit(true)
+        } else {
+            emit(response)
         }
     }
 
     fun getLocationById(locationId: Int) = flow {
-        locationRoomDAO.getLocationById(locationId)
-            .collect { location ->
-                if (location != null) {
-                    emit(location)
-                } else {
-                    fetchLocationById(locationId).collect {
-                        emit(it)
-                    }
+        locationRoomDAO.getLocationById(locationId).collect { location ->
+            if (location != null) {
+                emit(location)
+            } else {
+                fetchLocationById(locationId).collect {
+                    emit(it)
                 }
             }
+        }
     }
 
     private suspend fun fetchLocationById(id: Int) = flow {
         val response = apiService.getLocationById(id)
 
-        response.body()?.apply {
-            val location = toLocation()
-
-            locationRoomDAO.insertLocation(location)
-
-            emit(location)
+        if (response is ApiResponse.Success) {
+            locationRoomDAO.insertLocation(response.data.toLocation())
         }
+
+        emit(response)
     }
 
     suspend fun getCharacterMapByLocationId(locationId: Int) = flow {
-        characterDependenciesFeatureApi.getCharactersIdsByLocationId(locationId).collect{
-            characterFeatureApi.getCharacterMapByIds(it).collect{emit(it)}
-        }
+        characterDependenciesFeatureApi.getCharactersIdsByLocationId(locationId)
+            .collect { characterIds ->
+                characterFeatureApi.getCharacterMapByIds(characterIds).collect { emit(it) }
+            }
     }
 }

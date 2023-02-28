@@ -13,7 +13,7 @@ import ru.svoyakmartin.featureCore.domain.model.EntityMap
 @Dao
 interface CharacterRoomDAO {
     @Query("SELECT * FROM $CHARACTERS_TABLE_NAME")
-    fun getAllCharacters(): Flow<List<Character>?>
+    fun getAllCharacters(): Flow<List<Character>>
 
     @Query("SELECT * FROM $CHARACTERS_TABLE_NAME WHERE id = :id")
     fun getCharacterById(id: Int): Flow<Character?>
@@ -29,12 +29,12 @@ interface CharacterRoomDAO {
                 "FROM $CHARACTERS_TABLE_NAME \n" +
                 "WHERE id in (:characterIdsList)"
     )
-    fun getExistingCharacterIds(characterIdsList: List<Int>): Flow<List<Int>>
+    fun getExistingCharacterIds(characterIdsList: Set<Int>): Flow<List<Int>>
 
     @Query(
         "SELECT id, name \n" +
                 "FROM $CHARACTERS_TABLE_NAME \n" +
                 "WHERE id in (:characterIdsList)"
     )
-    fun getCharactersNameByIds(characterIdsList: List<Int>): Flow<List<EntityMap>>
+    fun getCharactersNameByIds(characterIdsList: Set<Int>): Flow<List<EntityMap>>
 }

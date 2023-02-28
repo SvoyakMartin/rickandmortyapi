@@ -153,6 +153,7 @@ class LastSeenAnimView
     fun setLocation(value: String) {
         location = value
         requestLayout()
+        invalidate()
     }
 
     @Suppress("unused")
@@ -166,10 +167,16 @@ class LastSeenAnimView
     }
 
     @Suppress("unused")
-    fun setAliveStatus(status: AliveStatus) {
-        aliveStatus = status
+    fun setAliveStatus(status: String) {
+        aliveStatus = try {
+            AliveStatus.valueOf(status)
+        } catch(e: NullPointerException) {
+            AliveStatus.UNKNOWN
+        }
+
         iconPaint = getPaint(PaintStyle.ICON)
         requestLayout()
+        invalidate()
     }
 
     @Suppress("unused")

@@ -7,9 +7,5 @@ import ru.svoyakmartin.featureCore.domain.model.EntityMap
 interface LocationFeatureApi {
     fun getFlowFragment(): Fragment
     fun getDetailFragment(locationId: Int): Fragment
-    fun getLocationMapByIds(locationIdsList: List<Int>): Flow<List<EntityMap>>
-
-    companion object {
-        const val BACKSTACK_KEY = "locations"
-    }
+    fun getLocationMapByIds(locationIdsList: Set<Int>): Flow<Any>
 }

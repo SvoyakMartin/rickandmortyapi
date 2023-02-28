@@ -1,35 +1,53 @@
 package ru.svoyakmartin.featureLocation.ui.viewModel
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import android.net.Uri
+import android.view.View
+import androidx.navigation.findNavController
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.*
+import ru.svoyakmartin.coreUI.viewModel.BaseLoadingErrorViewModel
+import ru.svoyakmartin.featureCore.util.getEntityMapListStateFlow
 import ru.svoyakmartin.featureLocation.data.LocationRepositoryImpl
+import ru.svoyakmartin.featureLocation.data.dataSource.toLocation
+import ru.svoyakmartin.featureLocation.data.model.LocationDTO
+import ru.svoyakmartin.featureLocation.domain.model.Location
 import javax.inject.Inject
 
-class LocationDetailsViewModel @Inject constructor(
-    private val repository: LocationRepositoryImpl
-) :
-    ViewModel() {
+class LocationDetailsViewModel @Inject constructor(private val repository: LocationRepositoryImpl) :
+    BaseLoadingErrorViewModel() {
     private val _isCharactersVisible = MutableStateFlow(false)
-    val isCharactersVisible = _isCharactersVisible
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
-
+    val isCharactersVisible = _isCharactersVisible.stateFlowWithDelay()
     fun changeCharactersVisible() {
         _isCharactersVisible.value = !_isCharactersVisible.value
     }
 
-    fun getLocationById(id: Int) = repository.getLocationById(id)
-        .flowOn(Dispatchers.IO)
-        .conflate()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+    private val _location = MutableStateFlow<Location?>(null)
+    val location = _location.stateFlowWithDelay().filterNotNull()
+    private fun setLocation(newLocation: Location) {
+        _location.value = newLocation
+    }
 
-    suspend fun getCharacterMapByLocationId(id: Int) = repository.getCharacterMapByLocationId(id)
+    suspend fun getLocationById(id: Int) = repository.getLocationById(id)
         .flowOn(Dispatchers.IO)
         .conflate()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), listOf())
+        .collect { response ->
+            getDataOrSetError(response).collect {
+                when (it) {
+                    is Location -> {
+                        setLocation(it)
+                    }
+                    is LocationDTO -> {
+                        setLocation(it.toLocation())
+                    }
+                }
+            }
+        }
+
+    suspend fun getCharacterMapByLocationId(id: Int) =
+        getEntityMapListStateFlow(repository.getCharacterMapByLocationId(id))
+
+    fun navigateToCharacter(view: View, characterId: Int) {
+        val uri = Uri.parse("RickAndMortyApi://character/$characterId")
+        view.findNavController().navigate(uri)
+    }
 }

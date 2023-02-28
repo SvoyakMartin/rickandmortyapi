@@ -1,44 +1,56 @@
 package ru.svoyakmartin.featureLocation.ui.viewModel
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.conflate
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import ru.svoyakmartin.coreUI.viewModel.BaseLoadingErrorViewModel
 import ru.svoyakmartin.featureLocation.data.LocationRepositoryImpl
+import ru.svoyakmartin.featureLocation.domain.model.Location
 import javax.inject.Inject
 
 class LocationListViewModel @Inject constructor(
     private val repository: LocationRepositoryImpl
-) : ViewModel() {
+) : BaseLoadingErrorViewModel() {
     var locationsCount = 0
+        private set
+
+    private val _allLocations = MutableStateFlow<List<Location>?>(null)
+    val allLocations = _allLocations.stateFlowWithDelay().filterNotNull()
+    private fun setAllLocations(newCharacters: List<Location>) {
+        _allLocations.value = newCharacters
+    }
 
     init {
-        viewModelScope.launch {
-            repository.locationsCount.collect{
-                locationsCount = it
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.locationsCount.collect {response ->
+                getDataOrSetError(response).collect {
+                    if (it is Int) locationsCount = it
+                }
             }
+
+            repository.allLocations
+                .flowOn(Dispatchers.IO)
+                .conflate()
+                .collect {
+                    setAllLocations(it)
+                }
         }
     }
 
-    val allLocations = repository.allLocations
-        .flowOn(Dispatchers.IO)
-        .conflate()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), listOf())
+    fun fetchNextLocationsPartFromWeb(){
+        if (isLoading.value) return
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading = _isLoading
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+        setIsLoading(true)
 
-    fun setIsLoading(value: Boolean) {
-        _isLoading.value = value
-    }
-
-    fun fetchNextLocationsPartFromWeb() = viewModelScope.launch {
-        repository.fetchNextLocationsPartFromWeb()
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.fetchNextLocationsPartFromWeb()
+                .conflate()
+                .collect { response ->
+                    getDataOrSetError(response).collect {
+                        if (it == true) setIsLoading(false)
+                    }
+                }
+        }
     }
 }

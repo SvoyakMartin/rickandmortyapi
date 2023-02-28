@@ -1,7 +1,6 @@
 package ru.svoyakmartin.featureCharacter.ui.fragment
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,21 +9,16 @@ import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import dagger.Lazy
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.filterNotNull
 import ru.svoyakmartin.coreDi.di.dependency.findFeatureExternalDependencies
 import ru.svoyakmartin.coreDi.di.viewModel.ViewModelFactory
-import ru.svoyakmartin.coreMvvm.viewModel
+import ru.svoyakmartin.coreUI.*
 import ru.svoyakmartin.featureCharacter.CHARACTERS_FIELD
 import ru.svoyakmartin.featureCharacter.R
 import ru.svoyakmartin.featureCharacter.databinding.FragmentCharacterDetailsBinding
 import ru.svoyakmartin.featureCharacter.domain.model.Character
-import ru.svoyakmartin.featureCharacter.ui.customView.LastSeenAnimView
 import ru.svoyakmartin.featureCharacter.ui.viewModel.CharacterDetailsViewModel
 import ru.svoyakmartin.featureCharacter.ui.viewModel.CharacterFeatureComponentDependenciesProvider
 import ru.svoyakmartin.featureCharacter.ui.viewModel.CharacterFeatureComponentViewModel
@@ -39,7 +33,8 @@ class CharacterDetailsFragment : Fragment() {
     private lateinit var binding: FragmentCharacterDetailsBinding
 
     override fun onAttach(context: Context) {
-        CharacterFeatureComponentDependenciesProvider.featureDependencies = findFeatureExternalDependencies()
+        CharacterFeatureComponentDependenciesProvider.featureDependencies =
+            findFeatureExternalDependencies()
         viewModel<CharacterFeatureComponentViewModel>().component.inject(this)
         super.onAttach(context)
     }
@@ -56,66 +51,82 @@ class CharacterDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initViews()
+    }
+
+    private fun initCharacter() {
         val characterId = arguments?.getInt(CHARACTERS_FIELD)
 
         characterId?.let {
-            viewLifecycleOwner.lifecycleScope.launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    launch {
-                        viewModel.getCharacterById(characterId).collect { character ->
-                            character?.let { initViews(it) }
-                        }
+            launch {
+                viewModel.character
+                    .collect {
+                        setCharacter(it)
                     }
-                }
+            }
+            launch {
+                viewModel.getCharacterById(characterId)
             }
         }
     }
 
-    private fun initViews(character: Character) {
-        binding.apply {
-            with(character) {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        launch {
-                            viewModel.getEpisodesMapByCharacterId(id)
-                                .collect { setEpisodesView(it) }
-                        }
-
-                        val locationsIdsList = arrayListOf<Int>()
-
-                        location?.let { locationsIdsList.add(it) }
-
-                        if (origin == null) {
-                            setOrigin(origin)
-                        } else {
-                            locationsIdsList.add(origin)
-                        }
-
-                        if (locationsIdsList.isNotEmpty()) {
-                            launch {
-                                viewModel.getLocationsMapByIds(locationsIdsList)
-                                    .collect { setLocations(location, origin, it) }
-                            }
-                        }
-
-                        launch {
-                            viewModel.isEpisodesVisible
-                                .collect { showHideEpisodes(it) }
-                        }
-                    }
-                }
-
-                Glide.with(characterImage.context)
-                    .load(image)
-                    .into(characterImage)
-
+    private fun setCharacter(character: Character) {
+        with(character) {
+            binding.apply {
                 characterName.text = name
                 val speciesAndType = "$species ${if (type.isNotEmpty()) ": $type" else ""}"
                 characterSpecies.text = speciesAndType
                 characterGender.text = gender.name
-                lastSeen.setAliveStatus(LastSeenAnimView.AliveStatus.valueOf(status.name))
+                lastSeen.setAliveStatus(status.name)
+            }
+
+            initImageView(image)
+            initLocations(location, origin)
+            initEpisodes(id)
+        }
+    }
+
+    private fun initImageView(imageURL: String) {
+        val imageView = binding.characterImage
+
+        Glide.with(imageView.context)
+            .load(imageURL)
+            .into(imageView)
+
+        //TODO try catch
+    }
+
+    private fun initEpisodes(characterId: Int) {
+        launch {
+            viewModel.getEpisodesMapByCharacterId(characterId).collect { setEpisodesView(it) }
+        }
+        launch {
+            viewModel.isEpisodesVisible.collect { showHideEpisodes(it) }
+        }
+    }
+
+    private fun initLocations(location: Int?, origin: Int?) {
+        val locationsIdsList = mutableSetOf<Int>()
+
+        location?.let { locationsIdsList.add(it) }
+
+        if (origin == null) {
+            setOrigin(origin)
+        } else {
+            locationsIdsList.add(origin)
+        }
+
+        if (locationsIdsList.isNotEmpty()) {
+            launch {
+                viewModel.getLocationsMapByIds(locationsIdsList)
+                    .collect { setLocations(location, origin, it) }
             }
         }
+    }
+
+    private fun initViews() {
+        initError(viewModel)
+        initCharacter()
     }
 
     private fun setLocations(lastSeenId: Int?, originId: Int?, locationsMapList: List<EntityMap>) {
@@ -131,8 +142,7 @@ class CharacterDetailsFragment : Fragment() {
         binding.lastSeen.apply {
             setOnClickListener {
                 if (isFinded()) {
-                    val uri = Uri.parse("RickAndMortyApi://location/${locationMap.id}")
-                    it.findNavController().navigate(uri)
+                    viewModel.navigateToLocation(it, locationMap.id)
                 } else {
                     onClick()
                 }
@@ -146,8 +156,7 @@ class CharacterDetailsFragment : Fragment() {
         binding.characterOriginLocation.apply {
             locationMap?.let {
                 setOnClickListener {
-                    val uri = Uri.parse("RickAndMortyApi://location/${locationMap.id}")
-                    it.findNavController().navigate(uri)
+                    viewModel.navigateToLocation(it, locationMap.id)
                 }
             }
 
@@ -166,8 +175,7 @@ class CharacterDetailsFragment : Fragment() {
 
             if (size > 0) {
                 showHideEpisodes.apply {
-                    visibility = View.VISIBLE
-
+                    setVisibility(true)
                     setOnClickListener {
                         viewModel.changeEpisodesVisible()
                     }
@@ -178,8 +186,7 @@ class CharacterDetailsFragment : Fragment() {
                         text = entityMap.name
 
                         setOnClickListener {
-                            val uri = Uri.parse("RickAndMortyApi://episode/${entityMap.id}")
-                            it.findNavController().navigate(uri)
+                            viewModel.navigateToEpisode(it, entityMap.id)
                         }
                     }
 

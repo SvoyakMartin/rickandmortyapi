@@ -28,27 +28,34 @@ class CharacterRepositoryImpl @Inject constructor(
     private var charactersLastPage =
         settings.readInt(SettingsFeatureApi.CHARACTERS_LAST_PAGE_KEY, 1)
 
-    suspend fun fetchNextCharactersPartFromWeb() {
+    suspend fun fetchNextCharactersPartFromWeb() = flow {
         val response = apiService.getCharacters(charactersLastPage)
-        response.body()?.apply {
+
+        if (response is ApiResponse.Success) {
             val charactersList = ArrayList<Character>()
-            val charactersAndEpisodesIdsMap = mutableMapOf<Int, List<Int>>()
+            val charactersAndEpisodesIdsMap = mutableMapOf<Int, Set<Int>>()
 
-            results.forEach { characterDTO ->
-                val character = characterDTO.toCharacter()
-                charactersList.add(character)
-                charactersAndEpisodesIdsMap[character.id] = characterDTO.getEpisodesIds()
+            response.data.apply {
+                results.forEach { characterDTO ->
+                    val character = characterDTO.toCharacter()
+                    charactersList.add(character)
+                    charactersAndEpisodesIdsMap[character.id] = characterDTO.getEpisodesIds()
+                }
+
+                characterRoomDAO.insertCharacters(charactersList)
+                dependenciesFeatureApi.insertCharactersAndEpisodes(charactersAndEpisodesIdsMap)
+
+                if (info.pages > charactersLastPage) {
+                    settings.saveInt(
+                        SettingsFeatureApi.CHARACTERS_LAST_PAGE_KEY,
+                        ++charactersLastPage
+                    )
+                }
             }
 
-            dependenciesFeatureApi.insertCharactersAndEpisodes(charactersAndEpisodesIdsMap)
-            characterRoomDAO.insertCharacters(charactersList)
-
-            if (info.pages > charactersLastPage) {
-                settings.saveInt(
-                    SettingsFeatureApi.CHARACTERS_LAST_PAGE_KEY,
-                    ++charactersLastPage
-                )
-            }
+            emit(true)
+        } else {
+            emit(response)
         }
     }
 
@@ -68,16 +75,13 @@ class CharacterRepositoryImpl @Inject constructor(
         val response = apiService.getCharacterById(id)
 
         if (response is ApiResponse.Success) {
-            response.data.apply {
-                val character = toCharacter()
-                characterRoomDAO.insertCharacter(character)
-
-                emit(character)
-            }
+            characterRoomDAO.insertCharacter(response.data.toCharacter())
         }
+
+        emit(response)
     }
 
-    suspend fun getLocationsMapByIds(locationsIdsList: List<Int>) = flow {
+    suspend fun getLocationsMapByIds(locationsIdsList: Set<Int>) = flow {
         locationFeatureApi.getLocationMapByIds(locationsIdsList).collect { emit(it) }
     }
 

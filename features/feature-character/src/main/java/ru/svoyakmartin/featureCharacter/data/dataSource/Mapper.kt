@@ -19,6 +19,6 @@ fun CharacterDTO.toCharacter(): Character {
     )
 }
 
-fun CharacterDTO.getEpisodesIds(): List<Int> {
+fun CharacterDTO.getEpisodesIds(): Set<Int> {
     return getIdsListFromUrlList(episode)
 }
