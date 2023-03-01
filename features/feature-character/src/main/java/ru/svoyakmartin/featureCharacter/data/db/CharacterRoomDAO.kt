@@ -5,15 +5,22 @@ import androidx.room.Query
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import kotlinx.coroutines.flow.Flow
+import ru.svoyakmartin.featureCharacter.CHARACTERS_FTS_TABLE_NAME
 import ru.svoyakmartin.featureCharacter.CHARACTERS_TABLE_NAME
 import ru.svoyakmartin.featureCharacter.domain.model.Character
 import ru.svoyakmartin.featureCore.domain.model.EntityMap
-
 
 @Dao
 interface CharacterRoomDAO {
     @Query("SELECT * FROM $CHARACTERS_TABLE_NAME")
     fun getAllCharacters(): Flow<List<Character>>
+
+    @Query("SELECT *, snippet($CHARACTERS_FTS_TABLE_NAME)" +
+            "FROM $CHARACTERS_TABLE_NAME " +
+            "JOIN $CHARACTERS_FTS_TABLE_NAME " +
+            "ON $CHARACTERS_TABLE_NAME.id = $CHARACTERS_FTS_TABLE_NAME.id " +
+            "WHERE $CHARACTERS_FTS_TABLE_NAME.name MATCH :search")
+    fun getFilteredCharacters(search: String): Flow<List<Character>>
 
     @Query("SELECT * FROM $CHARACTERS_TABLE_NAME WHERE id = :id")
     fun getCharacterById(id: Int): Flow<Character?>

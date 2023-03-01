@@ -6,9 +6,10 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import ru.svoyakmartin.featureCharacter.DB_NAME
 import ru.svoyakmartin.featureCharacter.domain.model.Character
+import ru.svoyakmartin.featureCharacter.domain.model.CharacterFTS
 
 @Database(
-    entities = [Character::class],
+    entities = [Character::class, CharacterFTS::class],
     version = 1,
     exportSchema = false
 )

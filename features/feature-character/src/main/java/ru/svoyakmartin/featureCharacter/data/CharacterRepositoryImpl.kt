@@ -28,6 +28,8 @@ class CharacterRepositoryImpl @Inject constructor(
     private var charactersLastPage =
         settings.readInt(SettingsFeatureApi.CHARACTERS_LAST_PAGE_KEY, 1)
 
+    fun filteredCharacter(search: String) = characterRoomDAO.getFilteredCharacters("*$search*")
+
     suspend fun fetchNextCharactersPartFromWeb() = flow {
         val response = apiService.getCharacters(charactersLastPage)
 

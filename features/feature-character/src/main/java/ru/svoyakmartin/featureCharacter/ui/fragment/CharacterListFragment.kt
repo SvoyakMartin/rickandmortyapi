@@ -2,9 +2,8 @@ package ru.svoyakmartin.featureCharacter.ui.fragment
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import dagger.Lazy
@@ -41,6 +40,7 @@ class CharacterListFragment : Fragment() {
         return binding.root
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -49,12 +49,28 @@ class CharacterListFragment : Fragment() {
 
     private fun initViews() {
         initError(viewModel)
+        initSearch()
         initRecyclerView()
         initRepeatOnLifecycle()
     }
 
+    private fun initSearch() {
+        binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                viewModel.setQuery(query ?: "")
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.setQuery(newText ?: "")
+                return false
+            }
+
+        })
+    }
+
     private fun initRecyclerView() {
-        with(binding){
+        with(binding) {
             charactersRecyclerView.init(adapter) {
                 if (charactersRecyclerView.isVisibleLastItemWithMaximum(viewModel.charactersCount)) {
                     viewModel.fetchNextCharactersPartFromWeb()

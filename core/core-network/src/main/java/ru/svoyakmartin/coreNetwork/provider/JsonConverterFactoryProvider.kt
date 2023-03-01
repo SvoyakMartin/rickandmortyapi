@@ -7,10 +7,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Converter
 
 object JsonConverterFactoryProvider {
-    private val json = Json {
-        ignoreUnknownKeys = true
-        classDiscriminator = "not_use"
-    }
+    private val json = Json { ignoreUnknownKeys = true }
     private val contentType = "application/json".toMediaType()
 
     fun get(): Converter.Factory {

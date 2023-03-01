@@ -2,6 +2,7 @@ package ru.svoyakmartin.featureCharacter.ui.viewModel
 
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.svoyakmartin.featureCharacter.data.CharacterRepositoryImpl
@@ -17,9 +18,17 @@ class CharacterListViewModel @Inject constructor(
 
     private val _allCharacters = MutableStateFlow<List<Character>?>(null)
     val allCharacters = _allCharacters.stateFlowWithDelay().filterNotNull()
-    private fun setAllCharacters(newCharacters: List<Character>) {
+    private fun setAllCharacters(newCharacters: List<Character>?) {
         _allCharacters.value = newCharacters
     }
+
+    private var query = ""
+    fun setQuery(newQuery: String) {
+        query = newQuery
+        filteredCharacter()
+    }
+
+    private var searchJob: Job? = null
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -34,10 +43,29 @@ class CharacterListViewModel @Inject constructor(
                 .flowOn(Dispatchers.IO)
                 .conflate()
                 .collect {
-                    setAllCharacters(it)
+                    if (query.isBlank()) {
+                        setAllCharacters(it)
+                    }
                 }
+
+            filteredCharacter()
         }
     }
+
+    private fun filteredCharacter() {
+        searchJob?.cancel()
+
+        searchJob = viewModelScope.launch {
+            repository.filteredCharacter(query)
+                .flowOn(Dispatchers.IO)
+                .cancellable()
+                .collect {
+                    setAllCharacters(it)
+                }
+
+        }
+    }
+
 
     fun fetchNextCharactersPartFromWeb() {
         if (isLoading.value) return
