@@ -12,20 +12,25 @@
 #### Герои
 <img alt="Список героев" src="/preview/screenshots/001_characters_list.jpg" title="Список героев" width="250"/>
 <img src="/preview/screenshots/002_characters_list_search.jpg" width="250" title="Поиск по героям" alt="Поиск по героям"/>
-<br>
+
 <img src="/preview/screenshots/003_character_item.jpg" width="250" title="Детали героя" alt="Детали героя"/>
 <img src="/preview/screenshots/004_character_item_last_seen.jpg" width="250" title="Поиск последнего известного местонахождения" alt="Поиск последнего известного местонахождения"/>
 <img src="/preview/screenshots/005_character_item_episodes.jpg" width="250" title="Список эпизодов с участием героя" alt="Список эпизодов с участием героя"/>
-<br>
+
+#### Локации
 <img src="/preview/screenshots/006_locations_list.jpg" width="250" title="Список локаций" alt="Список локаций"/>
 <img src="/preview/screenshots/007_location_item.jpg" width="250" title="Детали локации" alt="Детали локации"/>
-<br>
+
+#### Эпизоды
 <img src="/preview/screenshots/008_episodes_list.jpg" width="250" title="Список эпизодов" alt="Список эпизодов"/>
 ![Детали эпизода]<img src="/preview/screenshots/009_episode_item.jpg" width="250"/>
-<br>
+
+
+#### Настройки
 <img src="/preview/screenshots/010_settings_dark.jpg" width="250" title="Настройки, тёмная тема" alt="Настройки, тёмная тема"/>
 <img src="/preview/screenshots/011_settings_lite.jpg" width="250" title="Настройки, светлая тема" alt="Настройки, светлая тема"/>
-<br>
+
+#### Ошибки
 <img src="/preview/screenshots/012_error_dialog.jpg" width="250" title="Диалог ошибки" alt="Диалог ошибки"/>
 
 ## Используемые библиотеки и технологии
