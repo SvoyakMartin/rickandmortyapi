@@ -1,4 +1,4 @@
-<img src="/preview/Rick_and_Morty.svg" width="500"/>
+<img src="/preview/Rick_and_Morty.svg" width="250"/>
 
 # Rick and Morty
 
