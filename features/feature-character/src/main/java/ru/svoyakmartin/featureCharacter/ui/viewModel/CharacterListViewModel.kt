@@ -62,10 +62,8 @@ class CharacterListViewModel @Inject constructor(
                 .collect {
                     setAllCharacters(it)
                 }
-
         }
     }
-
 
     fun fetchNextCharactersPartFromWeb() {
         if (isLoading.value) return
