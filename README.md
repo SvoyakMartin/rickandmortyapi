@@ -12,7 +12,7 @@
 #### Герои
 <img alt="Список героев" src="/preview/screenshots/001_characters_list.jpg" title="Список героев" width="250"/>
 <img src="/preview/screenshots/002_characters_list_search.jpg" width="250" title="Поиск по героям" alt="Поиск по героям"/>
-
+<br>
 <img src="/preview/screenshots/003_character_item.jpg" width="250" title="Детали героя" alt="Детали героя"/>
 <img src="/preview/screenshots/004_character_item_last_seen.jpg" width="250" title="Поиск последнего известного местонахождения" alt="Поиск последнего известного местонахождения"/>
 <img src="/preview/screenshots/005_character_item_episodes.jpg" width="250" title="Список эпизодов с участием героя" alt="Список эпизодов с участием героя"/>
@@ -23,7 +23,7 @@
 
 #### Эпизоды
 <img src="/preview/screenshots/008_episodes_list.jpg" width="250" title="Список эпизодов" alt="Список эпизодов"/>
-![Детали эпизода]<img src="/preview/screenshots/009_episode_item.jpg" width="250"/>
+<img src="/preview/screenshots/009_episode_item.jpg" width="250" title="Детали эпизода" alt="Детали эпизода"/>
 
 
 #### Настройки
@@ -51,3 +51,4 @@
 * Coroutines
 * Flow
 * Shared Preferences
+* Pagination
