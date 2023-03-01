@@ -9,8 +9,9 @@
 Используются данные открытого API: <https://rickandmortyapi.com/>
 
 ## Скриншоты
-<img alt="Список героев" src="/preview/screenshots/001_characters_list.jpg&quot;" title="Список героев" width="250"/>
-![Поиск по героям]<img src="/preview/screenshots/002_characters_list_search.jpg" width="250"/>
+<img alt="Список героев" src="/preview/screenshots/001_characters_list.jpg" title="Список героев" width="250"/>
+<img src="/preview/screenshots/002_characters_list_search.jpg" width="250" title="Поиск по героям" alt="Поиск по героям"/>
+
 ![Детали героя]<img src="/preview/screenshots/003_character_item.jpg" width="250"/>
 ![Поиск последнего известного местонахождения]<img src="/preview/screenshots/004_character_item_last_seen.jpg" width="250"/>
 ![Список эпизодов с участием героя]<img src="/preview/screenshots/005_character_item_episodes.jpg" width="250"/>
