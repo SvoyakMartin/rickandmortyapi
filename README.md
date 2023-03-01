@@ -1,4 +1,5 @@
-<img src="/preview/Rick_and_Morty.svg" width="500">
+<img src="/preview/Rick_and_Morty.svg" width="500"/>
+
 # Rick and Morty
 
 ## Описание
