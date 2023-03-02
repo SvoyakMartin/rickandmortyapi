@@ -7,7 +7,7 @@
     tools:context=".ui.fragment.SettingsFragment">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/theme"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView">
+        app:layout_constraintTop_toBottomOf="@id/theme">
 
         <RadioButton
             android:id="@+id/system_theme_radio_button"
@@ -43,5 +43,22 @@
             android:text="@string/dark_theme_text" />
 
     </RadioGroup>
+
+    <TextView
+        android:id="@+id/language"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="@string/language_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/theme_radio_group" />
+
+    <Spinner
+        android:id="@+id/language_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/languages"
+        app:layout_constraintTop_toBottomOf="@+id/language" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,8 +3,8 @@ package ru.svoyakmartin.featureSettings.data
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import ru.svoyakmartin.featureSettings.PREFERENCE_FILE_KEY
-
 
 class UserPreferencesRepositoryImpl private constructor(context: Context) {
     private val sharedPreferences =
@@ -28,14 +28,24 @@ class UserPreferencesRepositoryImpl private constructor(context: Context) {
         saveNightMode(mode)
     }
 
-    fun saveInt(key: String, value: Int){
+    fun saveInt(key: String, value: Int) {
         sharedPreferences.change {
             putInt(key, value)
         }
     }
 
-    fun readInt(key: String, defaultValue: Int): Int{
+    fun readInt(key: String, defaultValue: Int): Int {
         return sharedPreferences.getInt(key, defaultValue)
+    }
+
+    fun setLocale(language: String?) {
+        val appLocale = if (language == null) {
+            LocaleListCompat.getEmptyLocaleList()
+        } else {
+            LocaleListCompat.forLanguageTags(language)
+        }
+
+        AppCompatDelegate.setApplicationLocales(appLocale)
     }
 
     companion object {

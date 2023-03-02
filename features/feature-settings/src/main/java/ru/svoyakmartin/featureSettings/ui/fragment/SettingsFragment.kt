@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import ru.svoyakmartin.coreDi.di.dependency.findFeatureExternalDependencies
@@ -43,8 +44,12 @@ class SettingsFragment : Fragment() {
     }
 
     private fun initViews() {
-        with(binding) {
+        initTheme()
+        initLanguage()
+    }
 
+    private fun initTheme() {
+        with(binding) {
             themeRadioGroup.setOnCheckedChangeListener { _, id ->
                 val mode =
                     when (id) {
@@ -71,6 +76,46 @@ class SettingsFragment : Fragment() {
                 else -> {
                     systemThemeRadioButton.isChecked = true
                 }
+            }
+        }
+    }
+
+    private fun initLanguage() {
+        with(binding) {
+            languageSpinner.apply {
+//                setSelection(1)
+
+                onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(
+                        parent: AdapterView<*>,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                    ) {
+                        val lang = when (position) {
+                            1 -> "en"
+                            2 -> "ru"
+                            else -> null
+                        }
+                        settings.setLocale(lang)
+                    }
+
+                    override fun onNothingSelected(parent: AdapterView<*>) {}
+                }
+//                {
+//                val mode =
+//                    when (id) {
+//                        lightThemeRadioButton.id -> {
+//                            AppCompatDelegate.MODE_NIGHT_NO
+//                        }
+//                        darkThemeRadioButton.id -> {
+//                            AppCompatDelegate.MODE_NIGHT_YES
+//                        }
+//                        else -> {
+//                            AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+//                        }
+//                    }
+//                }
             }
         }
     }

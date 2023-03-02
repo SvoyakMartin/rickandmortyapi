@@ -1,7 +1,15 @@
 <resources>
     <!--    SETTINGS-->
-    <string name="settings_night_mode_text">Night mode</string>
+    <string name="settings_night_mode_text">Theme</string>
     <string name="light_theme_text">Light</string>
     <string name="dark_theme_text">Dark</string>
     <string name="system_theme_text">System</string>
+
+    <string name="language_text">Language</string>
+    <string-array name="languages">
+        <item>System</item>
+        <item>English</item>
+        <item>Russian</item>
+    </string-array>
+
 </resources>

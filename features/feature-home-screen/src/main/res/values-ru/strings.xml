@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_text">Настройки</string>
+    <string name="characters_text">Герои</string>
+    <string name="locations_text">Локации</string>
+    <string name="episodes_text">Эпизоды</string>
+    <string name="back_pressed_toast_text">для выхода нажмите ещё раз</string>
+</resources>

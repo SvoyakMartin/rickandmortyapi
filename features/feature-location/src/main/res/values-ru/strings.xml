@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="location_characters_header_text">Жители локации: %1$d</string>
+    <string name="characters_show">↓ показать ↓</string>
+    <string name="characters_hide">↑ скрыть ↑</string>
+</resources>
