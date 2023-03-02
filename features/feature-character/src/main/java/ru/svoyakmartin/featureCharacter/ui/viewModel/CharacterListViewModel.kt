@@ -24,9 +24,13 @@ class CharacterListViewModel @Inject constructor(
 
     private var query = ""
     fun setQuery(newQuery: String) {
-        query = newQuery
-        filteredCharacter()
+        if (query != newQuery){
+            query = newQuery
+            filteredCharacter()
+        }
     }
+
+    private lateinit var allCharactersFlow: StateFlow<List<Character>>
 
     private var searchJob: Job? = null
 
@@ -39,29 +43,35 @@ class CharacterListViewModel @Inject constructor(
                     }
             }
 
-            repository.allCharacters
-                .flowOn(Dispatchers.IO)
+            allCharactersFlow = repository.allCharacters
                 .conflate()
-                .collect {
-                    if (query.isBlank()) {
-                        setAllCharacters(it)
-                    }
-                }
+                .stateIn(viewModelScope)
+                .stateFlowWithDelay()
 
-            filteredCharacter()
+            allCharactersFlow.collect {
+                if (query.isEmpty()) {
+                    setAllCharacters(it)
+                }
+            }
         }
     }
 
     private fun filteredCharacter() {
-        searchJob?.cancel()
-
-        searchJob = viewModelScope.launch {
-            repository.filteredCharacter(query)
-                .flowOn(Dispatchers.IO)
-                .cancellable()
-                .collect {
-                    setAllCharacters(it)
-                }
+        if (query.isEmpty()) {
+            setAllCharacters(allCharactersFlow.value)
+        } else {
+            searchJob?.cancel()
+            setIsLoading(true)
+            searchJob = viewModelScope.launch(Dispatchers.IO) {
+                repository.filteredCharacter(query)
+                    .cancellable()
+                    .collect {
+                        when (it) {
+                            true -> setIsLoading(false)
+                            is List<*> -> setAllCharacters(it as List<Character>)
+                        }
+                    }
+            }
         }
     }
 
@@ -71,13 +81,10 @@ class CharacterListViewModel @Inject constructor(
         setIsLoading(true)
 
         viewModelScope.launch(Dispatchers.IO) {
-            repository.fetchNextCharactersPartFromWeb()
-                .conflate()
-                .collect { response ->
-                    getDataOrSetError(response).collect {
-                        if (it == true) setIsLoading(false)
-                    }
-                }
+            val response = repository.fetchNextCharactersPartFromWeb()
+            getDataOrSetError(response).collect {
+                if (it == true) setIsLoading(false)
+            }
         }
     }
 }

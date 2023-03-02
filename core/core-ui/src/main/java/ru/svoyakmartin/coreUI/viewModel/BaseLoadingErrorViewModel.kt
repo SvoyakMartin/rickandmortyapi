@@ -43,7 +43,7 @@ open class BaseLoadingErrorViewModel : ViewModel() {
 
     }
 
-    fun setError(failure: ApiResponse.Failure) {
+    private fun setError(failure: ApiResponse.Failure) {
         _error.value = when (failure) {
             is NetworkFailure -> {
                 mapOf(

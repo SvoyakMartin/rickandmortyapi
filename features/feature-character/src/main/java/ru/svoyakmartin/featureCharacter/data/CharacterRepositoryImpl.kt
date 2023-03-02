@@ -1,5 +1,6 @@
 package ru.svoyakmartin.featureCharacter.data
 
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
 import ru.svoyakmartin.coreNetwork.provider.response.ApiResponse
 import ru.svoyakmartin.featureCharacterDependenciesApi.CharacterDependenciesFeatureApi
@@ -28,9 +29,36 @@ class CharacterRepositoryImpl @Inject constructor(
     private var charactersLastPage =
         settings.readInt(SettingsFeatureApi.CHARACTERS_LAST_PAGE_KEY, 1)
 
-    fun filteredCharacter(search: String) = characterRoomDAO.getFilteredCharacters("*$search*")
+    suspend fun filteredCharacter(search: String) = flow {
+        var currentCount = 0
+        var allCount = 0
+        var filteredCount = 0
 
-    suspend fun fetchNextCharactersPartFromWeb() = flow {
+        allCharacters
+            .combine(charactersCount) { characterList, allCountOrError ->
+                currentCount = characterList.size
+                if (allCountOrError is Int) {
+                    allCount = allCountOrError
+                }
+
+                return@combine true
+            }
+            .combine(characterRoomDAO.getFilteredCharacters("*$search*")) { _, filteredCharacterList ->
+                filteredCount = filteredCharacterList.size
+
+                return@combine filteredCharacterList
+            }.collect{
+                emit(it)
+
+                if (filteredCount < 20 && currentCount < allCount) {
+                    fetchNextCharactersPartFromWeb()
+                } else {
+                    emit(true)
+                }
+            }
+    }
+
+    suspend fun fetchNextCharactersPartFromWeb(): Any {
         val response = apiService.getCharacters(charactersLastPage)
 
         if (response is ApiResponse.Success) {
@@ -55,9 +83,9 @@ class CharacterRepositoryImpl @Inject constructor(
                 }
             }
 
-            emit(true)
+            return true
         } else {
-            emit(response)
+            return response
         }
     }
 

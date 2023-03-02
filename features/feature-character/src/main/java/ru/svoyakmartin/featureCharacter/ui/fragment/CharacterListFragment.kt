@@ -83,10 +83,10 @@ class CharacterListFragment : Fragment() {
         launch {
             viewModel.allCharacters
                 .collect { characterList ->
+                    adapter.submitList(characterList)
+
                     if (characterList.isEmpty()) {
                         viewModel.fetchNextCharactersPartFromWeb()
-                    } else {
-                        adapter.submitList(characterList)
                     }
                 }
         }
