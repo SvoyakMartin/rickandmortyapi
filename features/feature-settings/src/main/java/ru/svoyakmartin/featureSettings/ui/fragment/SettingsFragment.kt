@@ -83,8 +83,6 @@ class SettingsFragment : Fragment() {
     private fun initLanguage() {
         with(binding) {
             languageSpinner.apply {
-//                setSelection(1)
-
                 onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(
                         parent: AdapterView<*>,
@@ -102,20 +100,6 @@ class SettingsFragment : Fragment() {
 
                     override fun onNothingSelected(parent: AdapterView<*>) {}
                 }
-//                {
-//                val mode =
-//                    when (id) {
-//                        lightThemeRadioButton.id -> {
-//                            AppCompatDelegate.MODE_NIGHT_NO
-//                        }
-//                        darkThemeRadioButton.id -> {
-//                            AppCompatDelegate.MODE_NIGHT_YES
-//                        }
-//                        else -> {
-//                            AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-//                        }
-//                    }
-//                }
             }
         }
     }
