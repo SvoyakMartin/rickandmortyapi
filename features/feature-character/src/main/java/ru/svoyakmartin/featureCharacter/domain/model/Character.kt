@@ -8,7 +8,7 @@ import java.io.Serializable
 @Entity(tableName = CHARACTERS_TABLE_NAME)
 data class Character(
     @PrimaryKey
-    val id : Int,
+    val id: Int,
     val name: String,
     val status: Status,
     val species: String,
@@ -17,4 +17,13 @@ data class Character(
     val origin: Int?,
     val location: Int?,
     val image: String
-) : Serializable
+) : Serializable {
+
+    fun toMap(): Map<String, Any> = mapOf(
+        "id" to id,
+        "name" to name,
+        "image" to image,
+        "species" to species,
+        "type" to type
+    )
+}

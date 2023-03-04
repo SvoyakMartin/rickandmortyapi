@@ -10,8 +10,10 @@ import ru.svoyakmartin.featureCharacterDependencies.di.CharacterDependenciesExte
 import ru.svoyakmartin.featureEpisode.di.EpisodeExternalDependencies
 import ru.svoyakmartin.featureHomeScreen.di.HomeScreenExternalDependencies
 import ru.svoyakmartin.featureLocation.di.LocationExternalDependencies
+import ru.svoyakmartin.featureNotification.di.NotificationExternalDependencies
 import ru.svoyakmartin.featureSettings.data.UserPreferencesRepositoryImpl
 import ru.svoyakmartin.featureSettings.di.SettingsExternalDependencies
+import ru.svoyakmartin.rickandmortyapi.App
 import ru.svoyakmartin.rickandmortyapi.AppActivity
 import ru.svoyakmartin.rickandmortyapi.di.modules.*
 
@@ -31,14 +33,13 @@ interface AppComponent :
     LocationExternalDependencies,
     EpisodeExternalDependencies {
 
-    @Component.Builder
-    abstract class Builder {
-        @BindsInstance
-        abstract fun bindContext(context: Context): Builder
-        abstract fun build(): AppComponent
+    @Component.Factory
+    interface Factory {
+        fun create(@BindsInstance context: Context): AppComponent
     }
 
     val userPreferencesRepository: UserPreferencesRepositoryImpl
 
     fun inject(activity: AppActivity)
+    fun inject(application: App)
 }

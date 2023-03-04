@@ -15,7 +15,7 @@ interface CharacterRoomDAO {
     @Query("SELECT * FROM $CHARACTERS_TABLE_NAME")
     fun getAllCharacters(): Flow<List<Character>>
 
-    @Query("SELECT *, snippet($CHARACTERS_FTS_TABLE_NAME)" +
+    @Query("SELECT $CHARACTERS_TABLE_NAME.*" +
             "FROM $CHARACTERS_TABLE_NAME " +
             "JOIN $CHARACTERS_FTS_TABLE_NAME " +
             "ON $CHARACTERS_TABLE_NAME.id = $CHARACTERS_FTS_TABLE_NAME.id " +

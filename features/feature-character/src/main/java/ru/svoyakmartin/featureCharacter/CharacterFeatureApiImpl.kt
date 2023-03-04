@@ -1,6 +1,6 @@
 package ru.svoyakmartin.featureCharacter
 
-import ru.svoyakmartin.featureCharacter.data.ExportRepositoryImpl
+import ru.svoyakmartin.featureCharacter.data.repository.ExportRepositoryImpl
 import ru.svoyakmartin.featureCharacter.ui.fragment.CharacterDetailsFragment
 import ru.svoyakmartin.featureCharacter.ui.fragment.CharacterListFragment
 import ru.svoyakmartin.featureCharacterApi.CharacterFeatureApi
@@ -16,4 +16,7 @@ class CharacterFeatureApiImpl @Inject constructor(private val repository: Export
 
     override fun getCharacterMapByIds(characterIdsList: Set<Int>) =
         repository.getCharacterMapByIds(characterIdsList)
+
+    override fun getRandomCharacterMap() =
+        repository.getRandomCharacterMap()
 }

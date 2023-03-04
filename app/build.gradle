@@ -16,7 +16,7 @@ android {
         versionName "1.0"
     }
 
-    buildFeatures{
+    buildFeatures {
         viewBinding true
     }
 }
@@ -26,6 +26,8 @@ dependencies {
     implementation project(":core:core-di")
     implementation project(":core:core-network")
     implementation project(":features:feature-theme")
+    implementation project(":features:feature-notification-api")
+    implementation project(":features:feature-notification")
     implementation project(':features:feature-character')
     implementation project(':features:feature-character-api')
     implementation project(':features:feature-home-screen-api')
@@ -54,4 +56,10 @@ dependencies {
     // Dagger
     implementation "com.google.dagger:dagger:2.44"
     kapt "com.google.dagger:dagger-compiler:2.44"
+
+    //app start up
+    implementation "androidx.startup:startup-runtime:1.1.1"
+
+    // Worker
+    implementation "androidx.work:work-runtime-ktx:2.8.0"
 }

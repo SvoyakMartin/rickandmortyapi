@@ -1,20 +1,31 @@
-package ru.svoyakmartin.featureCharacter.data
+package ru.svoyakmartin.featureCharacter.data.repository
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import ru.svoyakmartin.coreNetwork.provider.response.ApiResponse
+import ru.svoyakmartin.featureCharacter.ERROR_FIELD
 import ru.svoyakmartin.featureCharacter.data.dataSource.CharactersApi
 import ru.svoyakmartin.featureCharacter.data.dataSource.getEpisodesIds
 import ru.svoyakmartin.featureCharacter.data.dataSource.toCharacter
 import ru.svoyakmartin.featureCharacter.data.db.CharacterRoomDAO
+import ru.svoyakmartin.featureCharacter.data.model.CharacterDTO
 import ru.svoyakmartin.featureCharacter.domain.model.Character
 import ru.svoyakmartin.featureCharacterDependenciesApi.CharacterDependenciesFeatureApi
+import ru.svoyakmartin.featureStatisticApi.StatisticFeatureApi
+import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
+import kotlin.random.Random
 
 class ExportRepositoryImpl @Inject constructor(
     private val characterRoomDAO: CharacterRoomDAO,
     private val apiService: CharactersApi,
-    private val characterDependenciesFeatureApi: CharacterDependenciesFeatureApi
-) {
+    private val characterDependenciesFeatureApi: CharacterDependenciesFeatureApi,
+    statisticFeatureApi: StatisticFeatureApi
+) : BaseRepository(characterRoomDAO, apiService, statisticFeatureApi) {
 
     fun getCharacterMapByIds(characterIdsList: Set<Int>) = flow {
         characterRoomDAO.getExistingCharacterIds(characterIdsList)
@@ -53,4 +64,26 @@ class ExportRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    fun getRandomCharacterMap(): Flow<Map<String, Any>?> = flow {
+        charactersCount.collect { countOrError ->
+            if (countOrError is Int) {
+                val random = Random(Date().time)
+                getCharacterById(random.nextInt(countOrError))
+                    .collect { response ->
+                        emit(
+                            when (response) {
+                                is Character -> response.toMap()
+                                is ApiResponse.Success<*> ->
+                                    (response.data as CharacterDTO).toCharacter().toMap()
+                                is ApiResponse.Failure -> mapOf(ERROR_FIELD to response)
+                                else -> null
+                            }
+                        )
+                    }
+            } else {
+                emit(mapOf(ERROR_FIELD to countOrError))
+            }
+        }
+    }.flowOn(Dispatchers.IO)
 }

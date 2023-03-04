@@ -1,4 +1,4 @@
-package ru.svoyakmartin.featureCharacter.data
+package ru.svoyakmartin.featureCharacter.data.repository
 
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
@@ -23,9 +23,8 @@ class CharacterRepositoryImpl @Inject constructor(
     private val episodeFeatureApi: EpisodeFeatureApi,
     private val dependenciesFeatureApi: CharacterDependenciesFeatureApi,
     statisticFeatureApi: StatisticFeatureApi
-) {
+) : BaseRepository(characterRoomDAO, apiService, statisticFeatureApi) {
     val allCharacters = characterRoomDAO.getAllCharacters()
-    val charactersCount = statisticFeatureApi.getCharactersCount()
     private var charactersLastPage =
         settings.readInt(SettingsFeatureApi.CHARACTERS_LAST_PAGE_KEY, 1)
 
@@ -47,7 +46,7 @@ class CharacterRepositoryImpl @Inject constructor(
                 filteredCount = filteredCharacterList.size
 
                 return@combine filteredCharacterList
-            }.collect{
+            }.collect {
                 emit(it)
 
                 if (filteredCount < 20 && currentCount < allCount) {
@@ -87,28 +86,6 @@ class CharacterRepositoryImpl @Inject constructor(
         } else {
             return response
         }
-    }
-
-    suspend fun getCharacterById(id: Int) = flow {
-        characterRoomDAO.getCharacterById(id).collect { character ->
-            if (character != null) {
-                emit(character)
-            } else {
-                fetchCharacterById(id).collect {
-                    emit(it)
-                }
-            }
-        }
-    }
-
-    private suspend fun fetchCharacterById(id: Int) = flow {
-        val response = apiService.getCharacterById(id)
-
-        if (response is ApiResponse.Success) {
-            characterRoomDAO.insertCharacter(response.data.toCharacter())
-        }
-
-        emit(response)
     }
 
     suspend fun getLocationsMapByIds(locationsIdsList: Set<Int>) = flow {

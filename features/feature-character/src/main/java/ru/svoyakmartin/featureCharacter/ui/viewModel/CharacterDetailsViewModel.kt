@@ -5,7 +5,7 @@ import android.view.View
 import androidx.navigation.findNavController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
-import ru.svoyakmartin.featureCharacter.data.CharacterRepositoryImpl
+import ru.svoyakmartin.featureCharacter.data.repository.CharacterRepositoryImpl
 import ru.svoyakmartin.featureCharacter.data.dataSource.toCharacter
 import ru.svoyakmartin.featureCharacter.data.model.CharacterDTO
 import ru.svoyakmartin.featureCharacter.domain.model.Character

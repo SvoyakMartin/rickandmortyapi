@@ -5,7 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import ru.svoyakmartin.featureCharacter.data.CharacterRepositoryImpl
+import ru.svoyakmartin.featureCharacter.data.repository.CharacterRepositoryImpl
 import ru.svoyakmartin.coreUI.viewModel.BaseLoadingErrorViewModel
 import ru.svoyakmartin.featureCharacter.domain.model.Character
 import javax.inject.Inject

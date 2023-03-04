@@ -22,6 +22,7 @@ import ru.svoyakmartin.featureLocation.data.dataSource.LocationsApi
 import ru.svoyakmartin.featureLocation.data.db.LocationRoomDAO
 import ru.svoyakmartin.featureLocation.data.db.LocationRoomDB
 import ru.svoyakmartin.featureLocation.di.LocationFeatureApiModule
+import ru.svoyakmartin.featureNotification.di.NotificationFeatureApiModule
 import ru.svoyakmartin.featureSettings.di.SettingsFeatureApiModule
 import ru.svoyakmartin.featureStatistic.data.dataSource.StatisticApi
 import ru.svoyakmartin.featureStatistic.di.StatisticFeatureApiModule
@@ -34,7 +35,8 @@ import ru.svoyakmartin.featureStatistic.di.StatisticFeatureApiModule
         SettingsFeatureApiModule::class,
         LocationFeatureApiModule::class,
         EpisodeFeatureApiModule::class,
-        StatisticFeatureApiModule::class
+        StatisticFeatureApiModule::class,
+        NotificationFeatureApiModule::class
     ]
 )
 object AppModule {
