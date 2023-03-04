@@ -13,10 +13,10 @@ class NotificationFeatureApiImpl @Inject constructor(private val context: Contex
     override fun addRandomCharacterNotification() {
         val workManager = WorkManager.getInstance(context)
         val workRequest = PeriodicWorkRequestBuilder<NotificationWorker>(
-            15,
-            TimeUnit.MINUTES,
-            14,
-            TimeUnit.MINUTES
+            15,//todo debag 1
+            TimeUnit.MINUTES,//todo debag DAYS
+            14,//todo debag 23
+            TimeUnit.MINUTES//todo debag HOURS
         )
             .build()
 

@@ -47,7 +47,7 @@ class NotificationWorker(
                                             "${response["image"]}___" +
                                             "${response["species"]}___" +
                                             "${response["type"]}!!!"
-                                )
+                                )//todo debag
                                 preSendNotification(response)
                             }
                         }
@@ -55,7 +55,7 @@ class NotificationWorker(
             }
             Result.success()
         } catch (e: Exception) {
-            Log.e("ERROR", "???___???___???___???___???")
+            Log.e("ERROR", "???___???___???___???___???")//todo debag
             Result.retry()
         }
     }
