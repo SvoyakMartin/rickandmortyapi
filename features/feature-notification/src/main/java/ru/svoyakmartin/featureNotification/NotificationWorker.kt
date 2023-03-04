@@ -76,7 +76,7 @@ class NotificationWorker(
         Glide.with(applicationContext)
             .asBitmap()
             .load(data["image"])
-            .into(object : CustomTarget<Bitmap?>(100, 100) {
+            .into(object : CustomTarget<Bitmap?>() {
 
                 override fun onResourceReady(
                     resource: Bitmap,
@@ -101,12 +101,20 @@ class NotificationWorker(
 
         createChannel()
 
+        val title = data["name"].toString()
+        val text = "${data["type"]}\n${data["species"]}"
+
         val builder = NotificationCompat.Builder(applicationContext, CHANNEL_ID).apply {
             setSmallIcon(androidx.loader.R.drawable.notification_bg)// todo icon from app
-            setContentTitle(data["name"].toString())
-            setContentText("${data["type"]} - ${data["species"]}")
+            setLargeIcon(resource)
+            setContentTitle(title)
+            setContentText(text)
             setAutoCancel(true)
-            setStyle(NotificationCompat.BigPictureStyle().bigPicture(resource))
+            setStyle(
+                NotificationCompat.BigPictureStyle().bigPicture(resource)
+                    .setBigContentTitle(title)
+                    .setSummaryText(text)
+            )
 //            addAction(0, "Action", pendingIntent)
 //            setContentIntent(pendingClickIntent)
         }
