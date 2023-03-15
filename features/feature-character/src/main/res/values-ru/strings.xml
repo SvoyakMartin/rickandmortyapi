@@ -3,7 +3,7 @@
     <string name="status_alive">Жив</string>
     <string name="status_dead">Мёртв</string>
     <string name="status_unknown">Неизвестно</string>
-    <string name="last_seen_placeholder">нажать для поиска</string>
+    <string name="last_seen_placeholder">нажать для поиска 🔍</string>
     <string name="last_seen_unknown">неизвестно</string>
     <string name="origin_location_unknown">неизвестно</string>
     <string name="episodes_header_text">Эпизоды: %1$d</string>
