@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import dagger.Lazy
-import kotlinx.coroutines.flow.filterNotNull
 import ru.svoyakmartin.coreDi.di.dependency.findFeatureExternalDependencies
 import ru.svoyakmartin.coreDi.di.viewModel.ViewModelFactory
 import ru.svoyakmartin.coreUI.*

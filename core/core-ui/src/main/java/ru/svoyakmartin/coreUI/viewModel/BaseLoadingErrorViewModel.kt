@@ -16,8 +16,11 @@ import ru.svoyakmartin.coreNetwork.provider.response.ApiResponse.Failure.Unknown
 open class BaseLoadingErrorViewModel : ViewModel() {
     private val _error = MutableStateFlow(mapOf<String, Any>())
     val error = _error.stateFlowWithDelay()
+    var isErrorShowing = false
+
     private fun resetError() {
         _error.value = mapOf()
+        isErrorShowing = false
         setIsLoading(false)
     }
 

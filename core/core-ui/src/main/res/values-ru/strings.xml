@@ -2,4 +2,5 @@
 <resources>
     <string name="default_error_title">Ошибка</string>
     <string name="default_error_message">Что-то пошло не так… \nПожалуйста, попробуйте позднее.</string>
+    <string name="close_error_button_text">ОК</string>
 </resources>

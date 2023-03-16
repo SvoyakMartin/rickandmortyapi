@@ -1,6 +1,5 @@
 package ru.svoyakmartin.coreUI
 
-import android.app.AlertDialog
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
@@ -12,8 +11,10 @@ import androidx.lifecycle.get
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
+import ru.svoyakmartin.coreUI.fragment.ErrorDialogFragment
 import ru.svoyakmartin.coreUI.viewModel.BaseLoadingErrorViewModel
 
 inline fun <reified VM : ViewModel> Fragment.viewModel(): VM {
@@ -56,35 +57,23 @@ fun Fragment.showErrorDialog(error: Map<String, Any>) {
     val message = error["message"]
     val listener = error["listener"]
 
-    AlertDialog.Builder(requireContext()).apply {
-        setIcon(R.drawable.ic_error_24)
-        setTitle(
-            when (title) {
-                null -> getString(R.string.default_error_title)
-                else -> title.toString()
-            }
-        )
-        setMessage(
-            when (message) {
-                null -> getString(R.string.default_error_message)
-                else -> message.toString()
-            }
-        )
-        setPositiveButton("OK") { _, _ ->
-            if (listener != null){
-                (listener as () -> Unit).invoke()
-            }
-        }
-        show()
-    }
+    val fragment = ErrorDialogFragment().getInstance(
+        title.toString(),
+        message.toString(),
+        listener as (() -> Unit)?
+    )
+
+    fragment.show(childFragmentManager, "errorDialog")
 }
 
-fun Fragment.initError(viewModel: BaseLoadingErrorViewModel){
+fun Fragment.initError(viewModel: BaseLoadingErrorViewModel) {
     launch {
         viewModel.error
-            .filter { it.isNotEmpty() }
+            .filter { !viewModel.isErrorShowing && it.isNotEmpty() }
+            .conflate()
             .collect {
                 showErrorDialog(it)
+                viewModel.isErrorShowing = true
             }
     }
 }
